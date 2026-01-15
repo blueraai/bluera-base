@@ -1,6 +1,6 @@
 # Claude Code & Claude Code Plugins — Best Practices (2026-01)
 
-> This is a field guide for **Claude Code customization** (CLAUDE.md, rules, skills, subagents, hooks, MCP, output styles, settings) and **plugin / marketplace development** (plugin.json, commands, skills, hooks, MCP/LSP bundling, distribution, testing, troubleshooting).  
+> This is a field guide for **Claude Code customization** (CLAUDE.md, rules, skills, subagents, hooks, MCP, output styles, settings) and **plugin / marketplace development** (plugin.json, commands, skills, hooks, MCP/LSP bundling, distribution, testing, troubleshooting).
 > It synthesizes official docs plus recurring real-world gotchas from GitHub issues + community threads.
 
 ---
@@ -11,23 +11,23 @@
 
 | You want to… | Use… | Why |
 |---|---|---|
-| Set project-wide standards, workflows, “how we do things here” | `CLAUDE.md` + `.claude/rules/*.md` | Always-on, versioned, easy to review; rules can be path-scoped. |
+| Set project-wide standards, workflows, "how we do things here" | `CLAUDE.md` + `.claude/rules/*.md` | Always-on, versioned, easy to review; rules can be path-scoped. |
 | Make **explicit, user-invoked** workflows (`/review`, `/ship`, `/debug`) | **Slash commands** (`.claude/commands/*.md`) | Deterministic, discoverable, supports args and pre-run context gathering. |
-| Teach Claude a reusable “how to do X” playbook it can apply automatically | **Skills** (`.claude/skills/*/SKILL.md`) | Autonomously applied based on task intent; great for standards + recipes. |
+| Teach Claude a reusable "how to do X" playbook it can apply automatically | **Skills** (`.claude/skills/*/SKILL.md`) | Autonomously applied based on task intent; great for standards + recipes. |
 | Isolate noisy operations (tests, grepping, docs spelunking), or run parallel research | **Subagents** (`.claude/agents/*.md`) | Separate context + tool restrictions; keeps main thread clean. |
-| Guarantee something always happens (formatting, linting, compliance logging) | **Hooks** (`settings.json` or plugin `hooks.json`) | Deterministic “always-run” automation vs hoping the model remembers. |
+| Guarantee something always happens (formatting, linting, compliance logging) | **Hooks** (`settings.json` or plugin `hooks.json`) | Deterministic "always-run" automation vs hoping the model remembers. |
 | Connect Claude to external systems/tools (GitHub, Jira, DB, Sentry) | **MCP servers** (`.mcp.json` or plugin) | Adds tools/resources/prompts via MCP; policy controls + permissions. |
 | Package and share the above across repos/teams | **Plugins** (+ marketplaces) | Portable bundles: commands, skills, agents, hooks, MCP/LSP configs. |
-| Make Claude “be a different kind of agent” (teaching mode, super-terse mode, etc.) | **Output styles** | Alters system prompt behavior (and triggers reminders). Use sparingly. |
+| Make Claude "be a different kind of agent" (teaching mode, super-terse mode, etc.) | **Output styles** | Alters system prompt behavior (and triggers reminders). Use sparingly. |
 
-### When to move from “repo config” to “plugin”
+### When to move from "repo config" to "plugin"
 Use a plugin when:
 - You need **cross-repo reuse** (org-wide workflows, platform tooling).
 - You want **versioning + distribution** via marketplaces.
-- You’re bundling “a product”: docs, scripts, validation, and predictable interfaces.
+- You're bundling "a product": docs, scripts, validation, and predictable interfaces.
 
 Stay with standalone `.claude/` when:
-- It’s **project-specific** and tightly coupled to repo architecture.
+- It's **project-specific** and tightly coupled to repo architecture.
 - You want the lowest friction for contributors (no extra installs).
 
 ---
@@ -36,7 +36,7 @@ Stay with standalone `.claude/` when:
 
 ```
 your-repo/
-├─ CLAUDE.md                  # high-level “how we work” + common commands
+├─ CLAUDE.md                  # high-level "how we work" + common commands
 ├─ CLAUDE.local.md            # per-user overrides (gitignored by default)
 └─ .claude/
    ├─ settings.json           # shared team config (permissions/hooks/plugins)
@@ -53,23 +53,23 @@ your-repo/
 ```
 
 Why this works:
-- Memory loads hierarchically (enterprise → project → rules → user → local).  
-- Rules can be **path-scoped** via frontmatter `paths:` so you avoid “giant CLAUDE.md”.  
-- `settings.local.json` is ideal for experimentation without polluting the team baseline.  
+- Memory loads hierarchically (enterprise → project → rules → user → local).
+- Rules can be **path-scoped** via frontmatter `paths:` so you avoid "giant CLAUDE.md".
+- `settings.local.json` is ideal for experimentation without polluting the team baseline.
 
 ---
 
-## 2) CLAUDE.md & rules: treat it like an “agent manifest”
+## 2) CLAUDE.md & rules: treat it like an "agent manifest"
 
 ### CLAUDE.md best practices
-- **Prefer checklists + short bullets over prose.** Keep it scannable and review-friendly.  
-- Include **canonical commands** (build/test/lint, local env setup, common scripts). This avoids repeated tool search.  
-- Put “project invariants” here: architecture boundaries, naming conventions, PR policy, test expectations.  
+- **Prefer checklists + short bullets over prose.** Keep it scannable and review-friendly.
+- Include **canonical commands** (build/test/lint, local env setup, common scripts). This avoids repeated tool search.
+- Put "project invariants" here: architecture boundaries, naming conventions, PR policy, test expectations.
 - Keep it stable. Put volatile data (tokens, local URLs, personal notes) in `CLAUDE.local.md`.
 
 ### `.claude/rules/*.md` best practices
-- **One topic per file** (testing, security, API conventions). Official guidance explicitly recommends this style.  
-- Use `paths:` frontmatter only when rules truly are file-type specific.  
+- **One topic per file** (testing, security, API conventions). Official guidance explicitly recommends this style.
+- Use `paths:` frontmatter only when rules truly are file-type specific.
 - Prefer shallow hierarchies; subdirectories for grouping are fine and recursively discovered.
 
 **Path-scoped rule example**
@@ -85,7 +85,7 @@ paths:
 ```
 
 ### Imports: structure without bloat
-If you have a large “standards pack,” use `@path/to/file.md` imports inside `CLAUDE.md` (max depth is limited). Use imports to factor shared guidance into multiple files without giant prompts.
+If you have a large "standards pack," use `@path/to/file.md` imports inside `CLAUDE.md` (max depth is limited). Use imports to factor shared guidance into multiple files without giant prompts.
 
 ---
 
@@ -100,16 +100,17 @@ Claude Code settings are hierarchical (managed > CLI flags > local > project > u
 ### Settings hygiene checklist
 - Put **permissions** and **hooks** in project scope so teammates have consistent guardrails.
 - Keep personal allowlists (e.g., favorite harmless `Bash(...)` commands) in user scope.
+- **Secrets Management:** Never hardcode API keys or secrets in `settings.json` or `plugin.json`. Use environment variables on the host system, which Claude (and MCP servers) can inherit.
 - For monorepos, consider a custom `fileSuggestion` command to speed `@` completion.
 
 ---
 
-## 4) Output styles: powerful, but don’t use them as a crutch
+## 4) Output styles: powerful, but don't use them as a crutch
 
-Output styles directly change the system prompt; they’re great when you want Claude Code to behave like a different agent (teaching mode, ultra-terse mode). They also trigger reminders to adhere to the style.
+Output styles directly change the system prompt; they're great when you want Claude Code to behave like a different agent (teaching mode, ultra-terse mode). They also trigger reminders to adhere to the style.
 
 Best practices:
-- If you’re mostly doing software engineering: keep `keep-coding-instructions: true` in custom styles so you don’t lose “run tests / verify” guardrails.
+- If you're mostly doing software engineering: keep `keep-coding-instructions: true` in custom styles so you don't lose "run tests / verify" guardrails.
 - If the goal is consistent formatting, consider: **CLAUDE.md**, **rules**, or a **UserPromptSubmit hook** that reminds Claude. Use output styles only when you truly want to disable/replace core prompt sections.
 
 **Minimal custom output style**
@@ -127,7 +128,7 @@ keep-coding-instructions: true
 
 ---
 
-## 5) Slash commands: deterministic “stored prompts”
+## 5) Slash commands: deterministic "stored prompts"
 
 Slash commands are ideal for workflows you *choose* to run. They also support:
 - args (`$ARGUMENTS`, `$1`, `$2`, …)
@@ -137,14 +138,14 @@ Slash commands are ideal for workflows you *choose* to run. They also support:
 ### Slash command best practices
 - Treat each command like an API:
   - Define inputs (`argument-hint`)
-  - Define outputs (“what success looks like”)
+  - Define outputs ("what success looks like")
   - Declare tool constraints (`allowed-tools`)
-- Use `context: fork` for noisy/expensive commands so they don’t pollute your main thread.
+- Use `context: fork` for noisy/expensive commands so they don't pollute your main thread.
 - Be extremely careful with `!` pre-exec:
   - Keep it to read-only / low-risk commands (status, diff, logs).
   - Avoid constructing shell from untrusted args without strict quoting.
 
-**Example: safe-ish “commit” command**
+**Example: safe-ish "commit" command**
 ```md
 ---
 description: Create a single high-quality commit from current changes
@@ -162,10 +163,10 @@ Propose a commit message and run the commit.
 
 ## 6) Skills: autonomous playbooks (make them small & surgical)
 
-Skills are injected guidance that Claude may apply automatically when your request matches the skill’s purpose.
+Skills are injected guidance that Claude may apply automatically when your request matches the skill's purpose.
 
 ### Skill authoring best practices
-- **Progressive disclosure**: keep `SKILL.md` lean; push depth into `references/*.md`.  
+- **Progressive disclosure**: keep `SKILL.md` lean; push depth into `references/*.md`.
   *Community experience shows that huge SKILL.md files cause context bloat; a PR explicitly optimized this by moving detail into references and shrinking SKILL.md size.*
 - Use frontmatter carefully:
   - `description:` is your router—write it like a trigger spec.
@@ -176,13 +177,13 @@ Skills are injected guidance that Claude may apply automatically when your reque
   - how to validate success
 - Keep examples realistic and minimal; avoid giant code dumps.
 
-### “Gotcha”: accidental bash execution from docs
-A real plugin-dev PR removed patterns like `!` + backticks from skill documentation because Claude Code can treat them as executable pre-run snippets—even inside markdown blocks.  
+### "Gotcha": accidental bash execution from docs
+A real plugin-dev PR removed patterns like `!` + backticks from skill documentation because Claude Code can treat them as executable pre-run snippets—even inside markdown blocks.
 **Best practice:** in skills (and docs), avoid `!` + backticks unless you intentionally want a command executed by a slash command context.
 
 ### Skills vs. commands vs. subagents vs. MCP (short version)
-- **Skill:** “how to do X” guidance (autonomous).
-- **Command:** “do X now” (explicit).
+- **Skill:** "how to do X" guidance (autonomous).
+- **Command:** "do X now" (explicit).
 - **Subagent:** isolate X in separate context / tool restrictions.
 - **MCP:** provides tools; a Skill teaches the tool usage patterns.
 
@@ -198,7 +199,7 @@ Subagents shine for:
 ### Subagent best practices
 - Keep `description` precise: it drives automatic delegation.
 - Use tool restrictions (`tools`, `disallowedTools`) to enforce intent.
-- Use cheaper models for routine tasks (e.g., `sonnet` vs `opus`) unless you need depth.
+- **Context Cost Awareness:** Subagents spawn a *new* context window. While they keep the main thread clean, if a subagent needs to read 100 files, you pay for those tokens again. Use them for tasks that need *isolation*, not just to hide text.
 - Be aware of background-mode constraints:
   - background subagents inherit permissions and auto-deny missing ones
   - **MCP tools are not available in background subagents** (plan around this)
@@ -217,7 +218,7 @@ Run the test suite, capture only failing test output, and summarize the root cau
 
 ---
 
-## 8) Hooks: deterministic automation (guardrails, not “magic”)
+## 8) Hooks: deterministic automation (guardrails, not "magic")
 
 Hooks are the most reliable way to ensure repeatable behavior:
 - run formatters after file edits
@@ -232,16 +233,16 @@ Hooks are the most reliable way to ensure repeatable behavior:
 - Keep hook logic in scripts with real tests; keep config thin.
 
 ### Stop hooks: avoid infinite loops
-Claude Code exposes `stop_hook_active` in Stop hook input to indicate a stop hook has already forced continuation. Use it to prevent “retry forever” loops.  
+Claude Code exposes `stop_hook_active` in Stop hook input to indicate a stop hook has already forced continuation. Use it to prevent "retry forever" loops.
 Practical rule: **Stop hook should continue at most once**, then require user intervention.
 
 ### Security stance
-- Hooks can enforce policy even when the model is “confused.”
+- Hooks can enforce policy even when the model is "confused."
 - In managed environments, admins can set `allowManagedHooksOnly: true` to block user/project/plugin hooks.
 
 ---
 
-## 9) Plugins: build “a small product”
+## 9) Plugins: build "a small product"
 
 ### Core structure
 A plugin is a directory with a manifest at `.claude-plugin/plugin.json` and optional feature directories at the plugin root.
@@ -253,16 +254,16 @@ Key best practices:
 
 ### Plugin caching: design for relocatability
 Installed plugins are copied into a cache for integrity/security. Implications:
-- **Never reference files outside the plugin root** via `../..` — they won’t exist in cache.
+- **Never reference files outside the plugin root** via `../..` — they won't exist in cache.
 - Always reference internal scripts/resources using `${CLAUDE_PLUGIN_ROOT}`.
 - If you need shared code across plugins:
   - use symlinks inside the plugin directory (copied during install), or
   - restructure marketplace `source` to include the shared parent directory and declare component paths in the marketplace entry.
 
 ### Debugging & validation
-- Use `claude --debug` to see plugin loading, hook registration, MCP init, etc.
+- **Enable Verbose Logging:** Use `claude --debug` (CLI) or set `"verbose": true` in your user `settings.json` to see plugin loading, hook registration, and MCP init details.
 - Validate manifests early: `claude plugin validate` (or `/plugin validate`).
-- If skills don’t show up: clear cache (`rm -rf ~/.claude/plugins/cache`), restart, reinstall.
+- If skills don't show up: clear cache (`rm -rf ~/.claude/plugins/cache`), restart, reinstall.
 
 ### Cross-platform scripts
 If you ship hooks/scripts:
@@ -281,14 +282,14 @@ A marketplace is a repo (or URL) containing `.claude-plugin/marketplace.json`.
   - Relative `source: "./plugins/my-plugin"` works reliably only for git-based installs.
 - Use `strict` intentionally:
   - `strict: true` → plugin must have its own `plugin.json`
-  - `strict: false` → marketplace entry can fully define components (useful for “monorepo” layouts)
+  - `strict: false` → marketplace entry can fully define components (useful for "monorepo" layouts)
 - Provide:
   - ownership metadata (name/email)
   - plugin categories/keywords
   - license + repo homepage
   - clear install instructions + compatibility notes
 
-### Updating marketplaces & the “stale cache” gotcha
+### Updating marketplaces & the "stale cache" gotcha
 A recent Claude Code issue reports self-hosted marketplace caches not being fetched before install/update, causing outdated installs unless you manually update the marketplace checkout. Until this is fixed everywhere:
 - Run `/plugin marketplace update <marketplace>` before installing/updating plugins from self-hosted sources.
 - If you suspect a stale cache, manually `git pull` inside `~/.claude/plugins/marketplaces/<marketplace-name>/`.
@@ -312,11 +313,12 @@ In managed settings:
 ### MCP security best practices
 - Assume third-party MCP servers are untrusted unless vetted. Official docs explicitly warn about correctness/security and prompt injection risks.
 - Minimize tool surface:
-  - prefer “read-only” tools unless you need mutation
+  - prefer "read-only" tools unless you need mutation
   - restrict via permissions and/or managed allowlists/denylists
+- **No Secrets in Config:** Pass API keys and secrets via ENV variables. Do not commit them to `.mcp.json`.
 - Combine MCP + Skills:
   - MCP provides tools
-  - Skills teach “how to use our tools safely” (queries, limits, retry policy, etc.)
+  - Skills teach "how to use our tools safely" (queries, limits, retry policy, etc.)
 
 ### MCP in plugins
 - Bundle MCP via `.mcp.json` (or inline in plugin.json) and reference local scripts/config with `${CLAUDE_PLUGIN_ROOT}`.
@@ -341,8 +343,8 @@ High-leverage habits:
   - CLAUDE.md concise
   - rules modular
   - SKILL.md lean
-- Use subagents to isolate “output floods”.
-- Use hooks for formatting/linting instead of “please remember to run prettier.”
+- Use subagents to isolate "output floods".
+- Use hooks for formatting/linting instead of "please remember to run prettier."
 - If a workflow grows complex, promote it:
   - from ad-hoc prompt → command
   - from command → plugin
@@ -353,18 +355,18 @@ High-leverage habits:
 ## 14) Known pain points & pragmatic workarounds
 
 ### Marketplace cache / updates
-Symptom: plugin updates don’t appear even after bumping version.  
+Symptom: plugin updates don't appear even after bumping version.
 Workarounds:
 - `/plugin marketplace update …`
 - manual `git pull` in the cached marketplace directory
 
 ### Windows plugin management UX
-There are reports of plugin uninstall/removal problems in the UI on Windows.  
+There are reports of plugin uninstall/removal problems in the UI on Windows.
 Workaround:
 - Use CLI commands (`claude plugin uninstall … --scope …`) where the UI gets stuck.
 
 ### Claude Code on the web: plugin install hangs
-A freshly opened issue reports that installing plugins in web-based Claude Code environments can hang the agent.  
+A freshly opened issue reports that installing plugins in web-based Claude Code environments can hang the agent.
 Workaround patterns:
 - Skip plugin installs in cloud hooks (detect env) and pre-bake dependencies where possible.
 - If you need plugins, prefer local Claude Code execution until the web install path is stable.
@@ -384,7 +386,7 @@ my-plugin/
 │  └─ my-skill/
 │     ├─ SKILL.md
 │     └─ references/
-│        └─ deep-dive.md
+│       └─ deep-dive.md
 ├─ hooks/
 │  └─ hooks.json
 └─ scripts/
@@ -398,10 +400,10 @@ my-marketplace/
 │  └─ marketplace.json
 └─ plugins/
    └─ my-plugin/
-      └─ ...plugin contents...
+     └─ ...plugin contents...
 ```
 
-### “Progressive disclosure” skill skeleton
+### "Progressive disclosure" skill skeleton
 ```md
 ---
 name: my-skill
