@@ -1,3 +1,27 @@
 # Changelog
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## 0.2.0 (2026-01-15)
+
+
+### Features
+
+* add CLAUDE.md maintainer command and skill ([811ed07](https://github.com/blueraai/bluera-base/commit/811ed07c2db16a3088c2936edac76ca940ddd483))
+* add rule templates and /install-rules command ([f7f3532](https://github.com/blueraai/bluera-base/commit/f7f3532888bd8112e35819f6b89645b6ac7c2c0a))
+* **hooks:** add SessionStart hook and cross-platform notifications ([a6e7e56](https://github.com/blueraai/bluera-base/commit/a6e7e5639a32e307081cd66c6bd17de86b86444c))
+* initial bluera-base plugin ([451b099](https://github.com/blueraai/bluera-base/commit/451b099e7ebd455411592658bfeab623a98e858d))
+
+
+### Bug Fixes
+
+* add local_CLAUDE.local.md template ([f590cea](https://github.com/blueraai/bluera-base/commit/f590cea03ad6f2b3083afccd39cb9683e9c4e160))
+* **commit:** enforce mandatory workflow steps ([df25d57](https://github.com/blueraai/bluera-base/commit/df25d57478f82e59592103b66f15b10b934f0eb7))
+* **commit:** simplify to match working zark-backend pattern ([95d9438](https://github.com/blueraai/bluera-base/commit/95d9438195fbf6f98ade67c6988c02a622a7f1c9))
+* **hooks:** critical bug fixes for hook reliability ([7d5540a](https://github.com/blueraai/bluera-base/commit/7d5540ae71f8681a09a77e0eed3640d9a63c7d32))
+* **hooks:** remove pathspec excludes causing git errors ([e279361](https://github.com/blueraai/bluera-base/commit/e279361205a7e517b0e48dcc8f44713cfb82a38e))
+* **hooks:** resolve shellcheck warnings ([255db02](https://github.com/blueraai/bluera-base/commit/255db0272e041c669eb741251e477ae0701a6bac))
+
+# Changelog
+
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
