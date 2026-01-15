@@ -160,8 +160,9 @@ check_anti_patterns() {
   [ ${#PATTERNS[@]} -eq 0 ] && return 0
 
   # Check for anti-patterns in added lines only
+  # Note: relies on proper .gitignore (dist/, node_modules/, etc. should be ignored)
   local ANTI
-  ANTI=$(git diff -- "${PATTERNS[@]}" ':!dist/' ':!target/' ':!__pycache__/' ':!.venv/' ':!node_modules/' 2>/dev/null | \
+  ANTI=$(git diff -- "${PATTERNS[@]}" 2>/dev/null | \
     grep -E '\b(fallback|deprecated|backward compatibility|legacy)\b' | \
     grep -v '^-' | grep -E '^\+' || true)
 
