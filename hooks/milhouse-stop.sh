@@ -8,6 +8,13 @@ set -euo pipefail
 # Read hook input from stdin (advanced stop hook API)
 HOOK_INPUT=$(cat)
 
+# Check if stop hook already triggered continuation - prevent infinite loop
+# See: https://code.claude.com/docs/en/hooks (stop_hook_active field)
+STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
+if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
+  exit 0
+fi
+
 # Check if milhouse-loop is active
 STATE_FILE=".claude/milhouse-loop.local.md"
 

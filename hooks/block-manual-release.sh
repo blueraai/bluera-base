@@ -20,6 +20,13 @@ if echo "$COMMAND" | grep -qE '^__SKILL__=release '; then
   exit 0
 fi
 
+# Block --no-verify on git commit (CLAUDE-BASE.md rule: absolute zero exceptions)
+# This is a hard block regardless of /release skill prefix
+if echo "$COMMAND" | grep -qE '\bgit\s+commit\b.*--no-verify'; then
+  echo "Blocked: git commit --no-verify is forbidden. Fix pre-commit failures; do not bypass." >&2
+  exit 2
+fi
+
 # Block patterns for manual release commands across languages
 
 # JavaScript/TypeScript: npm version, yarn version, pnpm version, bun version, release scripts
