@@ -1,0 +1,55 @@
+@bluera-base/includes/CLAUDE-BASE.md
+
+---
+
+## Package Manager
+
+<!-- Uncomment/edit the one you use: -->
+<!-- **Use `bun`** — All scripts: `bun run <script>` -->
+<!-- **Use `npm`** — All scripts: `npm run <script>` -->
+<!-- **Use `yarn`** — All scripts: `yarn <script>` -->
+<!-- **Use `pnpm`** — All scripts: `pnpm <script>` -->
+<!-- **Use `cargo`** — All scripts: `cargo <command>` -->
+<!-- **Use `go`** — All scripts: `go <command>` -->
+<!-- **Use `uv`/`pip`** — Python package management -->
+
+---
+
+## Scripts
+
+<!-- Replace <runner> with your package manager's run command -->
+
+**Development:**
+- `<runner> build` — Compile/build the project
+- `<runner> test` — Run tests
+- `<runner> lint` — Lint check
+- `<runner> precommit` — Full validation (lint, typecheck, tests, build)
+
+---
+
+## Versioning
+
+- `<runner> version:patch` — Bump patch version (0.0.x)
+- `<runner> version:minor` — Bump minor version (0.x.0)
+- `<runner> version:major` — Bump major version (x.0.0)
+
+Note: Version scripts should run quality checks BEFORE bumping to prevent broken releases.
+
+---
+
+## Releasing (Fully Automated)
+
+1. Bump version: `<runner> version:patch` (or minor/major)
+2. Commit: `git commit -am "chore: bump version to X.Y.Z"`
+3. Push: `git push`
+4. **Done!** GitHub Actions handles the rest automatically
+
+**What happens automatically:**
+- CI workflow runs (lint, typecheck, tests, build)
+- Auto Release workflow creates & pushes tag
+- Release workflow creates GitHub release
+
+---
+
+<!-- Add project-specific sections below -->
+<!-- Examples: Logging, Database, API Keys, Architecture notes, etc. -->

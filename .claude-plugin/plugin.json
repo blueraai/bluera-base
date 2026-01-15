@@ -1,0 +1,12 @@
+{
+  "name": "bluera-base",
+  "version": "0.1.0",
+  "description": "Shared development conventions for Bluera projects - hooks, skills, CLAUDE.md patterns",
+  "author": {
+    "name": "Bluera",
+    "email": "contact@bluera.ai"
+  },
+  "repository": "https://github.com/blueraai/bluera-base",
+  "license": "MIT",
+  "keywords": ["conventions", "hooks", "skills", "claude-code", "development"]
+}

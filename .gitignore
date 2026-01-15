@@ -1,0 +1,14 @@
+# Development/testing
+.ignore/
+
+# Claude Code local settings (not committed)
+.claude/settings.local.json
+
+# Milhouse loop state files
+*.local.md
+
+# Bluera Knowledge - data directory (not committed)
+# Store definitions at .bluera/bluera-knowledge/stores.config.json ARE committed for team sharing
+.bluera/
+!.bluera/bluera-knowledge/
+!.bluera/bluera-knowledge/stores.config.json

@@ -1,0 +1,42 @@
+# [Directory Name]
+
+## Purpose
+
+[Brief description of what this directory contains and its role in the project.]
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `[file1]` | [Description] |
+| `[file2]` | [Description] |
+
+## Conventions
+
+[Directory-specific conventions that differ from or extend the root CLAUDE.md.]
+
+### [Convention Category 1]
+
+[Explanation of the convention and why it exists.]
+
+### [Convention Category 2]
+
+[Explanation.]
+
+## Running [Commands]
+
+```bash
+# [Description of command]
+[command]
+
+# [Description of another command]
+[command]
+```
+
+## Relationship to Root CLAUDE.md
+
+Per root CLAUDE.md [section name]:
+- **[Rule from root]** - [How it applies here]
+- **[Another rule]** - [How it applies]
+
+See: `.claude/skills/[relevant-skill]/SKILL.md` for [additional context].
