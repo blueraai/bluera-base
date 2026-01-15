@@ -1,3 +1,8 @@
+---
+description: Cut a release using conventional commits auto-detection and CI monitoring
+allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(bun:*), Bash(poetry:*), Bash(cargo:*), Read, Glob
+---
+
 # Release
 
 Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for workflow details.

@@ -1,3 +1,8 @@
+---
+description: Review codebase for bugs and CLAUDE.md compliance using multi-agent analysis
+allowed-tools: Read, Glob, Grep, Task, Bash(find:*), Bash(git:*), Bash(ls:*)
+---
+
 # Code Review
 
 Review the local codebase using multi-agent analysis. See @bluera-base/skills/code-review-repo/SKILL.md for process details.

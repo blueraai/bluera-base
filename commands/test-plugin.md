@@ -1,3 +1,8 @@
+---
+description: Run comprehensive plugin validation test suite
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+---
+
 # Test Plugin
 
 Comprehensive test of all Bluera Base plugin functionality (hooks + slash commands).

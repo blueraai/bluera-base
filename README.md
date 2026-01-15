@@ -67,10 +67,11 @@ claude --plugin-dir /path/to/bluera-base
 
 | Hook | Event | Purpose |
 |------|-------|---------|
+| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
-| Notification | Notification | macOS notification on permission prompts |
+| `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 <details>
 <summary><b>What post-edit-check.sh does</b></summary>
@@ -110,6 +111,9 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `/release` | Cut a release with conventional commits auto-detection and CI monitoring |
 | `/milhouse-loop` | Start iterative development loop with configurable completion criteria |
 | `/cancel-milhouse` | Cancel active milhouse loop |
+| `/install-rules` | Install bluera-base rule templates to `.claude/rules/` |
+| `/claude-md` | Audit and maintain CLAUDE.md files |
+| `/test-plugin` | Run plugin validation test suite |
 
 ### Skills
 
@@ -119,6 +123,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `release` | Release workflow with multi-language version bumping |
 | `milhouse` | Iterative development loop documentation |
+| `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
 
 <details>
 <summary><b>code-review-repo details</b></summary>
@@ -394,34 +399,45 @@ bluera-base/
 ├── .claude-plugin/
 │   └── plugin.json               # Plugin manifest
 ├── commands/
-│   ├── commit.md                 # /commit command
+│   ├── cancel-milhouse.md        # /cancel-milhouse command
+│   ├── claude-md.md              # /claude-md command
 │   ├── code-review.md            # /code-review command
-│   ├── release.md                # /release command
+│   ├── commit.md                 # /commit command
+│   ├── install-rules.md          # /install-rules command
 │   ├── milhouse-loop.md          # /milhouse-loop command
-│   └── cancel-milhouse.md        # /cancel-milhouse command
+│   ├── release.md                # /release command
+│   └── test-plugin.md            # /test-plugin command
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
-│   ├── post-edit-check.sh        # Multi-language validation hook
 │   ├── block-manual-release.sh   # Enforces /release workflow
 │   ├── milhouse-setup.sh         # Initializes milhouse loop state
-│   └── milhouse-stop.sh          # Stop hook for milhouse iterations
+│   ├── milhouse-stop.sh          # Stop hook for milhouse iterations
+│   ├── notify.sh                 # Cross-platform notifications
+│   ├── post-edit-check.sh        # Multi-language validation hook
+│   └── session-setup.sh          # SessionStart dependency check
 ├── skills/
-│   ├── code-review-repo/
-│   │   └── SKILL.md              # Multi-agent review
+│   ├── architectural-constraints/
+│   │   └── SKILL.md.template     # Template for constraint skills
 │   ├── atomic-commits/
 │   │   └── SKILL.md              # Commit guidelines
-│   ├── release/
-│   │   └── SKILL.md              # Release workflow
+│   ├── claude-md-maintainer/
+│   │   ├── SKILL.md              # CLAUDE.md validation skill
+│   │   ├── docs/                 # Invariants and heuristics
+│   │   └── templates/            # CLAUDE.md templates
+│   ├── code-review-repo/
+│   │   └── SKILL.md              # Multi-agent review
 │   ├── milhouse/
 │   │   └── SKILL.md              # Iterative development loop
-│   └── architectural-constraints/
-│       └── SKILL.md.template     # Template for constraint skills
+│   └── release/
+│       └── SKILL.md              # Release workflow
 ├── includes/
 │   └── CLAUDE-BASE.md            # @includeable sections
 ├── templates/
-│   ├── settings.local.json.example
+│   ├── claude/
+│   │   └── rules/                # Rule templates for /install-rules
 │   ├── CLAUDE.md.template
-│   └── subdirectory-CLAUDE.md.template  # Directory-specific docs
+│   ├── settings.local.json.example
+│   └── subdirectory-CLAUDE.md.template
 └── README.md
 ```
 
