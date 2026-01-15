@@ -1,5 +1,6 @@
 # Development/testing
 .ignore/
+node_modules/
 
 # Claude Code local settings (not committed)
 .claude/settings.local.json

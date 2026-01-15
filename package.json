@@ -1,0 +1,24 @@
+{
+  "name": "bluera-base",
+  "version": "0.1.0",
+  "description": "Shared development conventions for Bluera projects - hooks, skills, CLAUDE.md patterns",
+  "private": true,
+  "scripts": {
+    "version:patch": "commit-and-tag-version --release-as patch --skip.commit --skip.tag",
+    "version:minor": "commit-and-tag-version --release-as minor --skip.commit --skip.tag",
+    "version:major": "commit-and-tag-version --release-as major --skip.commit --skip.tag",
+    "release": "commit-and-tag-version --skip.tag && git push",
+    "release:patch": "commit-and-tag-version --release-as patch --skip.tag && git push",
+    "release:minor": "commit-and-tag-version --release-as minor --skip.tag && git push",
+    "release:major": "commit-and-tag-version --release-as major --skip.tag && git push"
+  },
+  "devDependencies": {
+    "commit-and-tag-version": "^12.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blueraai/bluera-base.git"
+  },
+  "author": "Bluera <contact@bluera.ai>",
+  "license": "MIT"
+}
