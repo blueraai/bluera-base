@@ -1,71 +1,35 @@
 ---
-description: "Create atomic, well-organized commits"
-allowed-tools: ["Bash(git *)", "Read(*)", "Grep(*)"]
+description: Create atomic commits grouped by logical features with README.md and CLAUDE.md awareness.
+allowed-tools: Bash(git:*), Read, Glob, Grep
 ---
+
 # Commit
 
-## Context (auto-loaded)
+Create atomic, well-organized commits. See @bluera-base/skills/atomic-commits/SKILL.md for documentation check criteria.
 
-!`git status --short && echo "---" && git diff --stat && echo "---UNTRACKED---" && git ls-files --others --exclude-standard`
+## Context
 
----
+!`git status && echo "---STAGED---" && git diff --cached --stat && echo "---UNSTAGED---" && git diff --stat && echo "---UNTRACKED---" && git ls-files --others --exclude-standard && echo "---HISTORY---" && git log --oneline -10`
 
-⛔ **STOP: You MUST complete Steps 1-2 before ANY git commit command.**
+## Workflow
 
----
+1. **Analyze**: Run `git diff HEAD` to see all changes
+2. **Documentation Check**: Check if README.md or CLAUDE.md need updates (see skill)
+3. **Group**: Identify logical features (see skill for grouping rules)
+4. **Commit each group**:
+   ```bash
+   git add <files>
+   git commit -m "<type>(<scope>): <description>"
+   ```
+5. **Handle untracked**: Categorize as commit/ignore/intentional
+6. **Report**: Show commits created and final `git status --short`
 
-## Step 1: Analyze Changes (MANDATORY)
+## Validation
 
-Review the diff output above. You MUST produce this analysis table:
-
-| File | Change Type | Purpose |
-|------|-------------|---------|
-| (fill each file from diff) | add/modify/delete | (describe what changed) |
-
-**DO NOT proceed until this table is complete.**
-
-## Step 2: Documentation Check (MANDATORY)
-
-For files that affect users (new features, changed behavior, new commands):
-
-| File | User-Facing? | README/CLAUDE.md Update Needed? |
-|------|--------------|--------------------------------|
-| (each file) | Yes/No | Yes/No |
-
-**If any "Yes" in last column:** Update documentation BEFORE committing.
-
-## Step 3: Group and Commit
-
-Only after producing BOTH tables above, create atomic commits:
-
-```bash
-git add <files-for-group-1>
-git commit -m "<type>(<scope>): <description>
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-```
-
-**Grouping rules** (see @bluera-base/skills/atomic-commits/SKILL.md):
-- One logical change per commit
-- README/CLAUDE.md changes with the feature they document
-- Config changes separate from code changes
-
-## Required Output Format
-
-Your response MUST include this report:
-
-```
-## Commit Report
-✓ Analyzed: X files
-✓ Doc check: [no updates needed | updated README.md | updated CLAUDE.md]
-✓ Commits:
-  - <hash> <type>: <message>
-✓ Status: [clean | X files remaining]
-```
+Pre-commit hooks run automatically. If hooks fail, fix issues and retry. Never use `--no-verify`.
 
 ## Safety
 
-- Never use `--no-verify`
 - Never force push
 - Never amend commits from other sessions
-- If hooks fail, fix issues and retry
+- Ask if unsure about grouping
