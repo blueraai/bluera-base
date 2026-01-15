@@ -113,6 +113,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `/cancel-milhouse` | Cancel active milhouse loop |
 | `/install-rules` | Install bluera-base rule templates to `.claude/rules/` |
 | `/claude-md` | Audit and maintain CLAUDE.md files |
+| `/readme` | Maintain README.md files with GitHub advanced formatting |
 | `/test-plugin` | Run plugin validation test suite |
 
 ### Skills
@@ -124,6 +125,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `release` | Release workflow with multi-language version bumping |
 | `milhouse` | Iterative development loop documentation |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
+| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
 
 <details>
 <summary><b>code-review-repo details</b></summary>
@@ -405,6 +407,7 @@ bluera-base/
 │   ├── commit.md                 # /commit command
 │   ├── install-rules.md          # /install-rules command
 │   ├── milhouse-loop.md          # /milhouse-loop command
+│   ├── readme.md                 # /readme command
 │   ├── release.md                # /release command
 │   └── test-plugin.md            # /test-plugin command
 ├── hooks/
@@ -428,6 +431,9 @@ bluera-base/
 │   │   └── SKILL.md              # Multi-agent review
 │   ├── milhouse/
 │   │   └── SKILL.md              # Iterative development loop
+│   ├── readme-maintainer/
+│   │   ├── SKILL.md              # README formatting guidelines
+│   │   └── templates/            # Badge and structure templates
 │   └── release/
 │       └── SKILL.md              # Release workflow
 ├── includes/
