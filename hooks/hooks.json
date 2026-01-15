@@ -1,13 +1,25 @@
 {
   "description": "bluera-base shared hooks - validation, notifications, release protection, and milhouse loop",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-setup.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-release.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-release.sh",
+            "timeout": 5
           }
         ]
       }
@@ -19,7 +31,8 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-edit-check.sh",
-            "statusMessage": "Validating changes..."
+            "statusMessage": "Validating changes...",
+            "timeout": 60
           }
         ]
       }
@@ -30,7 +43,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude needs your input\" with title \"Claude Code\" sound name \"Glass\"' 2>/dev/null || true"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/notify.sh",
+            "timeout": 5
           }
         ]
       }
@@ -41,7 +55,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-stop.sh"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-stop.sh",
+            "timeout": 10
           }
         ]
       }
