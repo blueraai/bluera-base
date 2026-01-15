@@ -110,7 +110,7 @@ cat <<EOF
 🔄 Milhouse loop activated!
 
 Iteration: 1
-Max iterations: $(if [[ $MAX_ITERATIONS -gt 0 ]]; then echo $MAX_ITERATIONS; else echo "unlimited"; fi)
+Max iterations: $(if [[ $MAX_ITERATIONS -gt 0 ]]; then echo "$MAX_ITERATIONS"; else echo "unlimited"; fi)
 Completion promise: $COMPLETION_PROMISE
 
 ═══════════════════════════════════════════════════════════

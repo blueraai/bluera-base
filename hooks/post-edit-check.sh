@@ -149,20 +149,19 @@ check_go() {
 # === Anti-pattern Check (all languages) ===
 
 check_anti_patterns() {
-  # Build file pattern based on what's in the project
-  local PATTERNS=""
+  # Build file patterns array based on what's in the project
+  local -a PATTERNS=()
 
-  [ -f "package.json" ] && PATTERNS="$PATTERNS *.ts *.tsx *.js *.jsx"
-  [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "setup.py" ] && PATTERNS="$PATTERNS *.py"
-  [ -f "Cargo.toml" ] && PATTERNS="$PATTERNS *.rs"
-  [ -f "go.mod" ] && PATTERNS="$PATTERNS *.go"
+  [ -f "package.json" ] && PATTERNS+=('*.ts' '*.tsx' '*.js' '*.jsx')
+  { [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "setup.py" ]; } && PATTERNS+=('*.py')
+  [ -f "Cargo.toml" ] && PATTERNS+=('*.rs')
+  [ -f "go.mod" ] && PATTERNS+=('*.go')
 
-  [ -z "$PATTERNS" ] && return 0
+  [ ${#PATTERNS[@]} -eq 0 ] && return 0
 
   # Check for anti-patterns in added lines only
-  # shellcheck disable=SC2086
   local ANTI
-  ANTI=$(git diff -- $PATTERNS ':!dist/' ':!target/' ':!__pycache__/' ':!.venv/' ':!node_modules/' 2>/dev/null | \
+  ANTI=$(git diff -- "${PATTERNS[@]}" ':!dist/' ':!target/' ':!__pycache__/' ':!.venv/' ':!node_modules/' 2>/dev/null | \
     grep -E '\b(fallback|deprecated|backward compatibility|legacy)\b' | \
     grep -v '^-' | grep -E '^\+' || true)
 
