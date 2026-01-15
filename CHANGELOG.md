@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.2.1](https://github.com/blueraai/bluera-base/compare/v0.2.0...v0.2.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* **hooks:** remove unused RED variable in session-setup.sh ([bbb73ab](https://github.com/blueraai/bluera-base/commit/bbb73abd7ee6f6700e91ed2db4814532ed9aef07))
+
 ## 0.2.0 (2026-01-15)
 
 
