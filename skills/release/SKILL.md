@@ -25,7 +25,10 @@ Standardized release workflow that auto-detects version bump, bumps version, com
 Analyze commits since last tag:
 
 ```bash
-git log $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD --oneline
+# If tags exist:
+git log $(git describe --tags --abbrev=0)..HEAD --oneline
+# If no tags yet:
+git log --oneline
 ```
 
 | Commit Type | Version Bump |
