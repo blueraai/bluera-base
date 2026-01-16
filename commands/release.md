@@ -61,4 +61,15 @@ __SKILL__=release bun run release:patch  # Bumps, commits, pushes (no tag)
 
 ## Monitor
 
-After push, use `gh run list --limit 5` and wait for all workflows to complete before verifying the release.
+After push, poll until all workflows pass:
+
+```bash
+# Quick status check (silent unless issues)
+gh run list --limit 5 --json status,conclusion -q '.[] | select(.status != "completed" or .conclusion != "success")' | grep -q . && echo "PENDING" || echo "ALL PASSED"
+
+# On failure, inspect with verbose output
+gh run list --limit 5
+gh run view <run-id>
+```
+
+Verify release published: `gh release list --limit 1`

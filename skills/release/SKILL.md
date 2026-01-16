@@ -44,11 +44,15 @@ See `references/languages.md` for detailed commands by language:
 
 ## CI Monitoring
 
-After push, monitor until ALL workflows complete:
+After push, wait for workflows to complete:
 
 ```bash
+# Quick status check (quiet, exit 1 on failure)
+gh run list --limit 5 --json status,conclusion -q '.[] | select(.status != "completed" or .conclusion != "success")' | grep -q . && echo "PENDING" || echo "ALL PASSED"
+
+# If issues, inspect with verbose output
 gh run list --limit 5
-gh release view v<version>
+gh run view <run-id>  # For failed run details
 ```
 
 **Not complete until:**
@@ -69,6 +73,6 @@ gh release view v<version>
 2. **Analyze:** Check commits since last tag, determine bump type
 3. **Bump:** Run version command with `__SKILL__=release` prefix (NO tag yet)
 4. **Push:** Push version bump commit (triggers CI)
-5. **Wait:** `gh run list` until CI passes
+5. **Wait:** Poll `gh run list --json status,conclusion -q` until all pass
 6. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
-7. **Verify:** `gh release view v<version>`
+7. **Verify:** `gh release list --limit 1` to confirm release published
