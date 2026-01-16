@@ -345,8 +345,75 @@ claude --plugin-dir /path/to/my-plugin
 
 ---
 
+## Finding the Claude Executable
+
+When configuring Claude Code for MCP servers or external integrations, you may need the full path to the executable.
+
+### Quick Methods
+
+```bash
+# Preferred: handles aliases correctly
+command -v claude
+
+# Alternative (may not work with aliases)
+which claude
+```
+
+**Note**: `which claude` returns the alias definition if Claude is aliased, not the actual path. Use `command -v` instead.
+
+### Known Installation Locations
+
+| Location | Notes |
+|----------|-------|
+| `~/.claude/local/claude` | Newer installation location |
+| `~/.local/bin/claude` | Standard symlink location (per docs) |
+| `/opt/homebrew/bin/claude` | Homebrew on Apple Silicon |
+| `/usr/local/bin/claude` | Homebrew on Intel Mac |
+| `%USERPROFILE%\.local\bin\claude.exe` | Windows |
+
+### Robust Detection (for scripts)
+
+```bash
+find_claude() {
+  # 1. Explicit override
+  if [[ -n "$CLAUDE_BIN" && -x "$CLAUDE_BIN" ]]; then
+    echo "$CLAUDE_BIN"
+    return 0
+  fi
+
+  # 2. Check known locations
+  for loc in "$HOME/.claude/local/claude" "$HOME/.local/bin/claude"; do
+    if [[ -x "$loc" ]]; then
+      echo "$loc"
+      return 0
+    fi
+  done
+
+  # 3. Fall back to PATH (handles aliases)
+  command -v claude
+}
+```
+
+### MCP Configuration
+
+When configuring Claude as an MCP server, use the full path:
+
+```json
+{
+  "mcpServers": {
+    "claude": {
+      "command": "/Users/you/.claude/local/claude",
+      "args": ["mcp", "serve"]
+    }
+  }
+}
+```
+
+---
+
 ## References
 
 - [Claude Code Hooks Docs](https://code.claude.com/docs/en/hooks)
 - [Claude Code Plugins Docs](https://code.claude.com/docs/en/plugins)
+- [Claude Code MCP Docs](https://code.claude.com/docs/en/mcp)
 - [Known Issues](https://github.com/anthropics/claude-code/issues)
