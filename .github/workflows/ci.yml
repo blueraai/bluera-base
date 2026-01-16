@@ -38,7 +38,8 @@ jobs:
       - name: Run shellcheck on hooks
         run: |
           # Find all .sh files in hooks/ and run shellcheck
-          find hooks -name "*.sh" -type f -exec shellcheck {} +
+          # -x: follow source statements, -e SC1091: ignore "source not found" for lib/ files
+          find hooks -name "*.sh" -type f -exec shellcheck -x -e SC1091 {} +
 
   # Success job - only runs if all parallel jobs pass
   ci-success:
