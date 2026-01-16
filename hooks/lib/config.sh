@@ -23,15 +23,28 @@ BLUERA_BASE_DEFAULT_CONFIG='{
 }'
 
 # Get the config directory path
+# Prefers BLUERA_CONFIG env var (published by SessionStart hook via CLAUDE_ENV_FILE)
+# Falls back to CLAUDE_PROJECT_DIR or current directory
 # Usage: config_dir=$(bluera_config_dir)
 bluera_config_dir() {
-  echo "${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base"
+  if [[ -n "${BLUERA_CONFIG:-}" ]]; then
+    # BLUERA_CONFIG points to config.json, return parent directory
+    dirname "$BLUERA_CONFIG"
+  else
+    echo "${BLUERA_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}/.bluera/bluera-base"
+  fi
 }
 
 # Get the state directory path
+# Prefers BLUERA_STATE_DIR env var (published by SessionStart hook via CLAUDE_ENV_FILE)
+# Falls back to config_dir/state
 # Usage: state_dir=$(bluera_state_dir)
 bluera_state_dir() {
-  echo "$(bluera_config_dir)/state"
+  if [[ -n "${BLUERA_STATE_DIR:-}" ]]; then
+    echo "$BLUERA_STATE_DIR"
+  else
+    echo "$(bluera_config_dir)/state"
+  fi
 }
 
 # Ensure config directory exists

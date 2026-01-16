@@ -211,45 +211,47 @@ if [[ "$PROMISE_MATCHED" == true ]] && [[ "$GATES_PASSED" == false ]]; then
   mv "$TEMP_FILE" "$STATE_FILE"
 fi
 
-# Not complete - continue loop with SAME PROMPT
+# Not complete - continue loop
 NEXT_ITERATION=$((ITERATION + 1))
-
-# Read prompt from state file (after second ---)
-PROMPT_TEXT=$(awk '/^---$/{i++; next} i>=2' "$STATE_FILE")
-
-if [[ -z "$PROMPT_TEXT" ]]; then
-  echo "⚠️  Milhouse: no prompt in state file. Stopping." >&2
-  rm "$STATE_FILE"
-  exit 0
-fi
 
 # Update iteration in state file
 TEMP_FILE="${STATE_FILE}.tmp.$$"
 sed "s/^iteration: .*/iteration: $NEXT_ITERATION/" "$STATE_FILE" > "$TEMP_FILE"
 mv "$TEMP_FILE" "$STATE_FILE"
 
-# Build system message
+# Build iteration display
+if [[ $MAX_ITERATIONS -gt 0 ]]; then
+  ITER_DISPLAY="$NEXT_ITERATION/$MAX_ITERATIONS"
+else
+  ITER_DISPLAY="$NEXT_ITERATION"
+fi
+
+# Build reason (pointer-based, not full prompt injection)
+# Token optimization: The model has conversation context and can read state file if needed
 if [[ -n "$GATE_FAILURE_OUTPUT" ]]; then
-  SYSTEM_MSG="🔄 Milhouse iteration $NEXT_ITERATION | Gate failed - fix and retry | Complete: <promise>$COMPLETION_PROMISE</promise>"
-  # Prepend gate failure to prompt
-  PROMPT_TEXT="## Gate Failure
+  SYSTEM_MSG="🔄 Milhouse iteration $ITER_DISPLAY | Gate failed - fix and retry | Complete: <promise>$COMPLETION_PROMISE</promise>"
+  REASON="## Gate Failure
 
 $GATE_FAILURE_OUTPUT
 
 ---
 
-$PROMPT_TEXT"
+Continue working on the milhouse task. Review your previous work and address the gate failure above.
+State: $STATE_FILE"
 else
-  SYSTEM_MSG="🔄 Milhouse iteration $NEXT_ITERATION | To complete: <promise>$COMPLETION_PROMISE</promise>"
+  SYSTEM_MSG="🔄 Milhouse iteration $ITER_DISPLAY | To complete: <promise>$COMPLETION_PROMISE</promise>"
+  REASON="Continue working on the milhouse task. Review your previous work visible in files and git history.
+State: $STATE_FILE"
 fi
 
-# Output JSON to block the stop and feed prompt back
+# Output JSON to block the stop and continue iteration
+# Note: reason contains continuation message, NOT full prompt (saves ~80% tokens per iteration)
 jq -n \
-  --arg prompt "$PROMPT_TEXT" \
+  --arg reason "$REASON" \
   --arg msg "$SYSTEM_MSG" \
   '{
     "decision": "block",
-    "reason": $prompt,
+    "reason": $reason,
     "systemMessage": $msg
   }'
 

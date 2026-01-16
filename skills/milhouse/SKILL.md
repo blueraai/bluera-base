@@ -123,6 +123,25 @@ Each milhouse loop is tied to the terminal session that started it. If you have 
 The loop state is stored in `.bluera/bluera-base/state/milhouse-loop.md`:
 - Automatically gitignored via `.bluera/` pattern (with config.json excepted)
 - Contains: iteration, max_iterations, completion_promise, session_id, gates, failure_hashes
+- Full prompt text stored in file body (after `---` frontmatter)
+
+## Token-Efficient Continuation
+
+The milhouse hook uses pointer-based continuation to minimize token usage:
+
+- **On each iteration**, the hook injects a short continuation message, NOT the full prompt
+- The model continues based on conversation context and file state
+- The full prompt remains in the state file and can be re-read if needed
+
+This design saves ~80-90% of tokens compared to re-injecting the full prompt each iteration.
+
+**Continuation message format:**
+```
+Continue working on the milhouse task. Review your previous work visible in files and git history.
+State: .bluera/bluera-base/state/milhouse-loop.md
+```
+
+If you need to refresh on the original task, read the state file directly.
 
 ## Use Cases
 

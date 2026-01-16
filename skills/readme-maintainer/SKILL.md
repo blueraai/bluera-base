@@ -274,129 +274,33 @@ When beautifying an existing README:
 
 ## Breakout Heuristics
 
-For large READMEs that should be split into modular documentation.
+For large READMEs (> 400 lines) that should be split into modular documentation.
 
-### Size Thresholds
+**Thresholds:**
+- Total lines > 400 → Consider breakout
+- Single section > 75 lines → Break out to dedicated file
+- Target after breakout: 200-350 lines
 
-| Metric | Threshold | Recommendation |
-|--------|-----------|----------------|
-| Total lines | > 400 | Consider breakout |
-| Single section | > 75 lines | Break out to dedicated file |
-| Code examples | > 100 lines | Move to docs/examples/ |
-| Table of Contents | > 15 items | Too fragmented, reorganize |
+**Algorithm:**
+1. Read README.md and count lines
+2. Parse sections by heading level
+3. Classify sections by keywords (Contributing → CONTRIBUTING.md, etc.)
+4. Present breakout plan as table
+5. Confirm with user before changes
+6. Execute and add Documentation links table
 
-### Content Type Detection
-
-Detect section types by heading keywords:
-
-| Content Type | Heading Keywords | Destination |
-|--------------|------------------|-------------|
-| Contributing | "Contributing", "Development", "How to Contribute" | CONTRIBUTING.md |
-| Changelog | "Changelog", "Version History", "Release Notes" | CHANGELOG.md |
-| Security | "Security", "Vulnerability", "Reporting Issues" | SECURITY.md |
-| Code of Conduct | "Code of Conduct", "Community Guidelines" | CODE_OF_CONDUCT.md |
-| API Reference | "API", "Reference", "Methods", "Functions" | docs/api-reference.md |
-| Getting Started | "Getting Started", "Quick Start", "Tutorial" | docs/getting-started.md |
-| Configuration | "Configuration", "Options", "Settings", "Config" | docs/configuration.md |
-| Architecture | "Architecture", "Design", "How it Works", "Internals" | docs/architecture.md |
-| Troubleshooting | "Troubleshooting", "FAQ", "Common Issues", "Problems" | docs/troubleshooting.md |
-| Examples | "Examples", "Use Cases", "Recipes" | docs/examples.md |
-
-### GitHub Special Files
-
-These files get special treatment from GitHub UI:
-
-| File | GitHub Behavior |
-|------|-----------------|
-| CONTRIBUTING.md | Linked automatically in PR creation UI |
-| CODE_OF_CONDUCT.md | Shown in community profile |
-| SECURITY.md | Shown in repository security tab |
-| CHANGELOG.md | Displayed on release pages |
-
-**Always prefer root-level placement for these files.**
-
-### What Should Stay in README
-
-Always keep in README.md:
-- Project title and badges
-- One-line description / tagline
-- "Why this project?" (5-10 lines max)
-- Quick installation (primary method only)
-- Basic usage example (10-20 lines)
-- Table of contents linking to docs/
-- License mention
-- Links to all broken-out documentation
-
-**Target: 200-350 lines after breakout**
-
-### Breakout Decision Tree
-
-```
-For each section:
-├─ Is it Contributing guidelines? → CONTRIBUTING.md
-├─ Is it Changelog/Versions? → CHANGELOG.md
-├─ Is it Security policy? → SECURITY.md
-├─ Is it Code of Conduct? → CODE_OF_CONDUCT.md
-├─ Is section > 75 lines AND one of:
-│  ├─ API documentation → docs/api-reference.md
-│  ├─ Getting started guide → docs/getting-started.md
-│  ├─ Configuration reference → docs/configuration.md
-│  ├─ Architecture/design → docs/architecture.md
-│  ├─ Troubleshooting/FAQ → docs/troubleshooting.md
-│  └─ Examples/tutorials → docs/examples.md
-└─ Otherwise → Keep in README
-```
-
-### Breakout Algorithm
-
-1. **Read** README.md and count lines
-2. **Parse** sections by heading level (## and ###)
-3. **Classify** each section using keyword matching
-4. **Apply** decision tree to build suggestion list
-5. **Present** breakout plan as table
-6. **Confirm** with user before any changes
-7. **Execute** by creating files and updating README
-8. **Add** Documentation section with links table
-
-### Post-Breakout README Structure
-
-After breakout, README should follow this structure:
-
-```markdown
-# Project Name
-
-[badges]
-
-> One-line description
-
-## Why Project Name?
-
-Brief motivation (5-10 lines)
-
-## Quick Start
-
-Primary installation method only
-
-## Features
-
-Key features list or table
-
-## Documentation
-
-| Guide | Description |
-|-------|-------------|
-| [Getting Started](docs/getting-started.md) | Full setup guide |
-| [API Reference](docs/api-reference.md) | Complete API docs |
-| [Configuration](docs/configuration.md) | All options |
-| [Contributing](CONTRIBUTING.md) | How to contribute |
-
-## License
-
-MIT
-```
+**Details:** Read `${CLAUDE_PLUGIN_ROOT}/skills/readme-maintainer/templates/breakout.md` for:
+- GitHub special files (CONTRIBUTING.md, SECURITY.md, etc.)
+- Content type detection keywords
+- docs/ folder structure
+- Post-breakout README template
 
 ## References
 
-- **Badge templates:** `templates/badges.md`
-- **Structure template:** `templates/structure.md`
-- **Breakout destinations:** `templates/breakout.md`
+Read these templates for detailed syntax and examples:
+
+| Template | Content |
+|----------|---------|
+| `templates/badges.md` | shields.io patterns for CI, npm, license badges |
+| `templates/structure.md` | README section templates (minimal, standard, comprehensive) |
+| `templates/breakout.md` | Breakout destinations and post-breakout structure |

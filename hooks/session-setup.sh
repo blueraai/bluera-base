@@ -46,5 +46,27 @@ for hook in "$PLUGIN_ROOT"/hooks/*.sh; do
     [[ -f "$hook" ]] && check_executable "$hook"
 done
 
+# =====================
+# Publish state/config pointers via CLAUDE_ENV_FILE
+# This allows Bash commands to access these paths without manual discovery
+# Note: Known issues exist where CLAUDE_ENV_FILE may be empty/missing
+# =====================
+
+if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
+    # Determine project directory (prefer CLAUDE_PROJECT_DIR, fallback to pwd)
+    PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+
+    # State and config paths
+    STATE_DIR="$PROJECT_DIR/.bluera/bluera-base/state"
+    CONFIG_FILE="$PROJECT_DIR/.bluera/bluera-base/config.json"
+
+    # Write environment exports (available to subsequent Bash tool calls)
+    {
+        echo "export BLUERA_STATE_DIR=\"$STATE_DIR\""
+        echo "export BLUERA_CONFIG=\"$CONFIG_FILE\""
+        echo "export BLUERA_PROJECT_DIR=\"$PROJECT_DIR\""
+    } >> "$CLAUDE_ENV_FILE"
+fi
+
 # Always exit 0 to not block the session
 exit 0

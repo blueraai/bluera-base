@@ -1,7 +1,7 @@
 ---
 description: Manage bluera-base plugin configuration
-argument-hint: [show|init|set|enable|disable|reset] [key] [value]
-allowed-tools: Read, Write, Edit, Bash(mkdir:*), Bash(jq:*), Bash(cat:*), Bash(rm:*), AskUserQuestion
+argument-hint: [show|init|set|enable|disable|reset|status] [key] [value]
+allowed-tools: Read, Write, Edit, Bash(mkdir:*), Bash(jq:*), Bash(cat:*), Bash(rm:*), Bash(ls:*), Bash(stat:*), Bash(wc:*), AskUserQuestion
 ---
 
 # bluera-base Configuration
@@ -18,6 +18,7 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 | `/config enable <feature>` | Enable a feature |
 | `/config disable <feature>` | Disable a feature |
 | `/config reset` | Reset to defaults |
+| `/config status [--state]` | Show config and state file status |
 
 ---
 
@@ -66,6 +67,30 @@ Shortcuts for common boolean settings:
 Options:
 - No args: Remove `config.local.json` only (keep shared config)
 - `--all`: Remove both config files
+
+### Status
+
+Show state file status for debugging and visibility.
+
+1. Check if `.bluera/bluera-base/` exists
+2. List state directory contents with sizes
+3. If milhouse-loop.md exists, show iteration status
+4. Report environment variables if set (BLUERA_STATE_DIR, BLUERA_CONFIG)
+
+**Output format:**
+```
+Config: .bluera/bluera-base/
+├── config.json (exists, 250 bytes)
+└── config.local.json (not found)
+
+State: .bluera/bluera-base/state/
+├── milhouse-loop.md (active, iteration 3/10)
+└── session-signals.json (12 entries)
+
+Env (from CLAUDE_ENV_FILE):
+├── BLUERA_STATE_DIR: /path/to/state
+└── BLUERA_CONFIG: /path/to/config.json
+```
 
 ---
 
@@ -132,6 +157,9 @@ Options:
 
 # Reset everything
 /config reset --all
+
+# Show state file status (useful for debugging milhouse loops)
+/config status --state
 ```
 
 ---
