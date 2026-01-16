@@ -23,25 +23,21 @@ When developing projects with Claude Code, you want consistent conventions acros
 **The result:** Every project gets the same quality gates and conventions, without duplication.
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
 flowchart LR
-    subgraph Project["Your Project"]
+    subgraph Project[Your Project]
         A[CLAUDE.md]
         B[Code]
     end
 
-    subgraph BB["Bluera Base"]
+    subgraph BB[Bluera Base]
         C[Hooks]
         D[Skills]
         E[Includes]
     end
 
-    E -->|"@include"| A
-    C -->|"validate"| B
-    D -->|"guide"| B
-
-    style Project fill:#1e1b4b,stroke:#6366f1,stroke-width:2px
-    style BB fill:#312e81,stroke:#818cf8,stroke-width:2px
+    E -->|@include| A
+    C -->|validate| B
+    D -->|guide| B
 ```
 
 ---
@@ -95,24 +91,17 @@ claude --plugin-dir /path/to/bluera-base
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
 flowchart LR
     A[Start] --> B[Setup]
-    B --> C{Tool}
-    C -->|Bash| D[Release?]
+    B --> C{Tool?}
+    C -->|Bash| D{Release?}
     C -->|Edit| E[Lint]
-    D --> F{OK?}
-    E --> G{Pass?}
-    F -->|No| H[Block]
-    F -->|Yes| I[OK]
-    G -->|No| H
-    G -->|Yes| I
-    I --> J[Stop]
-    J --> K[Loop?]
-
-    style A fill:#1e1b4b,stroke:#6366f1
-    style H fill:#7f1d1d,stroke:#ef4444
-    style I fill:#14532d,stroke:#22c55e
+    D -->|No| F[Allow]
+    D -->|Yes| G[Block]
+    E --> H{Pass?}
+    H -->|No| G
+    H -->|Yes| F
+    F --> I[Continue]
 ```
 
 <details>
@@ -190,25 +179,18 @@ Each issue gets a confidence score (0-100). Only issues scoring >= 80 are report
 The `/release` command provides a standardized release workflow:
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
-flowchart TB
-    A[/release] --> B[Check]
-    B --> C{Clean?}
-    C -->|No| D[Abort]
-    C -->|Yes| E[Analyze]
-    E --> F{Type?}
-    F -->|fix| G[patch]
-    F -->|feat| H[minor]
-    F -->|feat!| I[major]
-    G --> J[Bump]
-    H --> J
-    I --> J
-    J --> K[Push]
-    K --> L[Done]
-
-    style A fill:#6366f1,stroke:#818cf8
-    style D fill:#7f1d1d,stroke:#ef4444
-    style L fill:#14532d,stroke:#22c55e
+flowchart LR
+    A[/release] --> B{Clean?}
+    B -->|No| C[Abort]
+    B -->|Yes| D[Analyze]
+    D --> E{Type?}
+    E -->|fix| F[patch]
+    E -->|feat| G[minor]
+    E -->|BREAKING| H[major]
+    F --> I[Bump]
+    G --> I
+    H --> I
+    I --> J[Push]
 ```
 
 | Commit Type | Version Bump | Example |
@@ -233,28 +215,13 @@ The `block-manual-release.sh` hook prevents bypassing this workflow by blocking 
 The milhouse loop is an iterative development pattern:
 
 ```mermaid
-%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
-flowchart TB
+flowchart LR
     A[/milhouse] --> B[Load]
     B --> C[Work]
-    C --> D{Exit?}
-    D --> E{Promise?}
-    E -->|No| F[Intercept]
-    F --> G[Repeat]
-    G --> C
-    E -->|Yes| H[Exit]
-
-    subgraph Loop[Iteration]
-        C
-        D
-        E
-        F
-        G
-    end
-
-    style A fill:#6366f1,stroke:#818cf8
-    style H fill:#14532d,stroke:#22c55e
-    style Loop fill:#1e1b4b,stroke:#818cf8,stroke-width:2px
+    C --> D{Done?}
+    D -->|No| E[Intercept]
+    E --> C
+    D -->|Yes| F[Exit]
 ```
 
 **Usage:**

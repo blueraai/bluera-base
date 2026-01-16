@@ -95,14 +95,16 @@ Badges communicate project status at a glance. Use shields.io for consistent sty
 
 GitHub renders Mermaid diagrams in fenced code blocks.
 
-**CRITICAL: Keep node labels SHORT (1-2 words max).** Long labels get truncated in GitHub's renderer. Use surrounding text/tables for details.
+**CRITICAL RULES:**
+1. **Keep node labels SHORT (1-2 words max)** - Long labels get truncated
+2. **Do NOT use `%%{init:...}%%` theme blocks** - These cause node sizing issues that truncate text
+3. **Use `flowchart LR`** - Left-to-right works best on GitHub
 
 | Bad (truncated) | Good (fits) |
 |-----------------|-------------|
 | `A["Pre-flight Checks"]` | `A[Check]` |
 | `B["Clean working dir?"]` | `B{Clean?}` |
-| `C["Analyze Commits"]` | `C[Analyze]` |
-| `D["Version Bump"]` | `D[Bump]` |
+| `%%{init: {'theme': 'dark'...}}%%` | (omit entirely) |
 
 **Flowchart:**
 ````markdown
@@ -142,6 +144,7 @@ sequenceDiagram
 
 **Best practices:**
 - Max 1-2 words per node label
+- Never use `%%{init:...}%%` theme configuration (causes truncation)
 - Use edge labels for relationships (`-->|label|`)
 - Put detailed explanations in surrounding text or tables
 - Test diagram renders on GitHub before committing
