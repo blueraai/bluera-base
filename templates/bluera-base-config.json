@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "autoLearn": {
+    "enabled": false,
+    "mode": "suggest",
+    "threshold": 3,
+    "target": "local"
+  },
+  "milhouse": {
+    "defaultMaxIterations": 0,
+    "defaultStuckLimit": 3,
+    "defaultGates": []
+  },
+  "notifications": {
+    "enabled": true
+  }
+}

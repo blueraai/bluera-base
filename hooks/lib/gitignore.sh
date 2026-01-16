@@ -1,0 +1,132 @@
+#!/bin/bash
+# bluera-base Gitignore Management Library
+# Provides intelligent, non-destructive gitignore updates with negation pattern support
+
+# Required patterns for bluera-base
+# Order matters: ignore .bluera/, then allow specific subdirs and files
+BLUERA_GITIGNORE_PATTERNS=(
+  "# Bluera plugins"
+  ".bluera/"
+  "!.bluera/bluera-base/"
+  "!.bluera/bluera-base/config.json"
+  "!.bluera/bluera-knowledge/"
+  "!.bluera/bluera-knowledge/stores.config.json"
+)
+
+# Check if a pattern exists in gitignore
+# Usage: if gitignore_has_pattern ".bluera/"; then ...
+gitignore_has_pattern() {
+  local pattern="$1"
+  local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
+
+  if [[ ! -f "$gitignore" ]]; then
+    return 1
+  fi
+
+  # Escape special characters for grep
+  local escaped
+  escaped=$(printf '%s\n' "$pattern" | sed 's/[[\.*^$()+?{|]/\\&/g')
+  grep -qFx "$pattern" "$gitignore" 2>/dev/null
+}
+
+# Get missing patterns that need to be added
+# Usage: missing=$(gitignore_missing_patterns)
+gitignore_missing_patterns() {
+  local missing=()
+
+  for pattern in "${BLUERA_GITIGNORE_PATTERNS[@]}"; do
+    # Skip comments when checking (but include them in output)
+    if [[ "$pattern" =~ ^# ]]; then
+      # Only add comment if the next non-comment pattern is missing
+      continue
+    fi
+
+    if ! gitignore_has_pattern "$pattern"; then
+      missing+=("$pattern")
+    fi
+  done
+
+  # If we have missing patterns, include the header comment
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    # Check if header comment is missing
+    if ! gitignore_has_pattern "# Bluera plugins"; then
+      echo "# Bluera plugins"
+    fi
+    printf '%s\n' "${missing[@]}"
+  fi
+}
+
+# Ensure all required patterns exist in gitignore
+# Usage: gitignore_ensure_patterns
+# Returns: 0 if patterns were added, 1 if all patterns already exist
+gitignore_ensure_patterns() {
+  local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
+  local missing
+
+  missing=$(gitignore_missing_patterns)
+
+  if [[ -z "$missing" ]]; then
+    return 1  # Nothing to add
+  fi
+
+  # Create gitignore if it doesn't exist
+  if [[ ! -f "$gitignore" ]]; then
+    echo "$missing" > "$gitignore"
+    return 0
+  fi
+
+  # Append missing patterns with a newline separator
+  {
+    echo ""  # Ensure we start on a new line
+    echo "$missing"
+  } >> "$gitignore"
+
+  return 0
+}
+
+# Show current gitignore status for bluera patterns
+# Usage: gitignore_status
+gitignore_status() {
+  local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
+
+  echo "Gitignore status for bluera-base patterns:"
+  echo ""
+
+  for pattern in "${BLUERA_GITIGNORE_PATTERNS[@]}"; do
+    # Skip comments
+    if [[ "$pattern" =~ ^# ]]; then
+      continue
+    fi
+
+    if gitignore_has_pattern "$pattern"; then
+      echo "  [x] $pattern"
+    else
+      echo "  [ ] $pattern (missing)"
+    fi
+  done
+}
+
+# Validate gitignore patterns are in correct order
+# Returns: 0 if order is correct, 1 if problematic
+gitignore_validate_order() {
+  local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
+
+  if [[ ! -f "$gitignore" ]]; then
+    return 0  # No gitignore, no order issues
+  fi
+
+  # The main .bluera/ ignore must come before the negations
+  local base_line negation_line
+
+  base_line=$(grep -n "^\.bluera/$" "$gitignore" 2>/dev/null | head -1 | cut -d: -f1)
+  negation_line=$(grep -n "^!\.bluera/" "$gitignore" 2>/dev/null | head -1 | cut -d: -f1)
+
+  if [[ -n "$base_line" ]] && [[ -n "$negation_line" ]]; then
+    if [[ "$negation_line" -lt "$base_line" ]]; then
+      echo "Warning: Negation patterns appear before base .bluera/ pattern" >&2
+      return 1
+    fi
+  fi
+
+  return 0
+}

@@ -5,11 +5,13 @@ node_modules/
 # Claude Code local settings (not committed)
 .claude/settings.local.json
 
-# Milhouse loop state files
+# Personal notes (not committed)
 *.local.md
 
-# Bluera Knowledge - data directory (not committed)
-# Store definitions at .bluera/bluera-knowledge/stores.config.json ARE committed for team sharing
+# Bluera plugins - config and state
+# Shared config files ARE committed for team sharing
 .bluera/
+!.bluera/bluera-base/
+!.bluera/bluera-base/config.json
 !.bluera/bluera-knowledge/
 !.bluera/bluera-knowledge/stores.config.json
