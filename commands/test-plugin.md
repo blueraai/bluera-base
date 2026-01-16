@@ -16,7 +16,7 @@ Comprehensive test of all Bluera Base plugin functionality (hooks + slash comman
 Remove any leftover artifacts from previous test runs:
 
 ```bash
-rm -f .claude/milhouse-loop.local.md
+rm -rf .bluera/bluera-base/state/milhouse-loop.md
 rm -rf /tmp/bluera-base-test
 ```
 
@@ -53,8 +53,8 @@ Execute each test in order. Mark each as PASS or FAIL.
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    ls -la "$PLUGIN_PATH/hooks/"*.sh | wc -l
    ```
-   - Expected: 4 shell scripts (block-manual-release.sh, milhouse-setup.sh, milhouse-stop.sh, post-edit-check.sh)
-   - PASS if count is 4
+   - Expected: 10 shell scripts (block-manual-release, milhouse-setup, milhouse-stop, notify, observe-learning, post-edit-check, pre-compact, session-end-learn, session-setup, session-start-inject)
+   - PASS if count is 10
 
 ### Part 2: PreToolUse Hook (block-manual-release.sh)
 
@@ -127,7 +127,7 @@ Execute each test in order. Mark each as PASS or FAIL.
 9. **No State File**: Test that hook exits cleanly when no milhouse loop active
    ```bash
    cd /tmp/bluera-base-test
-   rm -f .claude/milhouse-loop.local.md
+   rm -rf .bluera/bluera-base/state/milhouse-loop.md
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"transcript_path": "/tmp/test.jsonl"}' | bash "$PLUGIN_PATH/hooks/milhouse-stop.sh" 2>&1
    echo "Exit code: $?"
@@ -138,8 +138,8 @@ Execute each test in order. Mark each as PASS or FAIL.
 10. **Invalid Iteration**: Test handling of corrupted state file
     ```bash
     cd /tmp/bluera-base-test
-    mkdir -p .claude
-    cat > .claude/milhouse-loop.local.md << 'EOF'
+    mkdir -p .bluera/bluera-base/state
+    cat > .bluera/bluera-base/state/milhouse-loop.md << 'EOF'
 ---
 iteration: invalid
 max_iterations: 5
@@ -152,20 +152,18 @@ EOF
     EXIT=$?
     echo "Exit code: $EXIT"
     ```
-    - Expected: Warning about corrupted state, removes file, exits 0
-    - PASS if mentions "corrupted" and exits 0
+    - Expected: Warning about invalid iteration, removes file, exits 0
+    - PASS if mentions "invalid" and exits 0
 
 ### Part 5: Milhouse Setup Hook
 
 11. **Setup Creates State File**: Test milhouse-setup.sh creates proper state
     ```bash
     cd /tmp/bluera-base-test
-    rm -f .claude/milhouse-loop.local.md
+    rm -rf .bluera/bluera-base/state/milhouse-loop.md
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-    export MILHOUSE_PROMPT="Build the feature"
-    export MILHOUSE_MAX_ITERATIONS="10"
-    bash "$PLUGIN_PATH/hooks/milhouse-setup.sh" 2>&1
-    cat .claude/milhouse-loop.local.md 2>/dev/null | head -10
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/milhouse-setup.sh" --inline "Build the feature" --max-iterations 10 2>&1
+    cat .bluera/bluera-base/state/milhouse-loop.md 2>/dev/null | head -10
     ```
     - Expected: State file created with iteration: 1, max_iterations: 10
     - PASS if file exists with correct fields
@@ -178,7 +176,7 @@ EOF
 
 13. **Cancel Milhouse Available**: Verify cancel command works when no loop active
     ```bash
-    rm -f /tmp/bluera-base-test/.claude/milhouse-loop.local.md
+    rm -rf /tmp/bluera-base-test/.bluera/bluera-base/state/milhouse-loop.md
     ```
     Then run `/bluera-base:cancel-milhouse`
     - Expected: Message about no active loop
@@ -191,8 +189,8 @@ EOF
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     ls -d "$PLUGIN_PATH/skills/"*/
     ```
-    - Expected: Lists atomic-commits, milhouse, release, code-review-repo, architectural-constraints
-    - PASS if all 5 skill directories exist
+    - Expected: Lists 7 skill directories (architectural-constraints, atomic-commits, claude-md-maintainer, code-review-repo, milhouse, readme-maintainer, release)
+    - PASS if all 7 skill directories exist
 
 15. **Atomic Commits Skill**: Verify skill file is readable
     ```bash
@@ -215,7 +213,7 @@ EOF
 17. **Remove Test Directory**: Clean up test artifacts
     ```bash
     rm -rf /tmp/bluera-base-test
-    rm -f .claude/milhouse-loop.local.md
+    rm -rf .bluera/bluera-base/state/milhouse-loop.md
     ```
     - Expected: Directory removed
     - PASS if command succeeds
@@ -262,5 +260,5 @@ If tests fail partway through, clean up manually:
 
 ```bash
 rm -rf /tmp/bluera-base-test
-rm -f .claude/milhouse-loop.local.md
+rm -rf .bluera/bluera-base/state/milhouse-loop.md
 ```
