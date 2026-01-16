@@ -15,8 +15,12 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
 
+# Source config library for state directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/config.sh"
+
 # Check if milhouse-loop is active
-STATE_FILE=".claude/milhouse-loop.local.md"
+STATE_FILE="$(bluera_state_dir)/milhouse-loop.md"
 
 if [[ ! -f "$STATE_FILE" ]]; then
   # No active loop - allow exit

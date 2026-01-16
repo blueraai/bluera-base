@@ -109,8 +109,8 @@ For long-running loops, use `--init-harness` to create tracking files:
 ```
 
 Creates:
-- `.claude/milhouse-plan.md` - Acceptance criteria checklist
-- `.claude/milhouse-activity.md` - Per-iteration progress log
+- `.bluera/bluera-base/state/milhouse-plan.md` - Acceptance criteria checklist
+- `.bluera/bluera-base/state/milhouse-activity.md` - Per-iteration progress log
 
 Update these files each iteration to maintain context across compactions.
 
@@ -120,8 +120,8 @@ Each milhouse loop is tied to the terminal session that started it. If you have 
 
 ## State File
 
-The loop state is stored in `.claude/milhouse-loop.local.md`:
-- Should be gitignored (`.local.md` pattern)
+The loop state is stored in `.bluera/bluera-base/state/milhouse-loop.md`:
+- Automatically gitignored via `.bluera/` pattern (with config.json excepted)
 - Contains: iteration, max_iterations, completion_promise, session_id, gates, failure_hashes
 
 ## Use Cases

@@ -1,8 +1,13 @@
 #!/bin/bash
 # Milhouse Loop Setup Script
 # Creates state file for iterative development loop
+# State is stored in .bluera/bluera-base/state/
 
 set -euo pipefail
+
+# Source config library for directory functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/config.sh"
 
 PROMPT_FILE=""
 PROMPT_TEXT=""
@@ -44,10 +49,10 @@ GATES:
 
 MONITORING:
   # View current iteration:
-  grep '^iteration:' .claude/milhouse-loop.local.md
+  grep '^iteration:' .bluera/bluera-base/state/milhouse-loop.md
 
   # View full state:
-  head -10 .claude/milhouse-loop.local.md
+  head -10 .bluera/bluera-base/state/milhouse-loop.md
 EOF
       exit 0
       ;;
@@ -125,7 +130,9 @@ if [[ -z "$PROMPT_TEXT" ]]; then
 fi
 
 # Create state file
-mkdir -p .claude
+bluera_ensure_config_dir
+STATE_DIR="$(bluera_state_dir)"
+STATE_FILE="$STATE_DIR/milhouse-loop.md"
 
 # Build gates YAML array
 GATES_YAML=""
@@ -139,7 +146,7 @@ else
   GATES_YAML="gates: []"
 fi
 
-cat > .claude/milhouse-loop.local.md <<EOF
+cat > "$STATE_FILE" <<EOF
 ---
 active: true
 iteration: 1
@@ -161,7 +168,7 @@ if [[ "$INIT_HARNESS" == true ]]; then
   # Extract first line of prompt as goal summary
   GOAL_SUMMARY=$(echo "$PROMPT_TEXT" | head -1 | sed 's/^#* *//')
 
-  cat > .claude/milhouse-plan.md <<PLANEOF
+  cat > "$STATE_DIR/milhouse-plan.md" <<PLANEOF
 # Milhouse Plan
 
 ## Goal
@@ -182,7 +189,7 @@ $GOAL_SUMMARY
 4. [ ] Output completion promise
 PLANEOF
 
-  cat > .claude/milhouse-activity.md <<ACTEOF
+  cat > "$STATE_DIR/milhouse-activity.md" <<ACTEOF
 # Milhouse Activity Log
 
 Track progress across iterations. Update after each iteration.
@@ -204,7 +211,7 @@ Track progress across iterations. Update after each iteration.
 - Review task requirements
 ACTEOF
 
-  echo "📋 Created .claude/milhouse-plan.md and .claude/milhouse-activity.md"
+  echo "📋 Created $STATE_DIR/milhouse-plan.md and $STATE_DIR/milhouse-activity.md"
 fi
 
 # Output compact setup message
