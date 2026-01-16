@@ -99,8 +99,12 @@ SIGNALS=$(echo "$SIGNALS" | jq --arg cmd "$BASE_CMD" '
   .commands[$cmd] = ((.commands[$cmd] // 0) + 1)
 ')
 
-# Write updated signals
-echo "$SIGNALS" > "$SIGNAL_FILE"
+# Write updated signals (validate JSON before writing to prevent corruption)
+if echo "$SIGNALS" | jq -e . >/dev/null 2>&1; then
+  echo "$SIGNALS" > "$SIGNAL_FILE"
+else
+  echo "[bluera-base] Warning: Invalid JSON, skipping signal write" >&2
+fi
 
 # Exit successfully (non-blocking)
 exit 0

@@ -30,8 +30,13 @@ if [[ ! -f "$SIGNAL_FILE" ]]; then
   exit 0
 fi
 
-# Read signals
+# Read signals with validation
 SIGNALS=$(cat "$SIGNAL_FILE")
+if ! echo "$SIGNALS" | jq -e . >/dev/null 2>&1; then
+  echo "[bluera-base] Warning: Corrupted signals file, removing" >&2
+  rm -f "$SIGNAL_FILE"
+  exit 0
+fi
 
 # Check if we have any commands tracked
 CMD_COUNT=$(echo "$SIGNALS" | jq '.commands | length')
