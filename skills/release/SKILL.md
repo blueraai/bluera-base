@@ -5,7 +5,11 @@ description: Release workflow with conventional commits auto-detection and GitHu
 
 # Release Workflow
 
-Standardized release workflow that auto-detects version bump, bumps version, commits, tags, pushes, and monitors CI.
+Standardized release workflow that auto-detects version bump, bumps version, commits, pushes, and monitors CI.
+
+**CRITICAL:** Do NOT push tags directly. Tags should only be created AFTER CI passes. Either:
+1. Use auto-release workflow (creates tags after CI passes)
+2. Or manually create tag only after verifying CI success
 
 **IMPORTANT:** All release commands MUST be prefixed with `__SKILL__=release` to bypass the manual-release hook.
 
@@ -61,9 +65,10 @@ gh release view v<version>
 
 ## Workflow Summary
 
-1. **Pre-flight:** `git status`
-2. **Analyze:** Check commits, determine bump type
-3. **Bump:** Run version command with `__SKILL__=release` prefix
-4. **Push:** Push commits and tags
-5. **Monitor:** `gh run list` until complete
-6. **Verify:** `gh release view v<version>`
+1. **Pre-flight:** `git status` - ensure clean working directory
+2. **Analyze:** Check commits since last tag, determine bump type
+3. **Bump:** Run version command with `__SKILL__=release` prefix (NO tag yet)
+4. **Push:** Push version bump commit (triggers CI)
+5. **Wait:** `gh run list` until CI passes
+6. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
+7. **Verify:** `gh release view v<version>`
