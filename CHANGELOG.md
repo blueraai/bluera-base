@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.7.0](https://github.com/blueraai/bluera-base/compare/v0.6.0...v0.7.0) (2026-01-16)
+
+
+### Features
+
+* **hooks:** add auto-commit hook for session-stop commits ([2645fad](https://github.com/blueraai/bluera-base/commit/2645fad9cd6de36770be731938aee114230c1f73))
+
 ## [0.3.0](https://github.com/blueraai/bluera-base/compare/v0.2.3...v0.3.0) (2026-01-16)
 
 
