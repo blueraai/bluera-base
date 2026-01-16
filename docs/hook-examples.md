@@ -23,7 +23,7 @@ Block dangerous or policy-violating commands before execution.
 
 ### Example: Block Manual Release Commands
 
-**Purpose**: Force use of `/release` skill instead of manual version bumps.
+**Purpose**: Force use of `/bluera-base:release` skill instead of manual version bumps.
 
 ```bash
 #!/bin/bash
@@ -38,7 +38,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 # If no command, allow
 [ -z "$COMMAND" ] && exit 0
 
-# Allow if invoked from /release skill (skill prefix makes it intentional)
+# Allow if invoked from /bluera-base:release skill (skill prefix makes it intentional)
 if echo "$COMMAND" | grep -qE '^__SKILL__=release '; then
   exit 0
 fi
@@ -55,7 +55,7 @@ BLOCK_PATTERNS="$BLOCK_PATTERNS|git tag v[0-9]"
 BLOCK_PATTERNS="$BLOCK_PATTERNS|gh release create"
 
 if echo "$COMMAND" | grep -qE "$BLOCK_PATTERNS"; then
-  echo "Manual release commands are blocked. Use /release instead." >&2
+  echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2
   exit 2
 fi
 

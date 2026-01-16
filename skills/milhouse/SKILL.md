@@ -1,6 +1,6 @@
 ---
 name: milhouse
-description: Iterative development loop that feeds the same prompt back after each iteration until task completion. Use /milhouse-loop to start.
+description: Iterative development loop that feeds the same prompt back after each iteration until task completion. Use /bluera-base:milhouse-loop to start.
 ---
 
 # Milhouse Loop - Iterative Development
@@ -19,22 +19,22 @@ The milhouse loop is a powerful pattern for iterative development tasks. It work
 
 ```bash
 # Basic usage with a prompt file
-/milhouse-loop .claude/prompts/my-task.md
+/bluera-base:milhouse-loop .claude/prompts/my-task.md
 
 # With max iterations
-/milhouse-loop task.md --max-iterations 10
+/bluera-base:milhouse-loop task.md --max-iterations 10
 
 # With custom completion promise
-/milhouse-loop task.md --promise "FEATURE COMPLETE"
+/bluera-base:milhouse-loop task.md --promise "FEATURE COMPLETE"
 
 # Inline prompt (for simple tasks)
-/milhouse-loop --inline "Refactor the auth module to use JWT tokens"
+/bluera-base:milhouse-loop --inline "Refactor the auth module to use JWT tokens"
 
 # With objective gates (tests must pass to exit)
-/milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+/bluera-base:milhouse-loop task.md --gate "npm test" --gate "npm run lint"
 
 # With context harness (creates plan.md and activity.md)
-/milhouse-loop task.md --init-harness
+/bluera-base:milhouse-loop task.md --init-harness
 ```
 
 ## Options
@@ -71,7 +71,7 @@ Or with a custom promise:
 Gates are commands that must pass AFTER the promise matches, before the loop exits.
 
 ```bash
-/milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+/bluera-base:milhouse-loop task.md --gate "npm test" --gate "npm run lint"
 ```
 
 **Behavior:**
@@ -88,16 +88,16 @@ If the same gate fails 3 times in a row (identical output), the loop auto-stops.
 
 ```bash
 # Disable stuck detection
-/milhouse-loop task.md --gate "npm test" --stuck-limit 0
+/bluera-base:milhouse-loop task.md --gate "npm test" --stuck-limit 0
 
 # More lenient (5 identical failures)
-/milhouse-loop task.md --gate "npm test" --stuck-limit 5
+/bluera-base:milhouse-loop task.md --gate "npm test" --stuck-limit 5
 ```
 
 ## Stopping Early
 
 - **Max iterations**: Use `--max-iterations N` to auto-stop after N iterations
-- **Manual cancel**: Run `/cancel-milhouse` to stop immediately
+- **Manual cancel**: Run `/bluera-base:cancel-milhouse` to stop immediately
 - **Stuck detection**: Triggers after 3 identical gate failures (configurable)
 
 ## Context Harness
@@ -105,7 +105,7 @@ If the same gate fails 3 times in a row (identical output), the loop auto-stops.
 For long-running loops, use `--init-harness` to create tracking files:
 
 ```bash
-/milhouse-loop task.md --init-harness
+/bluera-base:milhouse-loop task.md --init-harness
 ```
 
 Creates:
@@ -153,7 +153,7 @@ If you need to refresh on the original task, read the state file directly.
 ## Example: TDD Loop
 
 ```bash
-/milhouse-loop .claude/prompts/add-auth.md \
+/bluera-base:milhouse-loop .claude/prompts/add-auth.md \
   --gate "npm test" \
   --gate "npm run lint" \
   --max-iterations 20 \

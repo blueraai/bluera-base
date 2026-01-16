@@ -12,11 +12,11 @@ Comprehensive guide to all bluera-base features.
 
 | Command | Description |
 |---------|-------------|
-| `/help` or `/help all` | Show all features |
-| `/help commands` | List all slash commands |
-| `/help skills` | List all skills |
-| `/help hooks` | Explain automatic hooks |
-| `/help config` | Show configuration options |
+| `/bluera-base:help` or `/bluera-base:help all` | Show all features |
+| `/bluera-base:help commands` | List all slash commands |
+| `/bluera-base:help skills` | List all skills |
+| `/bluera-base:help hooks` | Explain automatic hooks |
+| `/bluera-base:help config` | Show configuration options |
 
 ---
 
@@ -48,19 +48,19 @@ Show only the Configuration section.
 
 ```bash
 # Initialize config for your project
-/config init
+/bluera-base:config init
 
 # Create atomic commits with conventional format
-/commit
+/bluera-base:commit
 
 # Start iterative development loop
-/milhouse-loop "implement feature X"
+/bluera-base:milhouse-loop "implement feature X"
 
 # Review code for issues
-/code-review
+/bluera-base:code-review
 
 # Cut a release
-/release
+/bluera-base:release
 ```
 
 ---
@@ -71,48 +71,48 @@ Show only the Configuration section.
 
 | Command | Description |
 |---------|-------------|
-| `/commit` | Create atomic commits with conventional format |
-| `/code-review` | Review codebase for bugs and CLAUDE.md compliance |
-| `/release` | Cut releases with conventional commits auto-detection |
-| `/milhouse-loop` | Start iterative development loop |
-| `/cancel-milhouse` | Cancel active milhouse loop |
+| `/bluera-base:commit` | Create atomic commits with conventional format |
+| `/bluera-base:code-review` | Review codebase for bugs and CLAUDE.md compliance |
+| `/bluera-base:release` | Cut releases with conventional commits auto-detection |
+| `/bluera-base:milhouse-loop` | Start iterative development loop |
+| `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
 
 ### Project Setup
 
 | Command | Description |
 |---------|-------------|
-| `/config` | Manage plugin configuration |
-| `/harden-repo` | Set up git hooks, linters, formatters |
-| `/install-rules` | Install rule templates to `.claude/rules/` |
+| `/bluera-base:config` | Manage plugin configuration |
+| `/bluera-base:harden-repo` | Set up git hooks, linters, formatters |
+| `/bluera-base:install-rules` | Install rule templates to `.claude/rules/` |
 
 ### Documentation
 
 | Command | Description |
 |---------|-------------|
-| `/claude-md` | Audit and maintain CLAUDE.md files |
-| `/readme` | Maintain README.md files |
+| `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
+| `/bluera-base:readme` | Maintain README.md files |
 
 ### Analysis & Quality
 
 | Command | Description |
 |---------|-------------|
-| `/analyze-config` | Analyze repo's `.claude/**` for overlap |
-| `/audit-plugin` | Audit a Claude Code plugin against best practices |
-| `/dry` | Detect duplicate code with jscpd |
+| `/bluera-base:analyze-config` | Analyze repo's `.claude/**` for overlap |
+| `/bluera-base:audit-plugin` | Audit a Claude Code plugin against best practices |
+| `/bluera-base:dry` | Detect duplicate code with jscpd |
 
 ### Git & Workflows
 
 | Command | Description |
 |---------|-------------|
-| `/worktree` | Manage git worktrees for parallel development |
-| `/statusline` | Configure Claude Code terminal status line |
-| `/test-plugin` | Run plugin validation test suite |
+| `/bluera-base:worktree` | Manage git worktrees for parallel development |
+| `/bluera-base:statusline` | Configure Claude Code terminal status line |
+| `/bluera-base:test-plugin` | Run plugin validation test suite |
 
 ### Help
 
 | Command | Description |
 |---------|-------------|
-| `/help` | Show this help (you are here) |
+| `/bluera-base:help` | Show this help (you are here) |
 
 ---
 
@@ -151,7 +151,7 @@ Hooks run automatically on specific events. No action required.
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| `block-manual-release.sh` | PreToolUse:Bash | Block manual version bumps (use /release) |
+| `block-manual-release.sh` | PreToolUse:Bash | Block manual version bumps (use /bluera-base:release) |
 | `post-edit-check.sh` | PostToolUse:Write\|Edit | Validate file changes |
 | `observe-learning.sh` | PostToolUse:Bash | Track commands for learning |
 
@@ -172,17 +172,17 @@ Hooks run automatically on specific events. No action required.
 
 ## Configuration
 
-Manage settings with `/config`. Config stored in `.bluera/bluera-base/`.
+Manage settings with `/bluera-base:config`. Config stored in `.bluera/bluera-base/`.
 
 ### Quick Enable/Disable
 
 ```bash
-/config enable auto-learn      # Track commands for learning
-/config enable notifications   # Desktop notifications
-/config enable auto-commit     # Auto-commit on session stop
-/config enable auto-push       # Push after auto-commit
-/config enable dry-check       # Enable DRY detection
-/config enable dry-auto        # Auto-scan on session stop
+/bluera-base:config enable auto-learn      # Track commands for learning
+/bluera-base:config enable notifications   # Desktop notifications
+/bluera-base:config enable auto-commit     # Auto-commit on session stop
+/bluera-base:config enable auto-push       # Push after auto-commit
+/bluera-base:config enable dry-check       # Enable DRY detection
+/bluera-base:config enable dry-auto        # Auto-scan on session stop
 ```
 
 ### Config Schema
@@ -245,7 +245,7 @@ bluera-base works with any language Claude Code supports. Language-specific feat
 
 ## Getting Help
 
-- `/help <topic>` - Specific topic help
+- `/bluera-base:help <topic>` - Specific topic help
 - `@skill-name` - Reference skill documentation
-- `/config status` - Debug configuration issues
+- `/bluera-base:config status` - Debug configuration issues
 - GitHub: https://github.com/anthropics/bluera-base

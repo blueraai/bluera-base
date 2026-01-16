@@ -17,17 +17,17 @@ Scan the repo's `.claude/**` for functionality that overlaps with bluera-base, r
 This plugin provides:
 
 ### Commands
-- `/commit` - atomic commits with documentation awareness
-- `/release` - version bumping and release workflow
-- `/milhouse-loop` - iterative development loop
-- `/cancel-milhouse` - cancel active loop
-- `/claude-md` - CLAUDE.md maintenance
-- `/code-review` - multi-agent code review
-- `/config` - configuration management
-- `/harden-repo` - git hooks, linters, formatters setup
-- `/install-rules` - install rule templates
-- `/readme` - README.md maintenance
-- `/test-plugin` - plugin validation
+- `/bluera-base:commit` - atomic commits with documentation awareness
+- `/bluera-base:release` - version bumping and release workflow
+- `/bluera-base:milhouse-loop` - iterative development loop
+- `/bluera-base:cancel-milhouse` - cancel active loop
+- `/bluera-base:claude-md` - CLAUDE.md maintenance
+- `/bluera-base:code-review` - multi-agent code review
+- `/bluera-base:config` - configuration management
+- `/bluera-base:harden-repo` - git hooks, linters, formatters setup
+- `/bluera-base:install-rules` - install rule templates
+- `/bluera-base:readme` - README.md maintenance
+- `/bluera-base:test-plugin` - plugin validation
 
 ### Skills
 - `atomic-commits` - commit grouping and documentation checks

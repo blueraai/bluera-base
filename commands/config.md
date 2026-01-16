@@ -12,13 +12,13 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 
 | Command | Description |
 |---------|-------------|
-| `/config` or `/config show` | Display current effective config |
-| `/config init` | Initialize config for this project |
-| `/config set <key> <value>` | Set a config value |
-| `/config enable <feature>` | Enable a feature |
-| `/config disable <feature>` | Disable a feature |
-| `/config reset` | Reset to defaults |
-| `/config status [--state]` | Show config and state file status |
+| `/bluera-base:config` or `/bluera-base:config show` | Display current effective config |
+| `/bluera-base:config init` | Initialize config for this project |
+| `/bluera-base:config set <key> <value>` | Set a config value |
+| `/bluera-base:config enable <feature>` | Enable a feature |
+| `/bluera-base:config disable <feature>` | Disable a feature |
+| `/bluera-base:config reset` | Reset to defaults |
+| `/bluera-base:config status [--state]` | Show config and state file status |
 
 ---
 
@@ -154,56 +154,56 @@ Env (from CLAUDE_ENV_FILE):
 
 ```bash
 # Initialize config for a new project
-/config init
+/bluera-base:config init
 
 # Show current settings
-/config show
+/bluera-base:config show
 
 # Enable auto-learning (opt-in)
-/config enable auto-learn
+/bluera-base:config enable auto-learn
 
 # Set learning mode to auto-apply
-/config set .autoLearn.mode auto
+/bluera-base:config set .autoLearn.mode auto
 
 # Set default gates for milhouse
-/config set .milhouse.defaultGates '["bun test", "bun run lint"]' --shared
+/bluera-base:config set .milhouse.defaultGates '["bun test", "bun run lint"]' --shared
 
 # Disable notifications
-/config disable notifications
+/bluera-base:config disable notifications
 
 # Reset local overrides
-/config reset
+/bluera-base:config reset
 
 # Reset everything
-/config reset --all
+/bluera-base:config reset --all
 
 # Show state file status (useful for debugging milhouse loops)
-/config status --state
+/bluera-base:config status --state
 
 # Enable auto-commit on session stop
-/config enable auto-commit
+/bluera-base:config enable auto-commit
 
 # Enable auto-push after commit
-/config enable auto-push
+/bluera-base:config enable auto-push
 
 # Set custom remote for auto-push
-/config set .autoCommit.remote upstream --shared
+/bluera-base:config set .autoCommit.remote upstream --shared
 
 # Enable DRY duplicate checking
-/config enable dry-check
+/bluera-base:config enable dry-check
 
 # Enable auto-scan on session stop
-/config enable dry-auto
+/bluera-base:config enable dry-auto
 
 # Set custom DRY thresholds
-/config set .dryCheck.minTokens 50 --shared
+/bluera-base:config set .dryCheck.minTokens 50 --shared
 ```
 
 ---
 
 ## Gitignore Patterns
 
-The `/config init` command adds these patterns to `.gitignore`:
+The `/bluera-base:config init` command adds these patterns to `.gitignore`:
 
 ```gitignore
 # Bluera plugins

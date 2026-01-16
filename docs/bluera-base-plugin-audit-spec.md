@@ -95,7 +95,7 @@ Notes:
 ### Changes
 1. **PreToolUse**: replace the single-purpose script (`block-manual-release.sh`) with a consolidated guard:
    - block `git commit --no-verify` (hard block)
-   - block manual release/tag/publish commands (hard block → instruct to use `/release`)
+   - block manual release/tag/publish commands (hard block → instruct to use `/bluera-base:release`)
    - optionally: block force pushes (optional, if you want)
 2. **PostToolUse**: keep but add `timeout` and ensure the validator reads stdin JSON for the file path.
 3. **Notification**: move the inline `osascript` to a script so you can:
@@ -177,7 +177,7 @@ Create a new script that reads stdin JSON (the hook event payload) and blocks un
   - `npm version`, `pnpm version`, `yarn version`
   - `npm publish`, `pnpm publish`, `yarn npm publish`
   - optionally `cargo publish`
-  → exit **2** with message “Use /release”.
+  → exit **2** with message "Use /bluera-base:release".
 
 ### Implementation (copy/paste)
 ```bash
@@ -229,7 +229,7 @@ fi
 
 # 2) Block manual release / tagging / publishing
 if echo "$CMD" | grep -Eqi '\bgit\s+tag\b|\bgit\s+push\b.*\s--tags\b|\bgh\s+release\s+create\b|\bnpm\s+version\b|\bpnpm\s+version\b|\byarn\s+version\b|\bnpm\s+publish\b|\bpnpm\s+publish\b|\byarn\s+npm\s+publish\b|\bcargo\s+publish\b'; then
-  echo "Blocked: manual release/publish detected. Use /release workflow." >&2
+  echo "Blocked: manual release/publish detected. Use /bluera-base:release workflow." >&2
   exit 2
 fi
 

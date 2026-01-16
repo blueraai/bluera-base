@@ -82,7 +82,7 @@ Stop hook interception for autonomous iteration.
 
 ### How It Works
 
-1. User starts a loop via command: `/milhouse-loop "Build the feature" --max-iterations 10`
+1. User starts a loop via command: `/bluera-base:milhouse-loop "Build the feature" --max-iterations 10`
 2. Setup script creates state file with prompt, iteration count, completion promise
 3. Stop hook intercepts every stop attempt:
    - Check if completion promise matched
@@ -354,7 +354,7 @@ Structured development with agent coordination.
 4. Validate     → Test runner subagent verifies
 5. Document     → Update relevant docs
 6. Review       → Code review agent checks quality
-7. Commit       → Atomic commits via /commit
+7. Commit       → Atomic commits via /bluera-base:commit
 ```
 
 ### Implementation Tips

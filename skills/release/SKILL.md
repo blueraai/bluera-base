@@ -1,6 +1,6 @@
 ---
 name: release
-description: Release workflow with conventional commits auto-detection and GitHub Actions monitoring. Use /release to cut releases.
+description: Release workflow with conventional commits auto-detection and GitHub Actions monitoring. Use /bluera-base:release to cut releases.
 ---
 
 # Release Workflow

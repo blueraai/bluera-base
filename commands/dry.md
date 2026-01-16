@@ -12,10 +12,10 @@ Detect duplicate code across your codebase using jscpd (cross-language copy/past
 
 | Command | Description |
 |---------|-------------|
-| `/dry` or `/dry scan` | Run duplication scan |
-| `/dry report` | Show last scan results |
-| `/dry config` | Show current jscpd configuration |
-| `/dry init` | Create project-specific jscpd.json |
+| `/bluera-base:dry` or `/bluera-base:dry scan` | Run duplication scan |
+| `/bluera-base:dry report` | Show last scan results |
+| `/bluera-base:dry config` | Show current jscpd configuration |
+| `/bluera-base:dry init` | Create project-specific jscpd.json |
 
 ---
 
@@ -61,7 +61,7 @@ Detect duplicate code across your codebase using jscpd (cross-language copy/past
 ### Report
 
 1. Read `.bluera/bluera-base/state/dry-report.md`
-2. If not found, suggest running `/dry scan` first
+2. If not found, suggest running `/bluera-base:dry scan` first
 
 ### Config
 
@@ -124,7 +124,7 @@ For detailed refactoring patterns, see:
 
 To customize thresholds, create `.jscpd.json`:
 \`\`\`bash
-/dry init
+/bluera-base:dry init
 \`\`\`
 ```
 
@@ -179,7 +179,7 @@ jscpd supports 150+ languages. Primary focus:
 npm install -g jscpd
 ```
 
-If not installed, `/dry scan` will use `npx --yes jscpd` (slower, requires network first time).
+If not installed, `/bluera-base:dry scan` will use `npx --yes jscpd` (slower, requires network first time).
 
 ---
 
@@ -187,22 +187,22 @@ If not installed, `/dry scan` will use `npx --yes jscpd` (slower, requires netwo
 
 ```bash
 # Run scan on current project
-/dry scan
+/bluera-base:dry scan
 
 # View last report
-/dry report
+/bluera-base:dry report
 
 # Show configuration
-/dry config
+/bluera-base:dry config
 
 # Initialize project config
-/dry init
+/bluera-base:dry init
 
 # Scan specific directory
-/dry scan --path src/
+/bluera-base:dry scan --path src/
 
 # Scan with custom threshold
-/dry scan --threshold 3
+/bluera-base:dry scan --threshold 3
 ```
 
 ---
@@ -212,18 +212,18 @@ If not installed, `/dry scan` will use `npx --yes jscpd` (slower, requires netwo
 Enable automatic scanning on session end:
 
 ```bash
-/config enable dry-check
-/config enable dry-auto
+/bluera-base:config enable dry-check
+/bluera-base:config enable dry-auto
 ```
 
-This runs `/dry scan` via the Stop hook when Claude session ends.
+This runs `/bluera-base:dry scan` via the Stop hook when Claude session ends.
 
 ---
 
 ## Workflow Integration
 
-1. **Initial scan**: `/dry scan` to baseline
+1. **Initial scan**: `/bluera-base:dry scan` to baseline
 2. **Review**: Focus on top duplicates by token count
 3. **Refactor**: Use @dry-refactor skill patterns
-4. **Verify**: `/dry scan` again to confirm reduction
+4. **Verify**: `/bluera-base:dry scan` again to confirm reduction
 5. **Configure**: Set threshold in `.jscpd.json` for CI

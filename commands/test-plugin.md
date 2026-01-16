@@ -76,7 +76,7 @@ Execute each test in order. Mark each as PASS or FAIL.
    - Expected: Blocked with exit code 2
    - PASS if exits 2
 
-5. **Allow skill-prefixed release**: Test that /release skill can run version commands
+5. **Allow skill-prefixed release**: Test that /bluera-base:release skill can run version commands
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"tool_input": {"command": "__SKILL__=release npm version patch"}}' | bash "$PLUGIN_PATH/hooks/block-manual-release.sh"
@@ -244,8 +244,8 @@ After running all tests, report results in this format:
 | 9 | No State File (milhouse-stop) | ? |
 | 10 | Invalid Iteration Handling | ? |
 | 11 | Setup Creates State File | ? |
-| 12 | /commit Command | ? |
-| 13 | /cancel-milhouse Command | ? |
+| 12 | /bluera-base:commit Command | ? |
+| 13 | /bluera-base:cancel-milhouse Command | ? |
 | 14 | Skills Directory Structure | ? |
 | 15 | Atomic Commits Skill | ? |
 | 16 | Milhouse Skill | ? |

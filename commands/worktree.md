@@ -12,11 +12,11 @@ Manage multiple working directories from a single repository for parallel develo
 
 | Command | Description |
 |---------|-------------|
-| `/worktree` or `/worktree list` | List all worktrees |
-| `/worktree add <branch> [path]` | Create worktree for branch |
-| `/worktree remove <path>` | Remove a worktree |
-| `/worktree prune` | Clean up stale worktree refs |
-| `/worktree status` | Show status of all worktrees |
+| `/bluera-base:worktree` or `/bluera-base:worktree list` | List all worktrees |
+| `/bluera-base:worktree add <branch> [path]` | Create worktree for branch |
+| `/bluera-base:worktree remove <path>` | Remove a worktree |
+| `/bluera-base:worktree prune` | Clean up stale worktree refs |
+| `/bluera-base:worktree status` | Show status of all worktrees |
 
 ---
 
@@ -105,7 +105,7 @@ Worktrees for bluera-base:
 
 ### Quick Feature Branch Setup
 
-When user runs `/worktree add` without arguments:
+When user runs `/bluera-base:worktree add` without arguments:
 
 1. Ask for branch name
 2. Ask whether to create new branch or use existing
@@ -114,7 +114,7 @@ When user runs `/worktree add` without arguments:
 
 ### Cleanup Workflow
 
-When user runs `/worktree prune`:
+When user runs `/bluera-base:worktree prune`:
 
 1. Show what would be pruned
 2. Confirm before pruning
@@ -126,28 +126,28 @@ When user runs `/worktree prune`:
 
 ```bash
 # List all worktrees
-/worktree list
+/bluera-base:worktree list
 
 # Create worktree for existing branch
-/worktree add feature/new-ui
+/bluera-base:worktree add feature/new-ui
 
 # Create worktree with custom path
-/worktree add feature/new-ui ~/projects/new-ui-worktree
+/bluera-base:worktree add feature/new-ui ~/projects/new-ui-worktree
 
 # Create worktree for new branch (will prompt to create)
-/worktree add feature/experiment
+/bluera-base:worktree add feature/experiment
 
 # Remove a worktree
-/worktree remove ../bluera-base-feature-new-ui
+/bluera-base:worktree remove ../bluera-base-feature-new-ui
 
 # Force remove (if locked or has changes)
-/worktree remove ../bluera-base-stale --force
+/bluera-base:worktree remove ../bluera-base-stale --force
 
 # Clean up stale references
-/worktree prune
+/bluera-base:worktree prune
 
 # Show status of all worktrees
-/worktree status
+/bluera-base:worktree status
 ```
 
 ---

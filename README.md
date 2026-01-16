@@ -89,8 +89,9 @@ claude --plugin-dir /path/to/bluera-base
 |------|-------|---------|
 | `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
-| `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/release` command for releases |
+| `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
+| `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop if uncommitted changes exist (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 ```mermaid
@@ -145,16 +146,16 @@ Exit code 2 blocks the operation and shows the error to Claude.
 
 | Command | Purpose |
 |---------|---------|
-| `/commit` | Create atomic, well-organized commits with documentation checks |
-| `/code-review` | Run multi-agent codebase review |
-| `/release` | Cut a release with conventional commits auto-detection and CI monitoring |
-| `/config` | Manage bluera-base plugin configuration |
-| `/milhouse-loop` | Start iterative development loop with configurable completion criteria |
-| `/cancel-milhouse` | Cancel active milhouse loop |
-| `/install-rules` | Install bluera-base rule templates to `.claude/rules/` |
-| `/claude-md` | Audit and maintain CLAUDE.md files |
-| `/readme` | Maintain README.md files with GitHub advanced formatting |
-| `/test-plugin` | Run plugin validation test suite |
+| `/bluera-base:commit` | Create atomic, well-organized commits with documentation checks |
+| `/bluera-base:code-review` | Run multi-agent codebase review |
+| `/bluera-base:release` | Cut a release with conventional commits auto-detection and CI monitoring |
+| `/bluera-base:config` | Manage bluera-base plugin configuration |
+| `/bluera-base:milhouse-loop` | Start iterative development loop with configurable completion criteria |
+| `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
+| `/bluera-base:install-rules` | Install bluera-base rule templates to `.claude/rules/` |
+| `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
+| `/bluera-base:readme` | Maintain README.md files with GitHub advanced formatting |
+| `/bluera-base:test-plugin` | Run plugin validation test suite |
 
 ### Skills
 
@@ -185,7 +186,7 @@ Each issue gets a confidence score (0-100). Only issues scoring >= 80 are report
 <details>
 <summary><b>release skill details</b></summary>
 
-The `/release` command provides a standardized release workflow:
+The `/bluera-base:release` command provides a standardized release workflow:
 
 ```mermaid
 flowchart LR
@@ -242,7 +243,7 @@ flowchart LR
 
 **Usage:**
 ```bash
-/milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
+/bluera-base:milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
 ```
 
 **Exit conditions:**
@@ -250,7 +251,7 @@ flowchart LR
 |-----------|--------------|
 | `<promise>TEXT</promise>` in output | Loop exits successfully |
 | Max iterations reached | Loop exits with warning |
-| `/cancel-milhouse` | Loop cancelled |
+| `/bluera-base:cancel-milhouse` | Loop cancelled |
 
 </details>
 

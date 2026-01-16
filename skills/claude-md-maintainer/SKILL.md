@@ -43,7 +43,7 @@ Only after user confirms:
 
 ## Init Algorithm
 
-For `/claude-md init` - creates new CLAUDE.md from scratch.
+For `/bluera-base:claude-md init` - creates new CLAUDE.md from scratch.
 
 ### Detection Priority
 
@@ -119,7 +119,7 @@ grep -A 20 '^\[project.scripts\]' pyproject.toml | grep '=' | cut -d'=' -f1 | tr
 
 ## Learn Algorithm
 
-For `/claude-md learn` - adds learnings to marker-delimited regions.
+For `/bluera-base:claude-md learn` - adds learnings to marker-delimited regions.
 
 ### Marker Format
 
@@ -205,11 +205,11 @@ NEW_CONTENT="<!-- AUTO:bluera-base:learned -->
 
 ## User Control Modes
 
-Control auto-learning behavior via `/config` command:
+Control auto-learning behavior via `/bluera-base:config` command:
 
 ```bash
-/config enable auto-learn    # Opt-in to learning observation
-/config set .autoLearn.mode auto  # Change mode
+/bluera-base:config enable auto-learn    # Opt-in to learning observation
+/bluera-base:config set .autoLearn.mode auto  # Change mode
 ```
 
 Configuration stored in `.bluera/bluera-base/config.json`:

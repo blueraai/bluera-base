@@ -12,11 +12,11 @@ Manage Claude Code's status line display at the bottom of your terminal.
 
 | Command | Description |
 |---------|-------------|
-| `/statusline` or `/statusline show` | Display current configuration |
-| `/statusline preset <name>` | Apply a preset configuration |
-| `/statusline barista` | Install/configure Barista (advanced) |
-| `/statusline custom` | Interactive custom configuration |
-| `/statusline reset` | Reset to Claude Code defaults |
+| `/bluera-base:statusline` or `/bluera-base:statusline show` | Display current configuration |
+| `/bluera-base:statusline preset <name>` | Apply a preset configuration |
+| `/bluera-base:statusline barista` | Install/configure Barista (advanced) |
+| `/bluera-base:statusline custom` | Interactive custom configuration |
+| `/bluera-base:statusline reset` | Reset to Claude Code defaults |
 
 ---
 
@@ -218,22 +218,22 @@ For command-based, input JSON includes:
 
 ```bash
 # Show current config
-/statusline show
+/bluera-base:statusline show
 
 # Apply minimal preset
-/statusline preset minimal
+/bluera-base:statusline preset minimal
 
 # Apply developer preset (script-based)
-/statusline preset developer
+/bluera-base:statusline preset developer
 
 # Install Barista
-/statusline barista
+/bluera-base:statusline barista
 
 # Interactive custom setup
-/statusline custom
+/bluera-base:statusline custom
 
 # Reset to defaults
-/statusline reset
+/bluera-base:statusline reset
 ```
 
 ---

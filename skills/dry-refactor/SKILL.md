@@ -11,7 +11,7 @@ Help users eliminate code duplication by extracting shared logic into reusable m
 ## When This Applies
 
 - User mentions "duplicates", "DRY", "repeated code", "copy-paste"
-- `/dry scan` found duplicates that need refactoring
+- `/bluera-base:dry scan` found duplicates that need refactoring
 - Code review identified similar patterns across files
 
 ## When Duplication is Acceptable
@@ -29,10 +29,10 @@ Not all duplication is bad. Keep duplicates when:
 
 ```bash
 # Run scan if not already done
-/dry scan
+/bluera-base:dry scan
 
 # Review the report
-/dry report
+/bluera-base:dry report
 ```
 
 ### 2. Categorize Each Duplicate
@@ -88,9 +88,9 @@ See `@dry-refactor/references/patterns.md` for detailed examples:
 
 ## Report Integration
 
-When `/dry scan` identifies duplicates:
+When `/bluera-base:dry scan` identifies duplicates:
 
 1. Review the report at `.bluera/bluera-base/state/dry-report.md`
 2. Start with highest-impact duplicates (most tokens/instances)
 3. Use suggested extraction targets from the report
-4. Re-run `/dry scan` after refactoring to verify reduction
+4. Re-run `/bluera-base:dry scan` after refactoring to verify reduction

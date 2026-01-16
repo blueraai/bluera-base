@@ -30,7 +30,7 @@ claude --plugin-dir /path/to/bluera-base
 
 | What to test | How |
 |--------------|-----|
-| Commands (`/release`, `/commit`) | `--plugin-dir .` (restart to pick up changes) |
+| Commands (`/bluera-base:release`, `/bluera-base:commit`) | `--plugin-dir .` (restart to pick up changes) |
 | Hooks (post-edit, milhouse) | `--plugin-dir .` (restart to pick up changes) |
 | Skills | `--plugin-dir .` (restart to pick up changes) |
 
@@ -43,18 +43,18 @@ bluera-base/
 ├── .claude-plugin/
 │   └── plugin.json               # Plugin manifest
 ├── commands/
-│   ├── cancel-milhouse.md        # /cancel-milhouse command
-│   ├── claude-md.md              # /claude-md command
-│   ├── code-review.md            # /code-review command
-│   ├── commit.md                 # /commit command
-│   ├── install-rules.md          # /install-rules command
-│   ├── milhouse-loop.md          # /milhouse-loop command
-│   ├── readme.md                 # /readme command
-│   ├── release.md                # /release command
-│   └── test-plugin.md            # /test-plugin command
+│   ├── cancel-milhouse.md        # /bluera-base:cancel-milhouse command
+│   ├── claude-md.md              # /bluera-base:claude-md command
+│   ├── code-review.md            # /bluera-base:code-review command
+│   ├── commit.md                 # /bluera-base:commit command
+│   ├── install-rules.md          # /bluera-base:install-rules command
+│   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
+│   ├── readme.md                 # /bluera-base:readme command
+│   ├── release.md                # /bluera-base:release command
+│   └── test-plugin.md            # /bluera-base:test-plugin command
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
-│   ├── block-manual-release.sh   # Enforces /release workflow
+│   ├── block-manual-release.sh   # Enforces /bluera-base:release workflow
 │   ├── milhouse-setup.sh         # Initializes milhouse loop state
 │   ├── milhouse-stop.sh          # Stop hook for milhouse iterations
 │   ├── notify.sh                 # Cross-platform notifications
@@ -82,7 +82,7 @@ bluera-base/
 │   └── CLAUDE-BASE.md            # @includeable sections
 ├── templates/
 │   ├── claude/
-│   │   └── rules/                # Rule templates for /install-rules
+│   │   └── rules/                # Rule templates for /bluera-base:install-rules
 │   ├── CLAUDE.md.template
 │   ├── settings.local.json.example
 │   └── subdirectory-CLAUDE.md.template

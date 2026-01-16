@@ -10,9 +10,9 @@ Audit and maintain `CLAUDE.md` files in this repository. See @bluera-base/skills
 
 ## Subcommands
 
-- **`/claude-md audit`** (default) - Validate existing CLAUDE.md files
-- **`/claude-md init`** - Create new CLAUDE.md via auto-detection + interview
-- **`/claude-md learn "<text>"`** - Add a learning to the auto-managed section
+- **`/bluera-base:claude-md audit`** (default) - Validate existing CLAUDE.md files
+- **`/bluera-base:claude-md init`** - Create new CLAUDE.md via auto-detection + interview
+- **`/bluera-base:claude-md learn "<text>"`** - Add a learning to the auto-managed section
 
 ---
 
@@ -56,13 +56,13 @@ If a suspected secret is detected, output a warning and do NOT write.
 
 ```bash
 # Add to local memory (default)
-/claude-md learn "Always run bun test before committing"
+/bluera-base:claude-md learn "Always run bun test before committing"
 
 # Add to shared project memory
-/claude-md learn "Use conventional commits format" --shared
+/bluera-base:claude-md learn "Use conventional commits format" --shared
 
 # View current learnings
-/claude-md learn --list
+/bluera-base:claude-md learn --list
 ```
 
 ---

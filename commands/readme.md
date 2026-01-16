@@ -24,22 +24,22 @@ If `$ARGUMENTS` is empty or not a recognized action, show available subcommands:
 ```
 README Maintainer - Available Commands:
 
-  /readme beautify [instructions]
+  /bluera-base:readme beautify [instructions]
     Improve README formatting, structure, and visual appeal.
     Examples:
-      /readme beautify
-      /readme beautify "use mermaid diagrams"
-      /readme beautify "add CI badges, use tables"
+      /bluera-base:readme beautify
+      /bluera-base:readme beautify "use mermaid diagrams"
+      /bluera-base:readme beautify "add CI badges, use tables"
 
-  /readme breakout [instructions]
+  /bluera-base:readme breakout [instructions]
     Analyze large README and suggest splitting into modular docs.
     Examples:
-      /readme breakout
-      /readme breakout "focus on API documentation"
+      /bluera-base:readme breakout
+      /bluera-base:readme breakout "focus on API documentation"
 
   (coming soon)
-  /readme audit    - Check for issues without fixing
-  /readme sync     - Sync with code changes
+  /bluera-base:readme audit    - Check for issues without fixing
+  /bluera-base:readme sync     - Sync with code changes
 ```
 
 ## Beautify Workflow
