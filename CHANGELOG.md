@@ -4,19 +4,16 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.7.0](https://github.com/blueraai/bluera-base/compare/v0.6.0...v0.7.0) (2026-01-16)
 
-
 ### Features
 
 * **hooks:** add auto-commit hook for session-stop commits ([2645fad](https://github.com/blueraai/bluera-base/commit/2645fad9cd6de36770be731938aee114230c1f73))
 
 ## [0.3.0](https://github.com/blueraai/bluera-base/compare/v0.2.3...v0.3.0) (2026-01-16)
 
-
 ### Features
 
 * add /readme command for README.md maintenance ([6ec3abe](https://github.com/blueraai/bluera-base/commit/6ec3abe55adf3cce8c95c3c9ec4b556568d8b4cb))
 * **readme:** add breakout subcommand for splitting large READMEs ([a46a12a](https://github.com/blueraai/bluera-base/commit/a46a12a501de7f3dc9c61b64e5bd2ac7e5552144))
-
 
 ### Bug Fixes
 
@@ -32,13 +29,11 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [0.2.1](https://github.com/blueraai/bluera-base/compare/v0.2.0...v0.2.1) (2026-01-15)
 
-
 ### Bug Fixes
 
 * **hooks:** remove unused RED variable in session-setup.sh ([bbb73ab](https://github.com/blueraai/bluera-base/commit/bbb73abd7ee6f6700e91ed2db4814532ed9aef07))
 
 ## 0.2.0 (2026-01-15)
-
 
 ### Features
 
@@ -46,7 +41,6 @@ All notable changes to this project will be documented in this file. See [commit
 * add rule templates and /install-rules command ([f7f3532](https://github.com/blueraai/bluera-base/commit/f7f3532888bd8112e35819f6b89645b6ac7c2c0a))
 * **hooks:** add SessionStart hook and cross-platform notifications ([a6e7e56](https://github.com/blueraai/bluera-base/commit/a6e7e5639a32e307081cd66c6bd17de86b86444c))
 * initial bluera-base plugin ([451b099](https://github.com/blueraai/bluera-base/commit/451b099e7ebd455411592658bfeab623a98e858d))
-
 
 ### Bug Fixes
 
@@ -56,7 +50,3 @@ All notable changes to this project will be documented in this file. See [commit
 * **hooks:** critical bug fixes for hook reliability ([7d5540a](https://github.com/blueraai/bluera-base/commit/7d5540ae71f8681a09a77e0eed3640d9a63c7d32))
 * **hooks:** remove pathspec excludes causing git errors ([e279361](https://github.com/blueraai/bluera-base/commit/e279361205a7e517b0e48dcc8f44713cfb82a38e))
 * **hooks:** resolve shellcheck warnings ([255db02](https://github.com/blueraai/bluera-base/commit/255db0272e041c669eb741251e477ae0701a6bac))
-
-# Changelog
-
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
