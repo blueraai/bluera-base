@@ -13,5 +13,11 @@
   },
   "notifications": {
     "enabled": true
+  },
+  "autoCommit": {
+    "enabled": false,
+    "onStop": true,
+    "push": false,
+    "remote": "origin"
   }
 }

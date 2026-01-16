@@ -61,6 +61,8 @@ Shortcuts for common boolean settings:
 |---------|-------------|
 | `auto-learn` | `.autoLearn.enabled` |
 | `notifications` | `.notifications.enabled` |
+| `auto-commit` | `.autoCommit.enabled` |
+| `auto-push` | `.autoCommit.push` |
 
 ### Reset
 
@@ -112,6 +114,12 @@ Env (from CLAUDE_ENV_FILE):
   },
   "notifications": {
     "enabled": true
+  },
+  "autoCommit": {
+    "enabled": false,    // opt-in: auto-commit on session stop
+    "onStop": true,      // trigger on Stop hook
+    "push": false,       // also push after commit
+    "remote": "origin"   // remote to push to
   }
 }
 ```
@@ -160,6 +168,15 @@ Env (from CLAUDE_ENV_FILE):
 
 # Show state file status (useful for debugging milhouse loops)
 /config status --state
+
+# Enable auto-commit on session stop
+/config enable auto-commit
+
+# Enable auto-push after commit
+/config enable auto-push
+
+# Set custom remote for auto-push
+/config set .autoCommit.remote upstream --shared
 ```
 
 ---
