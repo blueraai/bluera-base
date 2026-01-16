@@ -1,0 +1,352 @@
+# Troubleshooting Guide
+
+Common issues and solutions for Claude Code plugins and hooks.
+
+---
+
+## Hook Debugging
+
+### Enable Verbose Mode
+
+```bash
+# Run Claude Code with debug output
+claude --debug
+
+# Or set in settings.json
+"verbose": true
+```
+
+This shows hook registration, execution timing, and any errors.
+
+### Test Hook Scripts Manually
+
+Hooks receive JSON via stdin. Test them directly:
+
+```bash
+# Test a PreToolUse hook
+echo '{"tool_name": "Bash", "tool_input": {"command": "npm version patch"}}' | \
+  bash hooks/block-manual-release.sh
+echo "Exit code: $?"
+
+# Test a PostToolUse hook
+echo '{"tool_name": "Edit", "tool_input": {"file_path": "src/app.ts"}}' | \
+  bash hooks/post-edit-check.sh
+
+# Test a Stop hook
+echo '{"transcript_path": "/path/to/transcript.jsonl", "stop_hook_active": false}' | \
+  bash hooks/milhouse-stop.sh
+```
+
+### Common Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Allow / success |
+| 2 | Block with message (stderr shown to user) |
+| Other | Error (logged, hook skipped) |
+
+---
+
+## State File Issues
+
+### State File Not Found
+
+**Symptom**: Hooks report missing state files or paths.
+
+**Solution**: Check `CLAUDE_PROJECT_DIR` is set correctly:
+
+```bash
+# In hooks, always use:
+cd "${CLAUDE_PROJECT_DIR:-.}"
+STATE_DIR="${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/state"
+```
+
+### State File Corruption
+
+**Symptom**: Invalid iteration, parse errors, unexpected behavior.
+
+**Solution**: Remove corrupted state and restart:
+
+```bash
+rm -rf .bluera/bluera-base/state/milhouse-loop.md
+```
+
+### Atomic State Writes
+
+Always use atomic writes to prevent corruption:
+
+```bash
+TEMP_FILE="${STATE_FILE}.tmp.$$"
+sed "s/^iteration: .*/iteration: $NEXT_ITERATION/" "$STATE_FILE" > "$TEMP_FILE"
+mv "$TEMP_FILE" "$STATE_FILE"
+```
+
+---
+
+## Environment Variable Issues
+
+### CLAUDE_ENV_FILE Empty or Missing
+
+**Known issue**: `CLAUDE_ENV_FILE` may be empty/missing in some environments.
+
+**Symptom**: Bash commands don't have access to published env vars.
+
+**Solution**: Always implement fallbacks:
+
+```bash
+# In hooks that publish env vars
+if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
+    echo "export MY_VAR=\"$VALUE\"" >> "$CLAUDE_ENV_FILE"
+fi
+
+# In commands/scripts that consume env vars
+STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/state}"
+```
+
+### SessionStart Hook Not Receiving CLAUDE_ENV_FILE
+
+**Known issue**: Plugin SessionStart hooks may not receive `CLAUDE_ENV_FILE`.
+
+**Workaround**:
+- Provide a manual `/init` command that runs the same setup logic
+- Design commands to lazily initialize if state is missing
+
+---
+
+## Plugin Loading Issues
+
+### Plugin Not Appearing
+
+**Symptoms**:
+- Commands not available via `/plugin-name:command`
+- Skills not being applied
+
+**Solutions**:
+
+1. Clear plugin cache:
+   ```bash
+   rm -rf ~/.claude/plugins/cache
+   ```
+
+2. Validate manifest:
+   ```bash
+   claude plugin validate
+   ```
+
+3. Check plugin structure:
+   ```
+   my-plugin/
+   ├─ .claude-plugin/
+   │  └─ plugin.json    # Manifest here
+   ├─ commands/         # At plugin root, NOT inside .claude-plugin
+   ├─ skills/
+   └─ hooks/
+   ```
+
+### Skills Not Loading
+
+**Symptom**: Skill not being applied automatically.
+
+**Causes**:
+- `description` field not matching task intent
+- `disable-model-invocation: true` set (manual only)
+- SKILL.md too large (context bloat)
+
+**Solution**: Keep SKILL.md lean, push detail to `references/*.md`.
+
+---
+
+## Hook Registration Issues
+
+### Hooks Not Firing
+
+1. Check `hooks.json` structure:
+   ```json
+   {
+     "hooks": {
+       "PreToolUse": [
+         {
+           "matcher": "Bash",
+           "command": "${CLAUDE_PLUGIN_ROOT}/hooks/my-hook.sh"
+         }
+       ]
+     }
+   }
+   ```
+
+2. Verify script is executable:
+   ```bash
+   chmod +x hooks/*.sh
+   ```
+
+3. Check matcher syntax - common patterns:
+   - `"Bash"` - matches Bash tool
+   - `"Write|Edit"` - matches Write OR Edit
+   - `""` or missing - matches all tools
+
+### Hooks Firing Multiple Times
+
+**Cause**: Multiple plugins or duplicate hook registrations.
+
+**Solution**: Check all installed plugins and remove duplicates.
+
+---
+
+## Cross-Session Issues
+
+### State Bleed Between Terminals
+
+**Symptom**: Hook fires in wrong terminal session.
+
+**Cause**: State file not session-scoped.
+
+**Solution**: Use session ID from transcript path:
+
+```bash
+CURRENT_SESSION=$(echo "$HOOK_INPUT" | jq -r '.transcript_path' | md5 -q)
+
+# Store in state file
+STORED_SESSION=$(grep '^session_id:' "$STATE_FILE" | sed 's/session_id: *//')
+
+# Ignore if mismatch
+if [[ "$STORED_SESSION" != "$CURRENT_SESSION" ]]; then
+  exit 0
+fi
+```
+
+---
+
+## Common Error Patterns
+
+### jq: command not found
+
+**Solution**: Install jq
+
+```bash
+# macOS
+brew install jq
+
+# Ubuntu/Debian
+sudo apt-get install jq
+
+# Windows (Git Bash)
+# Download from https://stedolan.github.io/jq/download/
+```
+
+### Permission Denied on Hook Scripts
+
+```bash
+chmod +x hooks/*.sh
+```
+
+### JSON Parse Errors
+
+Always validate JSON before processing:
+
+```bash
+if ! RESULT=$(echo "$INPUT" | jq -r '.field' 2>&1); then
+  echo "Parse error: $RESULT" >&2
+  exit 0  # Fail open, not closed
+fi
+```
+
+### Infinite Stop Hook Loops
+
+**Symptom**: Claude keeps retrying after Stop hook blocks.
+
+**Solution**: Check `stop_hook_active` field:
+
+```bash
+STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
+if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
+  exit 0  # Already tried once, allow exit
+fi
+```
+
+---
+
+## Compaction Issues
+
+### CLAUDE.md Ignored After /compact
+
+**Known issue**: Claude may "forget" CLAUDE.md guidance after compaction.
+
+**Solutions**:
+
+1. Use `SessionStart` hook to inject critical invariants:
+   ```json
+   {
+     "hookSpecificOutput": {
+       "additionalContext": "Critical: Always run tests before commit"
+     }
+   }
+   ```
+
+2. Keep a minimal "Critical invariants" section in CLAUDE.md (5-15 lines max)
+
+3. Use `PreCompact` hook to snapshot important state
+
+---
+
+## Marketplace Issues
+
+### Plugin Updates Not Appearing
+
+**Symptom**: Version bump doesn't result in updated plugin.
+
+**Solution**:
+```bash
+# Update marketplace cache
+/plugin marketplace update <marketplace>
+
+# Or manually pull
+cd ~/.claude/plugins/marketplaces/<marketplace-name>/
+git pull
+```
+
+### Self-Hosted Marketplace Stale
+
+**Workaround**: Always update marketplace before install:
+```bash
+/plugin marketplace update my-marketplace
+/plugin install my-plugin
+```
+
+---
+
+## Diagnostic Commands
+
+### Check Hook Registration
+
+```bash
+# View hooks.json
+cat ~/.claude/plugins/cache/<plugin>/hooks/hooks.json | jq
+
+# List installed plugins
+ls ~/.claude/plugins/cache/
+```
+
+### Check State Files
+
+```bash
+# View milhouse state
+cat .bluera/bluera-base/state/milhouse-loop.md
+
+# View config
+cat .bluera/bluera-base/config.json
+```
+
+### Test Without Plugin Cache
+
+```bash
+# Run with plugin from source directory
+claude --plugin-dir /path/to/my-plugin
+```
+
+---
+
+## References
+
+- [Claude Code Hooks Docs](https://code.claude.com/docs/en/hooks)
+- [Claude Code Plugins Docs](https://code.claude.com/docs/en/plugins)
+- [Known Issues](https://github.com/anthropics/claude-code/issues)
