@@ -1,6 +1,8 @@
 # Bluera Base
 
+[![CI](https://github.com/blueraai/bluera-base/actions/workflows/ci.yml/badge.svg)](https://github.com/blueraai/bluera-base/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blueviolet)
 
 > **Shared development conventions for any project.** Multi-language hooks, skills, and CLAUDE.md patterns for consistent Claude Code workflows.
 
@@ -20,6 +22,28 @@ When developing projects with Claude Code, you want consistent conventions acros
 
 **The result:** Every project gets the same quality gates and conventions, without duplication.
 
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
+flowchart LR
+    subgraph Project["Your Project"]
+        A[CLAUDE.md]
+        B[Code]
+    end
+
+    subgraph BB["Bluera Base"]
+        C[Hooks]
+        D[Skills]
+        E[Includes]
+    end
+
+    E -->|"@include"| A
+    C -->|"validate"| B
+    D -->|"guide"| B
+
+    style Project fill:#1e1b4b,stroke:#6366f1,stroke-width:2px
+    style BB fill:#312e81,stroke:#818cf8,stroke-width:2px
+```
+
 ---
 
 ## Table of Contents
@@ -31,10 +55,7 @@ When developing projects with Claude Code, you want consistent conventions acros
 - [Installation](#installation)
 - [What's Included](#whats-included)
 - [Supported Languages](#supported-languages)
-- [Usage](#usage)
-- [Customization](#customization)
-- [Development](#development)
-- [Contributing](#contributing)
+- [Documentation](#documentation)
 - [License](#license)
 
 </details>
@@ -72,6 +93,27 @@ claude --plugin-dir /path/to/bluera-base
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
+
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
+flowchart LR
+    A[SessionStart] --> B[session-setup.sh]
+    B --> C{Tool Use}
+    C -->|"Bash"| D[block-manual-release.sh]
+    C -->|"Write/Edit"| E[post-edit-check.sh]
+    D --> F{Allowed?}
+    E --> G{Passes?}
+    F -->|No| H[❌ Block]
+    F -->|Yes| I[✓ Continue]
+    G -->|No| H
+    G -->|Yes| I
+    I --> J[Stop]
+    J --> K[milhouse-stop.sh]
+
+    style A fill:#1e1b4b,stroke:#6366f1
+    style H fill:#7f1d1d,stroke:#ef4444
+    style I fill:#14532d,stroke:#22c55e
+```
 
 <details>
 <summary><b>What post-edit-check.sh does</b></summary>
@@ -147,17 +189,39 @@ Each issue gets a confidence score (0-100). Only issues scoring >= 80 are report
 
 The `/release` command provides a standardized release workflow:
 
-1. **Pre-flight checks** - Ensures clean working directory
-2. **Auto-detection** - Analyzes conventional commits to determine version bump:
-   - `fix:` → patch (0.0.x)
-   - `feat:` → minor (0.x.0)
-   - `feat!:` or `BREAKING CHANGE:` → major (x.0.0)
-3. **Version bump** - Uses language-appropriate tools:
-   - JS/TS: `npm version`
-   - Python: `poetry version`, `hatch version`, or `bump2version`
-   - Rust: `cargo release`
-   - Go: git tags
-4. **CI monitoring** - Watches GitHub Actions until release completes
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
+flowchart TB
+    A["/release"] --> B["Pre-flight Checks"]
+    B --> C{"Clean working dir?"}
+    C -->|No| D["❌ Abort"]
+    C -->|Yes| E["Analyze Commits"]
+    E --> F{"Commit Type?"}
+    F -->|"fix:"| G["patch 0.0.x"]
+    F -->|"feat:"| H["minor 0.x.0"]
+    F -->|"feat!:"| I["major x.0.0"]
+    G --> J["Version Bump"]
+    H --> J
+    I --> J
+    J --> K["Push + CI Monitor"]
+    K --> L["✓ Release Complete"]
+
+    style A fill:#6366f1,stroke:#818cf8
+    style D fill:#7f1d1d,stroke:#ef4444
+    style L fill:#14532d,stroke:#22c55e
+```
+
+| Commit Type | Version Bump | Example |
+|-------------|--------------|---------|
+| `fix:` | patch (0.0.x) | Bug fixes |
+| `feat:` | minor (0.x.0) | New features |
+| `feat!:` / `BREAKING CHANGE:` | major (x.0.0) | Breaking changes |
+
+**Language-specific tools:**
+- **JS/TS:** `npm version`
+- **Python:** `poetry version`, `hatch version`, or `bump2version`
+- **Rust:** `cargo release`
+- **Go:** git tags
 
 The `block-manual-release.sh` hook prevents bypassing this workflow by blocking direct version/release commands.
 
@@ -168,21 +232,42 @@ The `block-manual-release.sh` hook prevents bypassing this workflow by blocking 
 
 The milhouse loop is an iterative development pattern:
 
-1. **Start with a prompt** - From file or inline
-2. **Work on the task** - Claude works toward completion
-3. **Loop continues** - When Claude tries to exit, the Stop hook intercepts and feeds the same prompt back
-4. **Build on previous work** - Each iteration sees previous changes in files and git history
-5. **Exit on completion** - Output `<promise>YOUR_PROMISE</promise>` when genuinely complete
+```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
+flowchart TB
+    A["/milhouse-loop prompt.md"] --> B["Load Prompt"]
+    B --> C["Claude Works on Task"]
+    C --> D{"Tries to Exit"}
+    D --> E{"Promise Found?"}
+    E -->|No| F["Stop Hook Intercepts"]
+    F --> G["Feed Prompt Back"]
+    G --> C
+    E -->|Yes| H["✓ Exit Allowed"]
+
+    subgraph Loop["Iteration Loop"]
+        C
+        D
+        E
+        F
+        G
+    end
+
+    style A fill:#6366f1,stroke:#818cf8
+    style H fill:#14532d,stroke:#22c55e
+    style Loop fill:#1e1b4b,stroke:#818cf8,stroke-width:2px
+```
 
 **Usage:**
 ```bash
 /milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
 ```
 
-**Stopping:**
-- Output `<promise>TASK COMPLETE</promise>` (or custom promise)
-- Reach max iterations limit
-- Run `/cancel-milhouse`
+**Exit conditions:**
+| Condition | What Happens |
+|-----------|--------------|
+| `<promise>TEXT</promise>` in output | Loop exits successfully |
+| Max iterations reached | Loop exits with warning |
+| `/cancel-milhouse` | Loop cancelled |
 
 </details>
 
@@ -216,246 +301,14 @@ The `post-edit-check.sh` hook automatically detects and validates:
 
 ---
 
-## Usage
-
-### Using @includes in your CLAUDE.md
-
-Create a `CLAUDE.md` in your project root:
-
-```markdown
-@bluera-base/includes/CLAUDE-BASE.md
-
----
-
-## Package Manager
-
-**Use `bun`** - All scripts: `bun run <script>`
-
----
-
-## Scripts
-
-**Development:**
-- `bun run build` - Compile TypeScript
-- `bun run test:run` - Run tests once
-- `bun run precommit` - Full validation
-
-## Versioning
-
-- `bun run version:patch` - Bump patch (0.0.x)
-```
-
-The `@bluera-base/includes/CLAUDE-BASE.md` pulls in:
-- Header explaining CLAUDE.md vs README.md
-- Hierarchical CLAUDE.md explanation
-- ALWAYS/NEVER conventions
-
-### Overriding Skills
-
-To customize a skill for your project:
-
-1. Create `.claude/skills/atomic-commits/SKILL.md` in your project
-2. Copy the base skill content
-3. Modify the "Trigger files" section for your project structure
-
-Your local skill takes precedence over the plugin's version.
-
-### Using the Settings Template
-
-Copy `templates/settings.local.json.example` to your project's `.claude/settings.local.json`:
-
-```bash
-cp /path/to/bluera-base/templates/settings.local.json.example .claude/settings.local.json
-```
-
-This provides:
-- Pre-approved commands for multiple package managers and languages
-- PostToolUse hook for validation
-- Notification hook for permission prompts
-
----
-
-## Customization
-
-### Project-specific trigger files
-
-The `atomic-commits` skill has generic trigger files. Override by creating your own:
-
-```markdown
-# .claude/skills/atomic-commits/SKILL.md
-
-**Trigger files -> check README.md:**
-- `src/mcp/server.ts` - MCP tool surface
-- `.claude-plugin/plugin.json` - Plugin metadata
-- `commands/*.md` - Command documentation
-```
-
-### Additional hooks
-
-Add project-specific hooks in your `.claude/settings.local.json`:
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [{
-          "type": "command",
-          "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/my-custom-hook.sh\""
-        }]
-      }
-    ]
-  }
-}
-```
-
-### Extending ALWAYS/NEVER rules
-
-Add project-specific rules after the @include:
-
-```markdown
-@bluera-base/includes/CLAUDE-BASE.md
-
-## ALWAYS (project-specific)
-
-* run `bun run validate:api` before modifying API endpoints
-
-## NEVER (project-specific)
-
-* commit directly to main without PR
-```
-
-### Architectural Constraint Skills
-
-For projects with critical architectural requirements (e.g., "code must be database-agnostic"), use the template:
-
-```bash
-# Copy the template
-cp /path/to/bluera-base/skills/architectural-constraints/SKILL.md.template \
-   .claude/skills/[constraint-name]/SKILL.md
-
-# Edit to match your constraint
-```
-
-The template provides structure for:
-- What violates the constraint (with code examples)
-- Where constrained code IS allowed (table format)
-- The correct pattern (with code examples)
-- Why it matters
-
-### Subdirectory CLAUDE.md Files
-
-For large projects, create directory-specific CLAUDE.md files that auto-load when working in that directory:
-
-```bash
-# Copy the template
-cp /path/to/bluera-base/templates/subdirectory-CLAUDE.md.template \
-   [directory]/CLAUDE.md
-```
-
-Example: A `tests/CLAUDE.md` that explains why tests are organized a certain way.
-
----
-
-## Development
-
-### Setup
-
-```bash
-git clone https://github.com/blueraai/bluera-base.git
-cd bluera-base
-```
-
-No build step required - this plugin is pure markdown and shell scripts.
-
-### Dogfooding (Testing Your Development Version)
-
-The easiest way to test the plugin during development is to run Claude Code from the repo root:
-
-```bash
-cd /path/to/bluera-base
-claude --plugin-dir .
-```
-
-This loads the current directory as a plugin. Your commands, hooks, and skills are active immediately.
-
-**From any directory:**
-
-```bash
-claude --plugin-dir /path/to/bluera-base
-```
-
-| What to test | How |
-|--------------|-----|
-| Commands (`/release`, `/commit`) | `--plugin-dir .` (restart to pick up changes) |
-| Hooks (post-edit, milhouse) | `--plugin-dir .` (restart to pick up changes) |
-| Skills | `--plugin-dir .` (restart to pick up changes) |
-
-Changes take effect on Claude Code restart (no reinstall needed).
-
-### Project Structure
-
-```
-bluera-base/
-├── .claude-plugin/
-│   └── plugin.json               # Plugin manifest
-├── commands/
-│   ├── cancel-milhouse.md        # /cancel-milhouse command
-│   ├── claude-md.md              # /claude-md command
-│   ├── code-review.md            # /code-review command
-│   ├── commit.md                 # /commit command
-│   ├── install-rules.md          # /install-rules command
-│   ├── milhouse-loop.md          # /milhouse-loop command
-│   ├── readme.md                 # /readme command
-│   ├── release.md                # /release command
-│   └── test-plugin.md            # /test-plugin command
-├── hooks/
-│   ├── hooks.json                # Hook definitions
-│   ├── block-manual-release.sh   # Enforces /release workflow
-│   ├── milhouse-setup.sh         # Initializes milhouse loop state
-│   ├── milhouse-stop.sh          # Stop hook for milhouse iterations
-│   ├── notify.sh                 # Cross-platform notifications
-│   ├── post-edit-check.sh        # Multi-language validation hook
-│   └── session-setup.sh          # SessionStart dependency check
-├── skills/
-│   ├── architectural-constraints/
-│   │   └── SKILL.md.template     # Template for constraint skills
-│   ├── atomic-commits/
-│   │   └── SKILL.md              # Commit guidelines
-│   ├── claude-md-maintainer/
-│   │   ├── SKILL.md              # CLAUDE.md validation skill
-│   │   ├── docs/                 # Invariants and heuristics
-│   │   └── templates/            # CLAUDE.md templates
-│   ├── code-review-repo/
-│   │   └── SKILL.md              # Multi-agent review
-│   ├── milhouse/
-│   │   └── SKILL.md              # Iterative development loop
-│   ├── readme-maintainer/
-│   │   ├── SKILL.md              # README formatting guidelines
-│   │   └── templates/            # Badge and structure templates
-│   └── release/
-│       └── SKILL.md              # Release workflow
-├── includes/
-│   └── CLAUDE-BASE.md            # @includeable sections
-├── templates/
-│   ├── claude/
-│   │   └── rules/                # Rule templates for /install-rules
-│   ├── CLAUDE.md.template
-│   ├── settings.local.json.example
-│   └── subdirectory-CLAUDE.md.template
-└── README.md
-```
-
----
-
-## Contributing
-
-Contributions welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Usage](docs/usage.md) | @includes, overriding skills, settings templates |
+| [Customization](docs/customization.md) | Trigger files, hooks, rules, architectural constraints |
+| [Development](docs/development.md) | Setup, dogfooding, project structure |
+| [Contributing](CONTRIBUTING.md) | How to contribute |
 
 ---
 
