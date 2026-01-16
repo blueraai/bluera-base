@@ -119,24 +119,32 @@ flowchart LR
 On every Write/Edit operation, the hook auto-detects your project type and runs appropriate checks:
 
 **JavaScript/TypeScript:**
+
 - Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
 - Runs ESLint with `--fix` on modified files
 - Type-checks with `tsc --noEmit` if tsconfig.json exists
 
 **Python:**
+
 - Runs `ruff check --fix` (preferred) or `flake8`
 - Type-checks with `mypy` if pyproject.toml/mypy.ini exists
 
 **Rust:**
+
 - Auto-formats with `cargo fmt`
 - Runs `cargo clippy` for linting
 - Runs `cargo check` for compile errors
 
 **Go:**
+
 - Runs `golangci-lint` (preferred) or `go vet`
 
 **All Languages:**
+
 - Anti-pattern detection: blocks `fallback`, `deprecated`, `backward compatibility`, `legacy`
+- Strict typing (opt-in via `/bluera-base:config enable strict-typing`):
+  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-ignore`, `@ts-nocheck`
+  - Python: blocks `Any`, `type: ignore` without code, `cast()`
 
 Exit code 2 blocks the operation and shows the error to Claude.
 
@@ -214,6 +222,7 @@ flowchart LR
 | `feat!:` / `BREAKING CHANGE:` | major (x.0.0) | Breaking changes |
 
 **Language-specific tools:**
+
 - **JS/TS:** `npm version`
 - **Python:** `poetry version`, `hatch version`, or `bump2version`
 - **Rust:** `cargo release`
@@ -242,11 +251,13 @@ flowchart LR
 ```
 
 **Usage:**
+
 ```bash
 /bluera-base:milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
 ```
 
 **Exit conditions:**
+
 | Condition | What Happens |
 |-----------|--------------|
 | `<promise>TEXT</promise>` in output | Loop exits successfully |
