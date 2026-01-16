@@ -61,7 +61,7 @@ SUGGESTIONS=""
 # Analyze command patterns
 while IFS= read -r line; do
   CMD=$(echo "$line" | jq -r '.key')
-  COUNT=$(echo "$line" | jq -r '.value')
+  # COUNT available for future use: COUNT=$(echo "$line" | jq -r '.value')
 
   case "$CMD" in
     npm:test|bun:test|yarn:test|pnpm:test|cargo:test|go:test|pytest:*|jest:*|vitest:*)

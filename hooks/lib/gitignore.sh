@@ -23,9 +23,7 @@ gitignore_has_pattern() {
     return 1
   fi
 
-  # Escape special characters for grep
-  local escaped
-  escaped=$(printf '%s\n' "$pattern" | sed 's/[[\.*^$()+?{|]/\\&/g')
+  # Check for exact pattern match
   grep -qFx "$pattern" "$gitignore" 2>/dev/null
 }
 
