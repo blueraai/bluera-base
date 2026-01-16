@@ -1,7 +1,7 @@
 ---
 description: Configure Claude Code's terminal status line display
 allowed-tools: Bash(git:*), Bash(jq:*), Bash(cat:*), Bash(mkdir:*), Bash(cp:*), Bash(chmod:*), Read, Write, Edit, AskUserQuestion, WebFetch
-argument-hint: [show|preset|barista|custom|reset]
+argument-hint: [show|preset|custom|reset]
 ---
 
 # Status Line Configuration
@@ -13,8 +13,7 @@ Manage Claude Code's status line display at the bottom of your terminal.
 | Command | Description |
 |---------|-------------|
 | `/bluera-base:statusline` or `/bluera-base:statusline show` | Display current configuration |
-| `/bluera-base:statusline preset <name>` | Apply a preset configuration |
-| `/bluera-base:statusline barista` | Install/configure Barista (advanced) |
+| `/bluera-base:statusline preset <name>` | Apply a preset (minimal, informative, developer, system) |
 | `/bluera-base:statusline custom` | Interactive custom configuration |
 | `/bluera-base:statusline reset` | Reset to Claude Code defaults |
 
@@ -63,6 +62,8 @@ Script receives JSON input, outputs status text.
 
 ### Minimal
 
+Static string - lightweight, no script needed.
+
 ```json
 {
   "statusLine": "%model% | %context%"
@@ -70,6 +71,8 @@ Script receives JSON input, outputs status text.
 ```
 
 ### Informative
+
+Static string with cost display.
 
 ```json
 {
@@ -79,58 +82,72 @@ Script receives JSON input, outputs status text.
 
 ### Developer
 
-Uses a script showing git branch, project type, and more:
+Script-based with git integration, project detection, and context awareness.
 
-```bash
-#!/bin/bash
-# ~/.claude/statusline.sh
-read -r INPUT
-DIR=$(echo "$INPUT" | jq -r '.workspace.current_dir // "unknown"')
-MODEL=$(echo "$INPUT" | jq -r '.model.display_name // "Claude"')
-CONTEXT=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
-BRANCH=$(cd "$DIR" 2>/dev/null && git branch --show-current 2>/dev/null || echo "")
+Theme: `default` | Modules: `directory,model,context,git,project,cost`
 
-OUTPUT="🤖 $MODEL | 📊 ${CONTEXT}%"
-[ -n "$BRANCH" ] && OUTPUT="$OUTPUT | 🌿 $BRANCH"
-echo "$OUTPUT"
-```
+### System
+
+Script-based with system monitoring (CPU, memory, docker).
+
+Theme: `default` | Modules: `directory,model,context,git,cpu,memory,docker`
 
 ---
 
-## Barista Integration
+## Themes
 
-[Barista](https://github.com/pstuart/Barista) is a full-featured modular status line.
+Five themes available for script-based status lines:
 
-### Features
+| Theme | Description | Example Status |
+|-------|-------------|----------------|
+| `default` | Standard emoji | 🟢🟡🔴 📁 📊 🌿 |
+| `minimal` | Geometric shapes | ◦○● → ⎇ |
+| `vibrant` | Bold emoji | 💚💛❤️ 📂 🎯 🔀 |
+| `monochrome` | ASCII only | `[OK][~~][!!]` DIR: CTX: |
+| `nerd` | Nerd Font glyphs |    |
 
-- **Modules**: context, git, cost, rate limits, battery, docker, and more
-- **Themes**: default, minimal, vibrant, monochrome, nerd fonts
-- **Modes**: normal, compact, verbose
-- **Per-project**: `.barista.conf` overrides
+---
 
-### Quick Install
+## Available Modules
 
-```bash
-git clone https://github.com/pstuart/Barista.git ~/.claude/barista
-cd ~/.claude/barista && ./install.sh
-```
+### Core Modules
 
-### Recommended Presets
+| Module | Description |
+|--------|-------------|
+| `directory` | Current directory name |
+| `model` | Claude model display name |
+| `context` | Context window usage with status indicator |
+| `git` | Branch name and dirty/staged status |
+| `cost` | Session cost in USD |
+| `rate-limits` | 5h/7d API usage via OAuth |
+| `project` | Project type detection (Rust, Go, Python, Node, etc.) |
+| `lines-changed` | Lines added/removed (via git diff) |
 
-**Espresso (Minimal)**:
+### System Modules
 
-```bash
-DISPLAY_MODE="compact"
-MODULE_ORDER="directory,context,git,model"
-```
+| Module | Description |
+|--------|-------------|
+| `battery` | Battery % with charging indicator (macOS) |
+| `cpu` | CPU usage percentage |
+| `memory` | RAM usage percentage |
+| `docker` | Running container count |
 
-**Americano (Developer)**:
+### Extra Modules
 
-```bash
-MODULE_DOCKER="true"
-MODULE_CPU="true"
-MODULE_ORDER="directory,git,docker,cpu,model,cost,rate-limits"
-```
+| Module | Description |
+|--------|-------------|
+| `time` | Current time/date |
+| `cca-status` | Claude Code Anywhere status |
+
+---
+
+## Display Modes
+
+| Mode | Description |
+|------|-------------|
+| `normal` | Standard display with all elements |
+| `compact` | Shortened output, fewer separators |
+| `verbose` | Full detail with progress bars |
 
 ---
 
@@ -145,24 +162,17 @@ MODULE_ORDER="directory,git,docker,cpu,model,cost,rate-limits"
 
 ### Preset
 
-Arguments: `<preset-name>`
+Arguments: `<preset-name>` (minimal, informative, developer, system)
 
-1. Validate preset exists (minimal, informative, developer)
-2. For script-based presets:
-   - Create `~/.claude/statusline.sh` with template
+1. Validate preset exists
+2. For script-based presets (developer, system):
+   - Read skill for module implementations
+   - Generate `~/.claude/statusline.sh` with selected theme and modules
    - Make executable
-3. Update `~/.claude/settings.json`
-4. Report changes
-
-### Barista
-
-1. Check if Barista is installed (`~/.claude/barista/`)
-2. If not installed:
-   - Offer to clone repository
-   - Run interactive installer
-3. If installed:
-   - Show current config
-   - Offer to reconfigure
+3. For static presets (minimal, informative):
+   - Set static string directly
+4. Update `~/.claude/settings.json`
+5. Report changes
 
 ### Custom
 
@@ -170,10 +180,14 @@ Interactive workflow:
 
 1. Ask: Built-in, static text, or script-based?
 2. If static: Ask for format string
-3. If script: Ask which modules (context, git, cost, etc.)
+3. If script:
+   a. Select theme (default, minimal, vibrant, monochrome, nerd)
+   b. Select modules (multi-select from available list)
+   c. Select display mode (normal, compact, verbose)
 4. Generate configuration
-5. Preview before applying
-6. Update settings
+5. If existing script has custom sections, preserve them
+6. Preview before applying
+7. Update settings
 
 ### Reset
 
@@ -222,14 +236,14 @@ For command-based, input JSON includes:
 # Show current config
 /bluera-base:statusline show
 
-# Apply minimal preset
+# Apply minimal preset (static)
 /bluera-base:statusline preset minimal
 
 # Apply developer preset (script-based)
 /bluera-base:statusline preset developer
 
-# Install Barista
-/bluera-base:statusline barista
+# Apply system monitoring preset
+/bluera-base:statusline preset system
 
 # Interactive custom setup
 /bluera-base:statusline custom
@@ -281,6 +295,8 @@ OUTPUT="🤖 $MODEL | 📊 ${CONTEXT}%${STATUS}"
 echo "$OUTPUT"
 ```
 
+See `skills/statusline/SKILL.md` for complete module implementations and theme definitions.
+
 ---
 
 ## Troubleshooting
@@ -295,9 +311,15 @@ echo "$OUTPUT"
 
 Static strings use `%var%` format. Command-based use JSON input.
 
-### Barista issues
+### Custom sections lost
 
-See [Barista troubleshooting](https://github.com/pstuart/Barista#troubleshooting).
+When regenerating scripts, the command preserves sections marked with boundary comments:
+
+```bash
+# --- custom ---
+# Your custom code here
+# --- end custom ---
+```
 
 ---
 
