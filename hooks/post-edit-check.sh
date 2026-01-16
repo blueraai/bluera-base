@@ -234,29 +234,191 @@ check_anti_patterns_file() {
 
   local ANTI_RE='\b(fallback|deprecated|backward compatibility|legacy)\b'
 
-  # If git tracked, check only added lines
+  # Get content to check (added lines for tracked files, full file otherwise)
+  local CONTENT=""
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-      local ADDED
-      ADDED=$(git diff -U0 -- "$file" 2>/dev/null | grep -E '^\+' | grep -vE '^\+\+\+' || true)
-      if echo "$ADDED" | grep -Eiq "$ANTI_RE"; then
-        echo "Anti-pattern detected in added lines ($file): fallback/deprecated/legacy/backward compatibility" >&2
-        echo "$ADDED" | grep -Ei "$ANTI_RE" | head -10 >&2
-        return 2
-      fi
-      return 0
+      CONTENT=$(git diff -U0 -- "$file" 2>/dev/null | grep -E '^\+' | grep -vE '^\+\+\+' || true)
     fi
   fi
+  [ -z "$CONTENT" ] && CONTENT=$(cat "$file")
 
-  # Untracked or non-git: scan full file
-  if grep -Eiq "$ANTI_RE" "$file"; then
-    echo "Anti-pattern detected in file ($file): fallback/deprecated/legacy/backward compatibility" >&2
-    grep -Ein "$ANTI_RE" "$file" | head -10 >&2
+  # Check general anti-patterns
+  if echo "$CONTENT" | grep -Eiq "$ANTI_RE"; then
+    echo "Anti-pattern detected ($file): fallback/deprecated/legacy/backward compatibility" >&2
+    echo "$CONTENT" | grep -Ei "$ANTI_RE" | head -10 >&2
     return 2
   fi
 
   return 0
 }
+
+# === Lint Suppression Check (config files) ===
+
+check_lint_suppression_file() {
+  local file="$1"
+
+  # Only check lint config files
+  case "$file" in
+    .markdownlint*|.eslintrc*|eslint.config.*|.pylintrc|pyproject.toml|.ruff.toml|ruff.toml) ;;
+    *) return 0 ;;
+  esac
+
+  # File must exist
+  [ -f "$file" ] || return 0
+
+  # Only check added lines (new suppressions)
+  local ADDED=""
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+      ADDED=$(git diff -U0 -- "$file" 2>/dev/null | grep -E '^\+' | grep -vE '^\+\+\+' || true)
+    fi
+  fi
+
+  # Skip if no added lines (only check new suppressions)
+  [ -z "$ADDED" ] && return 0
+
+  case "$file" in
+    .markdownlint*)
+      # Check for disabling markdown rules: "MD___": false
+      if echo "$ADDED" | grep -E '"MD[0-9]+"\s*:\s*false' | grep -v '// ok:' | grep -q .; then
+        echo "Lint suppression detected ($file): disabling markdownlint rules" >&2
+        echo "Fix the markdown issues instead of disabling rules." >&2
+        echo "$ADDED" | grep -E '"MD[0-9]+"\s*:\s*false' | head -5 >&2
+        return 2
+      fi
+      ;;
+    .eslintrc*|eslint.config.*)
+      # Check for disabling eslint rules: "off" or 0
+      if echo "$ADDED" | grep -E ':\s*("off"|0)\s*[,}]' | grep -v '// ok:' | grep -q .; then
+        echo "Lint suppression detected ($file): disabling ESLint rules" >&2
+        echo "Fix the code issues instead of disabling rules." >&2
+        echo "$ADDED" | grep -E ':\s*("off"|0)' | head -5 >&2
+        return 2
+      fi
+      ;;
+    pyproject.toml|.ruff.toml|ruff.toml)
+      # Check for ignore patterns in ruff config
+      if echo "$ADDED" | grep -E 'ignore\s*=' | grep -v '# ok:' | grep -q .; then
+        echo "Lint suppression detected ($file): adding ruff ignore patterns" >&2
+        echo "Fix the Python issues instead of ignoring rules." >&2
+        echo "$ADDED" | grep -E 'ignore\s*=' | head -5 >&2
+        return 2
+      fi
+      ;;
+    .pylintrc)
+      # Check for disable additions
+      if echo "$ADDED" | grep -E 'disable\s*=' | grep -v '# ok:' | grep -q .; then
+        echo "Lint suppression detected ($file): disabling pylint rules" >&2
+        echo "Fix the Python issues instead of disabling rules." >&2
+        echo "$ADDED" | grep -E 'disable\s*=' | head -5 >&2
+        return 2
+      fi
+      ;;
+  esac
+
+  return 0
+}
+
+# === Strict Typing Check (single file) ===
+
+check_strict_typing_file() {
+  local file="$1"
+
+  # File must exist
+  [ -f "$file" ] || return 0
+
+  # Get content to check (added lines for tracked files, full file otherwise)
+  local CONTENT=""
+  if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+      CONTENT=$(git diff -U0 -- "$file" 2>/dev/null | grep -E '^\+' | grep -vE '^\+\+\+' || true)
+    fi
+  fi
+  [ -z "$CONTENT" ] && CONTENT=$(cat "$file")
+
+  case "$file" in
+    *.ts|*.tsx)
+      # TypeScript strict typing violations
+      # Check for: any type, as casts, @ts-ignore, @ts-expect-error without reason
+
+      # 'any' type (but not 'company' or 'many' etc)
+      if echo "$CONTENT" | grep -E ':\s*any\b|<any>|as\s+any\b' | grep -v '// ok:' | grep -q .; then
+        echo "Strict typing violation ($file): 'any' type is forbidden" >&2
+        echo "$CONTENT" | grep -En ':\s*any\b|<any>|as\s+any\b' | grep -v '// ok:' | head -5 >&2
+        return 2
+      fi
+
+      # Unsafe 'as' type casts (but allow 'as const')
+      if echo "$CONTENT" | grep -E '\bas\s+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | grep -q .; then
+        echo "Strict typing violation ($file): unsafe 'as' cast is forbidden (use type guards)" >&2
+        echo "$CONTENT" | grep -En '\bas\s+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | head -5 >&2
+        return 2
+      fi
+
+      # @ts-ignore without explanation
+      if echo "$CONTENT" | grep -E '@ts-ignore(?!\s+.{10,})' | grep -q .; then
+        echo "Strict typing violation ($file): @ts-ignore requires explanation" >&2
+        echo "$CONTENT" | grep -En '@ts-ignore' | head -5 >&2
+        return 2
+      fi
+
+      # @ts-nocheck is always forbidden
+      if echo "$CONTENT" | grep -q '@ts-nocheck'; then
+        echo "Strict typing violation ($file): @ts-nocheck is forbidden" >&2
+        return 2
+      fi
+      ;;
+
+    *.js|*.jsx|*.mjs|*.cjs)
+      # JavaScript - check for @ts-ignore in JS files (indicates type issues being suppressed)
+      if echo "$CONTENT" | grep -q '@ts-ignore\|@ts-nocheck'; then
+        echo "Strict typing violation ($file): TypeScript ignores in JS files indicate type issues" >&2
+        return 2
+      fi
+      ;;
+
+    *.py|*.pyi)
+      # Python strict typing violations
+
+      # type: ignore without code
+      if echo "$CONTENT" | grep -E '#\s*type:\s*ignore(?!\[)' | grep -q .; then
+        echo "Strict typing violation ($file): 'type: ignore' requires error code [code]" >&2
+        echo "$CONTENT" | grep -En '#\s*type:\s*ignore' | head -5 >&2
+        return 2
+      fi
+
+      # Any type usage (from typing import Any, or : Any)
+      if echo "$CONTENT" | grep -E '\bAny\b' | grep -v '# ok:' | grep -q .; then
+        echo "Strict typing violation ($file): 'Any' type is forbidden (use specific types or generics)" >&2
+        echo "$CONTENT" | grep -En '\bAny\b' | grep -v '# ok:' | head -5 >&2
+        return 2
+      fi
+
+      # cast() is usually a code smell
+      if echo "$CONTENT" | grep -E '\bcast\s*\(' | grep -v '# ok:' | grep -q .; then
+        echo "Strict typing violation ($file): cast() is forbidden (use type guards or fix types)" >&2
+        echo "$CONTENT" | grep -En '\bcast\s*\(' | head -5 >&2
+        return 2
+      fi
+      ;;
+
+    # Rust and Go are already strictly typed by the compiler
+  esac
+
+  return 0
+}
+
+# === Config Check ===
+
+# Source config library for feature flags
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/lib/config.sh" ]; then
+  source "$SCRIPT_DIR/lib/config.sh"
+  STRICT_TYPING_ENABLED=$(bluera_get_config ".strictTyping.enabled" 2>/dev/null || echo "false")
+else
+  STRICT_TYPING_ENABLED="false"
+fi
 
 # === Main ===
 
@@ -290,5 +452,13 @@ esac
 
 # Anti-pattern check (all source files)
 check_anti_patterns_file "$FILE_PATH" || exit $?
+
+# Lint suppression check (config files) - prevents disabling lint rules instead of fixing code
+check_lint_suppression_file "$FILE_PATH" || exit $?
+
+# Strict typing check (opt-in via config)
+if [ "$STRICT_TYPING_ENABLED" = "true" ]; then
+  check_strict_typing_file "$FILE_PATH" || exit $?
+fi
 
 exit 0

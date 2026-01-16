@@ -19,6 +19,22 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   },
   "notifications": {
     "enabled": true
+  },
+  "autoCommit": {
+    "enabled": false,
+    "onStop": true,
+    "push": false,
+    "remote": "origin"
+  },
+  "dryCheck": {
+    "enabled": false,
+    "onStop": false,
+    "threshold": 5,
+    "minTokens": 70,
+    "minLines": 5
+  },
+  "strictTyping": {
+    "enabled": false
   }
 }'
 
