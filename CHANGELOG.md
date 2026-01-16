@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.1](https://github.com/blueraai/bluera-base/compare/v0.8.0...v0.8.1) (2026-01-16)
+
+### Bug Fixes
+
+* **hooks:** add JSON validation to learning hooks ([16ab3eb](https://github.com/blueraai/bluera-base/commit/16ab3eb02d0d7ce60268dc59c392f88e1db7b6ad))
+
 ## [0.8.0](https://github.com/blueraai/bluera-base/compare/v0.7.0...v0.8.0) (2026-01-16)
 
 ### Features
