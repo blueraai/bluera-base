@@ -1,13 +1,94 @@
 ---
 description: Audit + maintain CLAUDE.md memory files (validate, update, create where helpful)
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls:*), Bash(wc:*), Bash(head:*), Bash(tail:*), AskUserQuestion
+argument-hint: <audit|init> [options]
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls:*), Bash(wc:*), Bash(head:*), Bash(tail:*), Bash(jq:*), AskUserQuestion
 ---
 
 # CLAUDE.md Maintainer
 
 Audit and maintain `CLAUDE.md` files in this repository. See @bluera-base/skills/claude-md-maintainer/SKILL.md for the algorithm.
 
-## Two-Phase Workflow
+## Subcommands
+
+- **`/claude-md audit`** (default) - Validate existing CLAUDE.md files
+- **`/claude-md init`** - Create new CLAUDE.md via auto-detection + interview
+
+---
+
+## Init Workflow
+
+When action is `init`:
+
+### Phase 1: Detection
+
+1. **Check for existing CLAUDE.md** - If found, offer to run `audit` instead
+2. **Detect project type** from files:
+   | File | Project Type |
+   |------|--------------|
+   | `package.json` | JavaScript/TypeScript |
+   | `Cargo.toml` | Rust |
+   | `pyproject.toml` or `requirements.txt` | Python |
+   | `go.mod` | Go |
+
+3. **Detect package manager** from lockfiles:
+   | Lockfile | Package Manager |
+   |----------|-----------------|
+   | `bun.lock` or `bun.lockb` | bun |
+   | `yarn.lock` | yarn |
+   | `pnpm-lock.yaml` | pnpm |
+   | `package-lock.json` | npm |
+   | `Cargo.lock` | cargo |
+   | `poetry.lock` | poetry |
+   | `uv.lock` | uv |
+
+4. **Extract scripts** from config files:
+   - JS/TS: `jq -r '.scripts | keys[]' package.json`
+   - Python: parse `[project.scripts]` or `[tool.poetry.scripts]`
+   - Rust/Go: use standard commands
+
+5. **Detect CI** from `.github/workflows/` or `.gitlab-ci.yml`
+
+### Phase 2: Interview
+
+Use AskUserQuestion for:
+
+```
+question: "Which package manager should be documented?"
+header: "Pkg Mgr"
+options: [detected options + "Other"]
+```
+
+```
+question: "Which scripts should be documented?"
+header: "Scripts"
+multiSelect: true
+options: [detected scripts, limited to 6 most common]
+```
+
+```
+question: "Any project-specific conventions to add?"
+header: "Conventions"
+options:
+  - label: "None"
+    description: "Skip custom conventions"
+  - label: "Add conventions"
+    description: "I'll provide conventions in a follow-up"
+```
+
+### Phase 3: Generate
+
+1. Start with `@bluera-base/includes/CLAUDE-BASE.md`
+2. Add `## Package Manager` section with detected/confirmed manager
+3. Add `## Scripts` section with selected scripts
+4. Add `## CI/CD` section if workflows detected
+5. Add user conventions if provided
+6. Write to `./CLAUDE.md`
+
+**Target: < 60 lines** - Keep it lean, user can expand later.
+
+---
+
+## Audit Workflow (default)
 
 ### Phase 1: Plan (no writes)
 

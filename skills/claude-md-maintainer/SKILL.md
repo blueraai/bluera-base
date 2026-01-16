@@ -39,12 +39,98 @@ Only after user confirms:
 2. Create missing files from templates
 3. Report final state
 
+---
+
+## Init Algorithm
+
+For `/claude-md init` - creates new CLAUDE.md from scratch.
+
+### Detection Priority
+
+Check files in order (stop at first match):
+
+```
+package.json → JavaScript/TypeScript
+Cargo.toml   → Rust
+pyproject.toml → Python
+go.mod       → Go
+```
+
+### Lockfile → Package Manager
+
+| Lockfile | Manager |
+|----------|---------|
+| bun.lock / bun.lockb | bun |
+| yarn.lock | yarn |
+| pnpm-lock.yaml | pnpm |
+| package-lock.json | npm |
+| poetry.lock | poetry |
+| uv.lock | uv |
+| (none) | ask user |
+
+### Script Extraction
+
+**JavaScript/TypeScript:**
+```bash
+jq -r '.scripts | keys[]' package.json 2>/dev/null | head -10
+```
+
+**Python (pyproject.toml):**
+```bash
+grep -A 20 '^\[project.scripts\]' pyproject.toml | grep '=' | cut -d'=' -f1 | tr -d ' "'
+```
+
+**Rust/Go:** Use standard commands (cargo build/test, go build/test).
+
+### Generated Structure
+
+```markdown
+@bluera-base/includes/CLAUDE-BASE.md
+
+---
+
+## Package Manager
+
+**Use `{PM}`** - All scripts: `{PM} run <script>`
+
+---
+
+## Scripts
+
+{SCRIPTS - grouped by category if many}
+
+---
+
+## CI/CD
+
+{Only if .github/workflows/ or .gitlab-ci.yml exists}
+
+---
+```
+
+### Design Principles
+
+1. **Auto-detect over ask** - Only interview when ambiguous
+2. **< 60 lines target** - Start lean, user expands later
+3. **Never overwrite** - Check for existing CLAUDE.md first
+4. **@include always** - Start with CLAUDE-BASE.md reference
+
+---
+
 ## References
 
-- **Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/templates/`
+- **Audit Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/templates/`
   - `root_CLAUDE.md` - Root project memory
   - `module_CLAUDE.md` - Directory-scoped memory
   - `local_CLAUDE.local.md` - Personal notes
+
+- **Init Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/templates/init/`
+  - `js-ts.md` - JavaScript/TypeScript projects
+  - `python.md` - Python projects
+  - `rust.md` - Rust projects
+  - `go.md` - Go projects
+  - `ci-github.md` - GitHub Actions CI section
+  - `ci-gitlab.md` - GitLab CI section
 
 - **Validation rules**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/docs/invariants.md`
 
