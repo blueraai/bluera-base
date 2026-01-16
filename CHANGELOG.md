@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.2](https://github.com/blueraai/bluera-base/compare/v0.9.1...v0.9.2) (2026-01-16)
+
+### Bug Fixes
+
+* **release:** correct shell command parsing in backtick context ([fd6e56b](https://github.com/blueraai/bluera-base/commit/fd6e56b81a9ba94f13086f3d4034537763e8dc79))
+
 ## [0.9.1](https://github.com/blueraai/bluera-base/compare/v0.9.0...v0.9.1) (2026-01-16)
 
 ## [0.9.0](https://github.com/blueraai/bluera-base/compare/v0.8.1...v0.9.0) (2026-01-16)
