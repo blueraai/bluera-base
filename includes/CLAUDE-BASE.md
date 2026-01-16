@@ -14,6 +14,7 @@ This file is YOUR (Claude's) project memory. It is NOT user documentation. It is
 **Keep this file LEAN.** This entire file loads into your context every session. Be concise. No prose. No redundancy. Every line must earn its place.
 
 **CLAUDE.md is hierarchical.** Any subdirectory can have its own CLAUDE.md that auto-loads when you work in that directory. Use this pattern:
+
 - **Root CLAUDE.md** (this file): Project-wide info - scripts, CI/CD, general conventions
 - **Subdirectory CLAUDE.md**: Directory-specific context scoped to files below it
 - Nest as deep as needed - each level inherits from parents
@@ -30,6 +31,7 @@ This file is YOUR (Claude's) project memory. It is NOT user documentation. It is
 - Plugins need pre-built files ready to execute immediately
 
 **After any code change:**
+
 1. Run your build command
 2. Commit both source AND dist/ changes together
 
@@ -37,11 +39,11 @@ This file is YOUR (Claude's) project memory. It is NOT user documentation. It is
 
 ## ALWAYS
 
-* fail early and fast
-  * our code is expected to *work* as-designed
-    * use "throw" / "panic" / "raise" when state is unexpected or for any error condition
-    * use strict typing where the language supports it
-* push to main after version bump - releases happen automatically (no manual tagging needed)
+- fail early and fast
+  - our code is expected to *work* as-designed
+    - use "throw" / "panic" / "raise" when state is unexpected or for any error condition
+    - use strict typing where the language supports it
+- push to main after version bump - releases happen automatically (no manual tagging needed)
 
 ---
 
@@ -51,23 +53,24 @@ This file is YOUR (Claude's) project memory. It is NOT user documentation. It is
 
 The following patterns are **strictly forbidden** and must be rejected on sight:
 
-* **NO FALLBACK CODE** - Never write fallback logic, graceful degradation, or default behavior "just in case". Code must fail fast and explicitly when state is unexpected. If a value might be missing, that's a bug to fix, not a condition to handle gracefully.
+- **NO FALLBACK CODE** - Never write fallback logic, graceful degradation, or default behavior "just in case". Code must fail fast and explicitly when state is unexpected. If a value might be missing, that's a bug to fix, not a condition to handle gracefully.
 
-* **NO BACKWARD COMPATIBILITY** - Never write code to maintain compatibility with deprecated APIs or old data formats. If an API is deprecated, delete it completely and update all callers. Do not create shims, wrappers, or compatibility layers.
+- **NO BACKWARD COMPATIBILITY** - Never write code to maintain compatibility with deprecated APIs or old data formats. If an API is deprecated, delete it completely and update all callers. Do not create shims, wrappers, or compatibility layers.
 
-* **NO DEPRECATED REFERENCES** - Do not reference, wrap, or call deprecated code. Delete deprecated code immediately. Do not leave deprecation markers lingering - they signal technical debt that must be eliminated.
+- **NO DEPRECATED REFERENCES** - Do not reference, wrap, or call deprecated code. Delete deprecated code immediately. Do not leave deprecation markers lingering - they signal technical debt that must be eliminated.
 
-* **NO `--no-verify` ON GIT COMMITS** - This is an **absolute rule with zero exceptions**. The `--no-verify` flag completely circumvents code protections. If pre-commit hooks fail:
+- **NO `--no-verify` ON GIT COMMITS** - This is an **absolute rule with zero exceptions**. The `--no-verify` flag completely circumvents code protections. If pre-commit hooks fail:
   1. **Fix the failing code** - don't bypass the check
   2. **If tests are pre-existing failures** - fix those tests first, then commit
   3. **Never rationalize bypassing** - "it's unrelated to my changes" is not valid
   4. **Ask the user** if you're unsure how to proceed
 
-* **NO COMMENTED CODE** - Delete it completely. If you need it later, use git history.
+- **NO COMMENTED CODE** - Delete it completely. If you need it later, use git history.
 
 ### Why These Rules Exist
 
 This codebase is designed to **fail early and fast**. We do not tolerate:
+
 - "It might work" code
 - "Just in case" logic
 - "For backward compatibility" patches

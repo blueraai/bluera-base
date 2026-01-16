@@ -13,6 +13,7 @@ No build step required - this plugin is pure markdown and shell scripts.
 ## Scripts
 
 **Versioning:**
+
 - `bun run version:patch` - Bump patch version (0.0.x)
 - `bun run version:minor` - Bump minor version (0.x.0)
 - `bun run version:major` - Bump major version (x.0.0)
@@ -23,6 +24,7 @@ No build step required - this plugin is pure markdown and shell scripts.
 ## CI/CD
 
 Push to main triggers:
+
 1. `ci.yml` - Validation (shellcheck on hooks)
 2. `auto-release.yml` - Detects version bump, creates tag
 3. `release.yml` - Creates GitHub release from tag
@@ -32,7 +34,7 @@ Push to main triggers:
 
 ## Plugin Structure
 
-```
+```text
 .claude-plugin/plugin.json  - Manifest (version synced via .versionrc.json)
 commands/*.md               - Slash commands (8 total)
 skills/*/SKILL.md           - Skill documentation
@@ -47,6 +49,7 @@ templates/                  - Templates for user projects
 ## Testing
 
 Run from this directory to dogfood the plugin:
+
 ```bash
 claude --plugin-dir .
 ```

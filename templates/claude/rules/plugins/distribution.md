@@ -17,6 +17,7 @@ Rules specific to Claude Code plugins that distribute built artifacts.
 ## Verification
 
 Before committing:
+
 1. Run `bun run build` (or equivalent)
 2. Verify `dist/` contains current build output
 3. Check that `plugin.json` references correct dist paths
