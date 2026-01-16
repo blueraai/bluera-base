@@ -95,13 +95,22 @@ Badges communicate project status at a glance. Use shields.io for consistent sty
 
 GitHub renders Mermaid diagrams in fenced code blocks.
 
+**CRITICAL: Keep node labels SHORT (1-2 words max).** Long labels get truncated in GitHub's renderer. Use surrounding text/tables for details.
+
+| Bad (truncated) | Good (fits) |
+|-----------------|-------------|
+| `A["Pre-flight Checks"]` | `A[Check]` |
+| `B["Clean working dir?"]` | `B{Clean?}` |
+| `C["Analyze Commits"]` | `C[Analyze]` |
+| `D["Version Bump"]` | `D[Bump]` |
+
 **Flowchart:**
 ````markdown
 ```mermaid
 flowchart LR
-    A[Input] --> B{Decision}
-    B -->|Yes| C[Action 1]
-    B -->|No| D[Action 2]
+    A[Start] --> B{Ready?}
+    B -->|Yes| C[Run]
+    B -->|No| D[Wait]
 ```
 ````
 
@@ -109,13 +118,13 @@ flowchart LR
 ````markdown
 ```mermaid
 sequenceDiagram
-    participant User
-    participant API
-    participant DB
-    User->>API: Request
-    API->>DB: Query
-    DB-->>API: Result
-    API-->>User: Response
+    participant U as User
+    participant A as API
+    participant D as DB
+    U->>A: Request
+    A->>D: Query
+    D-->>A: Result
+    A-->>U: Response
 ```
 ````
 
@@ -130,6 +139,12 @@ sequenceDiagram
 - Simple linear processes (use numbered list)
 - When prose is clearer
 - Decorative purposes (diagram must clarify)
+
+**Best practices:**
+- Max 1-2 words per node label
+- Use edge labels for relationships (`-->|label|`)
+- Put detailed explanations in surrounding text or tables
+- Test diagram renders on GitHub before committing
 
 ### GitHub Alerts
 

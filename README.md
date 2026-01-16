@@ -97,18 +97,18 @@ claude --plugin-dir /path/to/bluera-base
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
 flowchart LR
-    A[SessionStart] --> B[session-setup.sh]
-    B --> C{Tool Use}
-    C -->|"Bash"| D[block-manual-release.sh]
-    C -->|"Write/Edit"| E[post-edit-check.sh]
-    D --> F{Allowed?}
-    E --> G{Passes?}
-    F -->|No| H[❌ Block]
-    F -->|Yes| I[✓ Continue]
+    A[Start] --> B[Setup]
+    B --> C{Tool}
+    C -->|Bash| D[Release?]
+    C -->|Edit| E[Lint]
+    D --> F{OK?}
+    E --> G{Pass?}
+    F -->|No| H[Block]
+    F -->|Yes| I[OK]
     G -->|No| H
     G -->|Yes| I
     I --> J[Stop]
-    J --> K[milhouse-stop.sh]
+    J --> K[Loop?]
 
     style A fill:#1e1b4b,stroke:#6366f1
     style H fill:#7f1d1d,stroke:#ef4444
@@ -192,19 +192,19 @@ The `/release` command provides a standardized release workflow:
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
 flowchart TB
-    A["/release"] --> B["Pre-flight Checks"]
-    B --> C{"Clean working dir?"}
-    C -->|No| D["❌ Abort"]
-    C -->|Yes| E["Analyze Commits"]
-    E --> F{"Commit Type?"}
-    F -->|"fix:"| G["patch 0.0.x"]
-    F -->|"feat:"| H["minor 0.x.0"]
-    F -->|"feat!:"| I["major x.0.0"]
-    G --> J["Version Bump"]
+    A[/release] --> B[Check]
+    B --> C{Clean?}
+    C -->|No| D[Abort]
+    C -->|Yes| E[Analyze]
+    E --> F{Type?}
+    F -->|fix| G[patch]
+    F -->|feat| H[minor]
+    F -->|feat!| I[major]
+    G --> J[Bump]
     H --> J
     I --> J
-    J --> K["Push + CI Monitor"]
-    K --> L["✓ Release Complete"]
+    J --> K[Push]
+    K --> L[Done]
 
     style A fill:#6366f1,stroke:#818cf8
     style D fill:#7f1d1d,stroke:#ef4444
@@ -235,16 +235,16 @@ The milhouse loop is an iterative development pattern:
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#6366f1', 'primaryTextColor': '#f8fafc', 'primaryBorderColor': '#818cf8', 'lineColor': '#818cf8', 'secondaryColor': '#1e1b4b', 'tertiaryColor': '#312e81'}}}%%
 flowchart TB
-    A["/milhouse-loop prompt.md"] --> B["Load Prompt"]
-    B --> C["Claude Works on Task"]
-    C --> D{"Tries to Exit"}
-    D --> E{"Promise Found?"}
-    E -->|No| F["Stop Hook Intercepts"]
-    F --> G["Feed Prompt Back"]
+    A[/milhouse] --> B[Load]
+    B --> C[Work]
+    C --> D{Exit?}
+    D --> E{Promise?}
+    E -->|No| F[Intercept]
+    F --> G[Repeat]
     G --> C
-    E -->|Yes| H["✓ Exit Allowed"]
+    E -->|Yes| H[Exit]
 
-    subgraph Loop["Iteration Loop"]
+    subgraph Loop[Iteration]
         C
         D
         E
