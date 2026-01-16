@@ -1,0 +1,5 @@
+#!/bin/sh
+# Husky pre-commit hook for bluera-base
+# Runs lint-staged for shell scripts and markdown
+
+npx lint-staged
