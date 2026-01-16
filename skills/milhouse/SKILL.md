@@ -13,23 +13,40 @@ The milhouse loop is a powerful pattern for iterative development tasks. It work
 2. Working on the task
 3. When you try to exit, the Stop hook intercepts and feeds the SAME PROMPT back
 4. You continue iterating, building on previous work visible in files and git history
-5. Loop ends when you output the completion promise or hit max iterations
+5. Loop ends when you output the completion promise, hit max iterations, or get stuck
 
 ## Starting a Loop
 
 ```bash
-# From a prompt file
+# Basic usage with a prompt file
 /milhouse-loop .claude/prompts/my-task.md
 
 # With max iterations
-/milhouse-loop .claude/prompts/my-task.md --max-iterations 10
+/milhouse-loop task.md --max-iterations 10
 
 # With custom completion promise
-/milhouse-loop .claude/prompts/my-task.md --promise "FEATURE COMPLETE"
+/milhouse-loop task.md --promise "FEATURE COMPLETE"
 
 # Inline prompt (for simple tasks)
 /milhouse-loop --inline "Refactor the auth module to use JWT tokens"
+
+# With objective gates (tests must pass to exit)
+/milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+
+# With context harness (creates plan.md and activity.md)
+/milhouse-loop task.md --init-harness
 ```
+
+## Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--max-iterations <n>` | Stop after N iterations | unlimited |
+| `--promise <text>` | Completion promise text | "TASK COMPLETE" |
+| `--inline <prompt>` | Use inline prompt instead of file | - |
+| `--gate <cmd>` | Command that must pass before exit (repeatable) | none |
+| `--stuck-limit <n>` | Stop after N identical gate failures | 3 |
+| `--init-harness` | Create plan.md and activity.md files | false |
 
 ## Completing the Loop
 
@@ -49,43 +66,90 @@ Or with a custom promise:
 - Do NOT output false promises to escape the loop
 - Only output when the task is genuinely complete
 
+## Objective Gates
+
+Gates are commands that must pass AFTER the promise matches, before the loop exits.
+
+```bash
+/milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+```
+
+**Behavior:**
+1. You output `<promise>TASK COMPLETE</promise>`
+2. Each gate runs sequentially
+3. If all pass → loop exits
+4. If any fail → failure output is injected into the next iteration's prompt
+
+This ensures code is actually correct, not just claimed to be complete.
+
+## Stuck Detection
+
+If the same gate fails 3 times in a row (identical output), the loop auto-stops.
+
+```bash
+# Disable stuck detection
+/milhouse-loop task.md --gate "npm test" --stuck-limit 0
+
+# More lenient (5 identical failures)
+/milhouse-loop task.md --gate "npm test" --stuck-limit 5
+```
+
 ## Stopping Early
 
 - **Max iterations**: Use `--max-iterations N` to auto-stop after N iterations
 - **Manual cancel**: Run `/cancel-milhouse` to stop immediately
+- **Stuck detection**: Triggers after 3 identical gate failures (configurable)
+
+## Context Harness
+
+For long-running loops, use `--init-harness` to create tracking files:
+
+```bash
+/milhouse-loop task.md --init-harness
+```
+
+Creates:
+- `.claude/milhouse-plan.md` - Acceptance criteria checklist
+- `.claude/milhouse-activity.md` - Per-iteration progress log
+
+Update these files each iteration to maintain context across compactions.
+
+## Session Scoping
+
+Each milhouse loop is tied to the terminal session that started it. If you have multiple Claude Code terminals in the same project, they won't interfere with each other's loops.
 
 ## State File
 
 The loop state is stored in `.claude/milhouse-loop.local.md`:
 - Should be gitignored (`.local.md` pattern)
-- Contains: iteration count, max iterations, completion promise, prompt content
+- Contains: iteration, max_iterations, completion_promise, session_id, gates, failure_hashes
 
 ## Use Cases
 
-1. **Complex refactoring**: Keep iterating until all tests pass
+1. **TDD loops**: Keep iterating until all tests pass
 2. **Performance optimization**: Iterate until benchmark targets are met
 3. **Bug hunting**: Keep investigating until root cause is found
 4. **Feature implementation**: Iterate through design, implement, test cycles
 
-## Example Prompt File
+## Example: TDD Loop
 
+```bash
+/milhouse-loop .claude/prompts/add-auth.md \
+  --gate "npm test" \
+  --gate "npm run lint" \
+  --max-iterations 20 \
+  --init-harness
+```
+
+With prompt file:
 ```markdown
-# Task: Optimize Database Queries
+# Add JWT Authentication
 
-## Goal
-Reduce average query time from 500ms to under 100ms.
+## Requirements
+- Add /login endpoint that returns JWT
+- Add middleware to validate JWT on protected routes
+- Add /me endpoint that returns current user
 
-## Current State
-- Average query time: 500ms
-- Slowest queries in: user_analytics.py
-
-## Iteration Steps
-1. Profile current performance
-2. Identify bottlenecks
-3. Implement optimization
-4. Measure improvement
-5. If target not met, continue iterating
-
-## Completion Criteria
-Output <promise>TASK COMPLETE</promise> when average query time < 100ms.
+## Completion
+Output <promise>TASK COMPLETE</promise> when all requirements met AND tests pass.
 ```

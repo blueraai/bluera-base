@@ -28,6 +28,50 @@ FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$STATE_FILE")
 ITERATION=$(echo "$FRONTMATTER" | grep '^iteration:' | sed 's/iteration: *//')
 MAX_ITERATIONS=$(echo "$FRONTMATTER" | grep '^max_iterations:' | sed 's/max_iterations: *//')
 COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/completion_promise: *"\(.*\)"/\1/')
+STORED_SESSION=$(echo "$FRONTMATTER" | grep '^session_id:' | sed 's/session_id: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+STUCK_LIMIT=$(echo "$FRONTMATTER" | grep '^stuck_limit:' | sed 's/stuck_limit: *//' || echo "3")
+
+# Parse gates from YAML (lines starting with "  - " after "gates:")
+GATES=()
+IN_GATES=false
+while IFS= read -r line; do
+  if [[ "$line" =~ ^gates: ]]; then
+    IN_GATES=true
+    # Check for inline empty array
+    if [[ "$line" =~ ^\s*gates:\s*\[\] ]]; then
+      IN_GATES=false
+    fi
+  elif [[ "$IN_GATES" == true ]]; then
+    if [[ "$line" =~ ^[[:space:]]+-[[:space:]]+(.*) ]]; then
+      GATE_CMD="${BASH_REMATCH[1]}"
+      # Strip quotes
+      GATE_CMD="${GATE_CMD#\"}"
+      GATE_CMD="${GATE_CMD%\"}"
+      GATES+=("$GATE_CMD")
+    elif [[ ! "$line" =~ ^[[:space:]] ]]; then
+      IN_GATES=false
+    fi
+  fi
+done <<< "$FRONTMATTER"
+
+# Parse failure_hashes (simple array on one line)
+FAILURE_HASHES=$(echo "$FRONTMATTER" | grep '^failure_hashes:' | sed 's/failure_hashes: *//')
+
+# Session scoping: derive current session ID from transcript path
+CURRENT_SESSION=$(echo "$HOOK_INPUT" | jq -r '.transcript_path' | md5 -q 2>/dev/null || echo "$HOOK_INPUT" | jq -r '.transcript_path' | md5sum | cut -d' ' -f1)
+
+# If no stored session, capture it (first stop hook for this loop)
+if [[ -z "$STORED_SESSION" ]]; then
+  TEMP_FILE="${STATE_FILE}.tmp.$$"
+  sed "s/^session_id: .*/session_id: \"$CURRENT_SESSION\"/" "$STATE_FILE" > "$TEMP_FILE"
+  mv "$TEMP_FILE" "$STATE_FILE"
+  STORED_SESSION="$CURRENT_SESSION"
+fi
+
+# Session mismatch = different terminal, ignore this state file
+if [[ "$STORED_SESSION" != "$CURRENT_SESSION" ]]; then
+  exit 0
+fi
 
 # Validate numeric fields before arithmetic operations
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]]; then
@@ -101,10 +145,66 @@ if echo "$LAST_CONTENT_LINE" | grep -qE '^\s*<promise>.*</promise>\s*$'; then
 fi
 
 # Use = for literal string comparison
+PROMISE_MATCHED=false
 if [[ -n "$PROMISE_TEXT" ]] && [[ "$PROMISE_TEXT" = "$COMPLETION_PROMISE" ]]; then
+  PROMISE_MATCHED=true
+fi
+
+# If promise matched, run gates (if any)
+GATES_PASSED=true
+GATE_FAILURE_OUTPUT=""
+if [[ "$PROMISE_MATCHED" == true ]] && [[ ${#GATES[@]} -gt 0 ]]; then
+  for gate in "${GATES[@]}"; do
+    if ! GATE_OUTPUT=$(bash -c "$gate" 2>&1); then
+      GATES_PASSED=false
+      GATE_FAILURE_OUTPUT="Gate failed: $gate
+$(echo "$GATE_OUTPUT" | tail -20)"
+      break
+    fi
+  done
+fi
+
+# If promise matched and all gates passed, allow exit
+if [[ "$PROMISE_MATCHED" == true ]] && [[ "$GATES_PASSED" == true ]]; then
   echo "✅ Milhouse complete."
   rm "$STATE_FILE"
   exit 0
+fi
+
+# Gate failure: track hash for stuck detection
+if [[ "$PROMISE_MATCHED" == true ]] && [[ "$GATES_PASSED" == false ]]; then
+  FAILURE_HASH=$(echo "$GATE_FAILURE_OUTPUT" | md5 -q 2>/dev/null || echo "$GATE_FAILURE_OUTPUT" | md5sum | cut -d' ' -f1)
+
+  # Update failure_hashes in state file (append new hash)
+  if [[ "$FAILURE_HASHES" == "[]" ]]; then
+    NEW_HASHES="[\"$FAILURE_HASH\"]"
+  else
+    # Strip brackets, append new hash
+    EXISTING="${FAILURE_HASHES#[}"
+    EXISTING="${EXISTING%]}"
+    if [[ -z "$EXISTING" ]]; then
+      NEW_HASHES="[\"$FAILURE_HASH\"]"
+    else
+      NEW_HASHES="[$EXISTING, \"$FAILURE_HASH\"]"
+    fi
+  fi
+
+  # Check for stuck (last N hashes identical)
+  if [[ "$STUCK_LIMIT" -gt 0 ]]; then
+    # Count consecutive identical hashes at the end
+    HASH_COUNT=$(echo "$NEW_HASHES" | grep -o "\"$FAILURE_HASH\"" | wc -l | tr -d ' ')
+    if [[ "$HASH_COUNT" -ge "$STUCK_LIMIT" ]]; then
+      echo "🛑 Milhouse: stuck detected (same failure $HASH_COUNT times). Stopping."
+      echo "Last failure: $GATE_FAILURE_OUTPUT" | head -5
+      rm "$STATE_FILE"
+      exit 0
+    fi
+  fi
+
+  # Update state file with new failure hash
+  TEMP_FILE="${STATE_FILE}.tmp.$$"
+  sed "s/^failure_hashes: .*/failure_hashes: $NEW_HASHES/" "$STATE_FILE" > "$TEMP_FILE"
+  mv "$TEMP_FILE" "$STATE_FILE"
 fi
 
 # Not complete - continue loop with SAME PROMPT
@@ -125,7 +225,19 @@ sed "s/^iteration: .*/iteration: $NEXT_ITERATION/" "$STATE_FILE" > "$TEMP_FILE"
 mv "$TEMP_FILE" "$STATE_FILE"
 
 # Build system message
-SYSTEM_MSG="🔄 Milhouse iteration $NEXT_ITERATION | To complete: <promise>$COMPLETION_PROMISE</promise>"
+if [[ -n "$GATE_FAILURE_OUTPUT" ]]; then
+  SYSTEM_MSG="🔄 Milhouse iteration $NEXT_ITERATION | Gate failed - fix and retry | Complete: <promise>$COMPLETION_PROMISE</promise>"
+  # Prepend gate failure to prompt
+  PROMPT_TEXT="## Gate Failure
+
+$GATE_FAILURE_OUTPUT
+
+---
+
+$PROMPT_TEXT"
+else
+  SYSTEM_MSG="🔄 Milhouse iteration $NEXT_ITERATION | To complete: <promise>$COMPLETION_PROMISE</promise>"
+fi
 
 # Output JSON to block the stop and feed prompt back
 jq -n \
