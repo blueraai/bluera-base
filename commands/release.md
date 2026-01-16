@@ -9,7 +9,7 @@ Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for wo
 
 ## Context
 
-!`git describe --tags --abbrev=0 2>/dev/null || echo "No tags yet"`
+!`git fetch --tags -q 2>/dev/null; git describe --tags --abbrev=0 2>/dev/null || echo "No tags yet"`
 
 ## Quick Release
 
