@@ -1,7 +1,7 @@
 ---
 description: Maintain README.md files - improve formatting, structure, and clarity
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
-argument-hint: <action> [instructions]
+argument-hint: <beautify|breakout> [instructions]
 ---
 
 # README Maintainer
@@ -13,6 +13,7 @@ Maintain and improve README.md files using GitHub advanced formatting. See @blue
 Parse `$ARGUMENTS` to determine action:
 
 - **`beautify [instructions]`** - Improve formatting, structure, and visual appeal
+- **`breakout [instructions]`** - Analyze and split large README into modular docs
 - **(future) `audit`** - Check for issues without making changes
 - **(future) `sync`** - Sync README with code changes
 
@@ -29,6 +30,12 @@ README Maintainer - Available Commands:
       /readme beautify
       /readme beautify "use mermaid diagrams"
       /readme beautify "add CI badges, use tables"
+
+  /readme breakout [instructions]
+    Analyze large README and suggest splitting into modular docs.
+    Examples:
+      /readme breakout
+      /readme breakout "focus on API documentation"
 
   (coming soon)
   /readme audit    - Check for issues without fixing
@@ -67,6 +74,47 @@ Use Edit tool to apply improvements. Present a summary:
 - Changes made (with before/after examples if significant)
 - Formatting features added
 - Suggestions for manual improvements (if any)
+
+## Breakout Workflow
+
+When action is `breakout`:
+
+### Phase 1: Analysis (read-only)
+
+1. Read README.md and count total lines
+2. Identify sections by heading level (## and ###)
+3. Classify each section by content type (see skill for heuristics)
+4. Apply breakout decision tree:
+   - GitHub special files (CONTRIBUTING, CHANGELOG, SECURITY, CODE_OF_CONDUCT) → root
+   - Sections > 75 lines matching docs patterns → docs/ folder
+5. Present suggested breakout plan as table showing:
+   - Section name
+   - Line count
+   - Suggested destination file
+   - Estimated README size after breakout
+6. Ask user to confirm before making changes
+
+### Phase 2: Apply (after confirmation)
+
+Use AskUserQuestion to confirm:
+```
+question: "Apply the breakout plan?"
+header: "Confirm"
+options:
+  - label: "Apply all"
+    description: "Create all suggested files and update README"
+  - label: "Customize"
+    description: "Select which sections to break out"
+  - label: "Cancel"
+    description: "Make no changes"
+```
+
+If confirmed:
+1. Create docs/ folder if needed
+2. Create new documentation files with moved content
+3. Remove content from README.md
+4. Add "Documentation" section to README with links table
+5. Report final structure and file sizes
 
 ## Constraints
 
