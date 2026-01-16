@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.0](https://github.com/blueraai/bluera-base/compare/v0.8.1...v0.9.0) (2026-01-16)
+
+### Features
+
+* **settings:** add narrowly scoped permission templates ([b43e813](https://github.com/blueraai/bluera-base/commit/b43e813e9c168ed4672853a12977f5985dddccc5))
+
 ## [0.8.1](https://github.com/blueraai/bluera-base/compare/v0.8.0...v0.8.1) (2026-01-16)
 
 ### Bug Fixes
