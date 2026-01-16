@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/jscpd.json",
+  "threshold": 5,
+  "minTokens": 70,
+  "minLines": 5,
+  "reporters": ["json", "consoleFull"],
+  "output": ".bluera/bluera-base/state",
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/target/**",
+    "**/.git/**",
+    "**/vendor/**",
+    "**/__pycache__/**",
+    "**/*.min.js",
+    "**/*.min.css",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/pnpm-lock.yaml",
+    "**/bun.lockb",
+    "**/Cargo.lock",
+    "**/go.sum",
+    "**/poetry.lock"
+  ],
+  "gitignore": true,
+  "format": [
+    "javascript",
+    "typescript",
+    "jsx",
+    "tsx",
+    "python",
+    "rust",
+    "go"
+  ]
+}

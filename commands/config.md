@@ -63,6 +63,8 @@ Shortcuts for common boolean settings:
 | `notifications` | `.notifications.enabled` |
 | `auto-commit` | `.autoCommit.enabled` |
 | `auto-push` | `.autoCommit.push` |
+| `dry-check` | `.dryCheck.enabled` |
+| `dry-auto` | `.dryCheck.onStop` |
 
 ### Reset
 
@@ -120,6 +122,13 @@ Env (from CLAUDE_ENV_FILE):
     "onStop": true,      // trigger on Stop hook
     "push": false,       // also push after commit
     "remote": "origin"   // remote to push to
+  },
+  "dryCheck": {
+    "enabled": false,    // opt-in: enable DRY duplicate detection
+    "onStop": false,     // auto-scan on session stop
+    "threshold": 5,      // max allowed duplicate %
+    "minTokens": 70,     // min tokens to consider duplicate
+    "minLines": 5        // min lines to consider duplicate
   }
 }
 ```
@@ -133,8 +142,10 @@ Env (from CLAUDE_ENV_FILE):
 ├── config.json              # Team-shareable (committed)
 ├── config.local.json        # Personal overrides (gitignored)
 └── state/                   # Runtime state (gitignored)
-    ├── milhouse-loop.json   # Active loop state
-    └── session-signals.json # Learning observation data
+    ├── milhouse-loop.md     # Active loop state
+    ├── session-signals.json # Learning observation data
+    ├── dry-report.md        # Last DRY scan report
+    └── jscpd-report.json    # Raw jscpd output
 ```
 
 ---
@@ -177,6 +188,15 @@ Env (from CLAUDE_ENV_FILE):
 
 # Set custom remote for auto-push
 /config set .autoCommit.remote upstream --shared
+
+# Enable DRY duplicate checking
+/config enable dry-check
+
+# Enable auto-scan on session stop
+/config enable dry-auto
+
+# Set custom DRY thresholds
+/config set .dryCheck.minTokens 50 --shared
 ```
 
 ---
