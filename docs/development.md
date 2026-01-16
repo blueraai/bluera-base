@@ -43,15 +43,23 @@ bluera-base/
 ├── .claude-plugin/
 │   └── plugin.json               # Plugin manifest
 ├── commands/
+│   ├── analyze-config.md         # /bluera-base:analyze-config command
+│   ├── audit-plugin.md           # /bluera-base:audit-plugin command
 │   ├── cancel-milhouse.md        # /bluera-base:cancel-milhouse command
 │   ├── claude-md.md              # /bluera-base:claude-md command
 │   ├── code-review.md            # /bluera-base:code-review command
 │   ├── commit.md                 # /bluera-base:commit command
+│   ├── config.md                 # /bluera-base:config command
+│   ├── dry.md                    # /bluera-base:dry command
+│   ├── harden-repo.md            # /bluera-base:harden-repo command
+│   ├── help.md                   # /bluera-base:help command
 │   ├── install-rules.md          # /bluera-base:install-rules command
 │   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
 │   ├── readme.md                 # /bluera-base:readme command
 │   ├── release.md                # /bluera-base:release command
-│   └── test-plugin.md            # /bluera-base:test-plugin command
+│   ├── statusline.md             # /bluera-base:statusline command
+│   ├── test-plugin.md            # /bluera-base:test-plugin command
+│   └── worktree.md               # /bluera-base:worktree command
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
 │   ├── block-manual-release.sh   # Enforces /bluera-base:release workflow
@@ -71,18 +79,27 @@ bluera-base/
 │   │   └── templates/            # CLAUDE.md templates
 │   ├── code-review-repo/
 │   │   └── SKILL.md              # Multi-agent review
+│   ├── dry-refactor/
+│   │   └── SKILL.md              # DRY refactoring guidance
+│   ├── large-file-refactor/
+│   │   └── SKILL.md              # Large file splitting guidance
 │   ├── milhouse/
 │   │   └── SKILL.md              # Iterative development loop
 │   ├── readme-maintainer/
 │   │   ├── SKILL.md              # README formatting guidelines
 │   │   └── templates/            # Badge and structure templates
-│   └── release/
-│       └── SKILL.md              # Release workflow
+│   ├── release/
+│   │   └── SKILL.md              # Release workflow
+│   ├── repo-hardening/
+│   │   └── SKILL.md              # Repo hardening best practices
+│   └── statusline/
+│       └── SKILL.md              # Status line configuration
 ├── includes/
 │   └── CLAUDE-BASE.md            # @includeable sections
 ├── templates/
 │   ├── claude/
 │   │   └── rules/                # Rule templates for /bluera-base:install-rules
+│   ├── repo-hardening/           # Templates for /bluera-base:harden-repo
 │   ├── CLAUDE.md.template
 │   ├── settings.local.json.example
 │   └── subdirectory-CLAUDE.md.template

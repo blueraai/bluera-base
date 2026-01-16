@@ -164,6 +164,13 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
 | `/bluera-base:readme` | Maintain README.md files with GitHub advanced formatting |
 | `/bluera-base:test-plugin` | Run plugin validation test suite |
+| `/bluera-base:dry` | Detect duplicate code and suggest DRY refactors using jscpd |
+| `/bluera-base:harden-repo` | Set up git hooks, linters, formatters, and .editorconfig |
+| `/bluera-base:worktree` | Manage Git worktrees for parallel development workflows |
+| `/bluera-base:statusline` | Configure Claude Code's terminal status line display |
+| `/bluera-base:analyze-config` | Scan `.claude/**` for overlap with bluera-base |
+| `/bluera-base:audit-plugin` | Audit a plugin against best practices |
+| `/bluera-base:help` | Show bluera-base plugin features and usage |
 
 ### Skills
 
@@ -175,6 +182,10 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `milhouse` | Iterative development loop documentation |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
 | `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `dry-refactor` | Language-specific guidance for DRY refactoring |
+| `large-file-refactor` | Analyze and split large files when token limits exceeded |
+| `repo-hardening` | Language-specific best practices for git hooks and linters |
+| `statusline` | Status line configuration with presets and barista integration |
 
 <details>
 <summary><b>code-review-repo details</b></summary>
