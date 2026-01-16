@@ -1,5 +1,5 @@
 #!/bin/bash
-# Learning Observation Hook (PostToolUse on Bash)
+# Learning Observation Hook (PreToolUse on Bash)
 # Tracks recurring commands and patterns for potential learnings
 # Signals are accumulated in .bluera/bluera-base/state/session-signals.json
 # IMPORTANT: This is opt-in - only runs if autoLearn.enabled is true

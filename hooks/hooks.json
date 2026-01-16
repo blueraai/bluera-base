@@ -40,6 +40,11 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-release.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/observe-learning.sh",
+            "timeout": 5
           }
         ]
       }
@@ -53,16 +58,6 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-edit-check.sh",
             "statusMessage": "Validating changes...",
             "timeout": 60
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/observe-learning.sh",
-            "timeout": 5
           }
         ]
       }
