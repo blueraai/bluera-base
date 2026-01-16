@@ -98,21 +98,26 @@ GitHub renders Mermaid diagrams in fenced code blocks.
 **CRITICAL RULES:**
 1. **Keep node labels SHORT (1-2 words max)** - Long labels get truncated
 2. **Do NOT use `%%{init:...}%%` theme blocks** - These cause node sizing issues that truncate text
-3. **Use `flowchart LR`** - Left-to-right works best on GitHub
+3. **DO use `style` directives** - Individual node styling works fine
+4. **Use `flowchart LR`** - Left-to-right works best on GitHub
 
-| Bad (truncated) | Good (fits) |
-|-----------------|-------------|
+| Bad (causes truncation) | Good (works) |
+|-------------------------|--------------|
 | `A["Pre-flight Checks"]` | `A[Check]` |
-| `B["Clean working dir?"]` | `B{Clean?}` |
 | `%%{init: {'theme': 'dark'...}}%%` | (omit entirely) |
+| No colors | `style A fill:#6366f1,color:#fff` |
 
-**Flowchart:**
+**Flowchart with colors:**
 ````markdown
 ```mermaid
 flowchart LR
     A[Start] --> B{Ready?}
     B -->|Yes| C[Run]
     B -->|No| D[Wait]
+
+    style A fill:#6366f1,color:#fff
+    style C fill:#16a34a,color:#fff
+    style D fill:#dc2626,color:#fff
 ```
 ````
 
@@ -145,7 +150,9 @@ sequenceDiagram
 **Best practices:**
 - Max 1-2 words per node label
 - Never use `%%{init:...}%%` theme configuration (causes truncation)
+- Use `style NodeId fill:#color,color:#fff` for colored nodes
 - Use edge labels for relationships (`-->|label|`)
+- Common colors: `#6366f1` (indigo), `#16a34a` (green), `#dc2626` (red)
 - Put detailed explanations in surrounding text or tables
 - Test diagram renders on GitHub before committing
 

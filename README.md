@@ -38,6 +38,9 @@ flowchart LR
     E -->|@include| A
     C -->|validate| B
     D -->|guide| B
+
+    style Project fill:#1e1b4b,stroke:#6366f1,color:#fff
+    style BB fill:#312e81,stroke:#818cf8,color:#fff
 ```
 
 ---
@@ -102,6 +105,11 @@ flowchart LR
     H -->|No| G
     H -->|Yes| F
     F --> I[Continue]
+
+    style A fill:#6366f1,color:#fff
+    style G fill:#dc2626,color:#fff
+    style F fill:#16a34a,color:#fff
+    style I fill:#16a34a,color:#fff
 ```
 
 <details>
@@ -191,6 +199,10 @@ flowchart LR
     G --> I
     H --> I
     I --> J[Push]
+
+    style A fill:#6366f1,color:#fff
+    style C fill:#dc2626,color:#fff
+    style J fill:#16a34a,color:#fff
 ```
 
 | Commit Type | Version Bump | Example |
@@ -222,6 +234,9 @@ flowchart LR
     D -->|No| E[Intercept]
     E --> C
     D -->|Yes| F[Exit]
+
+    style A fill:#6366f1,color:#fff
+    style F fill:#16a34a,color:#fff
 ```
 
 **Usage:**
