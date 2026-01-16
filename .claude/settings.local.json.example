@@ -1,19 +1,46 @@
 {
   "permissions": {
     "allow": [
-      "Bash(osascript:*)",
+      "Bash(jq *)",
+      "Bash(git rev-parse *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git ls-files *)",
+      "Bash(git log *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git fetch *)",
+      "Bash(git describe *)",
+      "Bash(gh run *)",
+      "Bash(gh release *)",
+      "Bash(shellcheck *)",
+      "Bash(osascript *)",
+      "Bash(notify-send *)",
       "Bash(npm run *)",
-      "Bash(yarn *)",
-      "Bash(pnpm *)",
+      "Bash(npm test *)",
+      "Bash(yarn run *)",
+      "Bash(pnpm run *)",
       "Bash(bun run *)",
-      "Bash(cargo *)",
-      "Bash(go *)",
-      "Bash(ruff *)",
+      "Bash(bun x *)",
+      "Bash(npx *)",
+      "Bash(cargo check *)",
+      "Bash(cargo clippy *)",
+      "Bash(go vet *)",
+      "Bash(ruff check *)",
+      "Bash(flake8 *)",
       "Bash(mypy *)",
-      "Bash(pytest *)",
-      "Bash(golangci-lint *)"
+      "Bash(eslint *)",
+      "Bash(tsc --noEmit *)",
+      "Bash(rustfmt *)",
+      "Bash(gofmt *)",
+      "Bash(golangci-lint run *)",
+      "Bash(jscpd *)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(* --no-verify *)",
+      "Bash(git push --force *)",
+      "Bash(rm -rf /)"
+    ]
   },
   "hooks": {
     "PostToolUse": [

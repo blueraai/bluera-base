@@ -45,7 +45,38 @@ To customize a skill for your project:
 
 Your local skill takes precedence over the plugin's version.
 
-## Using the Settings Template
+## Settings Configuration
+
+Claude Code uses two settings files with different purposes:
+
+| File | Committed | Purpose |
+|------|-----------|---------|
+| `.claude/settings.json` | Yes | Shared team settings (checked into repo) |
+| `.claude/settings.local.json` | No | Personal settings (gitignored) |
+
+### For Teams (Committed Settings)
+
+Create `.claude/settings.json` in your project with permissions needed by all developers:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(jq *)",
+      "Bash(git rev-parse *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(bun run *)"
+    ],
+    "deny": [
+      "Bash(* --no-verify *)",
+      "Bash(git push --force *)"
+    ]
+  }
+}
+```
+
+### For Individuals (Local Settings)
 
 Copy `templates/settings.local.json.example` to your project's `.claude/settings.local.json`:
 
@@ -55,6 +86,27 @@ cp /path/to/bluera-base/templates/settings.local.json.example .claude/settings.l
 
 This provides:
 
-- Pre-approved commands for multiple package managers and languages
-- PostToolUse hook for validation
-- Notification hook for permission prompts
+- Pre-approved commands for multiple package managers and linters
+- PostToolUse hook for automatic validation after edits
+- Notification hook for permission prompts (macOS/Linux)
+
+### Permission Patterns
+
+Permissions use glob-style matching:
+
+| Pattern | Matches |
+|---------|---------|
+| `Bash(git status *)` | `git status`, `git status .`, etc. |
+| `Bash(npm run *)` | `npm run test`, `npm run build`, etc. |
+| `Bash(jq *)` | Any jq command (filters vary widely) |
+| `Bash(* --no-verify *)` | Any command containing `--no-verify` |
+
+### Deny Rules
+
+The templates include safety deny rules:
+
+- `Bash(* --no-verify *)` - Prevents bypassing git hooks
+- `Bash(git push --force *)` - Prevents force-pushing
+- `Bash(rm -rf /)` - Prevents catastrophic deletes
+
+Deny rules take precedence over allow rules.

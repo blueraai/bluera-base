@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jq *)",
+      "Bash(git rev-parse *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git ls-files *)",
+      "Bash(git log *)",
+      "Bash(git fetch *)",
+      "Bash(gh run *)",
+      "Bash(gh release *)",
+      "Bash(shellcheck *)",
+      "Bash(bun run *)",
+      "Bash(bun x *)"
+    ],
+    "deny": [
+      "Bash(* --no-verify *)",
+      "Bash(git push --force *)"
+    ]
+  }
+}
