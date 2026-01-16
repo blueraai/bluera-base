@@ -9,7 +9,7 @@ Comprehensive test of all Bluera Base plugin functionality (hooks + slash comman
 
 ## Context
 
-!`echo "=== Bluera Base Plugin Test ===" && echo "Plugin root: ${CLAUDE_PLUGIN_ROOT:-'(not set - running locally)'}" && ls -la hooks/ 2>/dev/null | head -5`
+!`echo "Hooks: $(ls hooks/*.sh 2>/dev/null | wc -l) files"`
 
 ## Pre-Test Cleanup
 

@@ -31,19 +31,13 @@ COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/
 
 # Validate numeric fields before arithmetic operations
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse loop: State file corrupted" >&2
-  echo "   File: $STATE_FILE" >&2
-  echo "   Problem: 'iteration' field is not a valid number (got: '$ITERATION')" >&2
-  echo "   Milhouse loop is stopping. Run /milhouse-loop again to start fresh." >&2
+  echo "⚠️  Milhouse: iteration invalid ('$ITERATION'). Run /milhouse-loop again." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
 if [[ ! "$MAX_ITERATIONS" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse loop: State file corrupted" >&2
-  echo "   File: $STATE_FILE" >&2
-  echo "   Problem: 'max_iterations' field is not a valid number (got: '$MAX_ITERATIONS')" >&2
-  echo "   Milhouse loop is stopping. Run /milhouse-loop again to start fresh." >&2
+  echo "⚠️  Milhouse: max_iterations invalid ('$MAX_ITERATIONS'). Run /milhouse-loop again." >&2
   rm "$STATE_FILE"
   exit 0
 fi
@@ -59,17 +53,14 @@ fi
 TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
 
 if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
-  echo "⚠️  Milhouse loop: Transcript file not found" >&2
-  echo "   Expected: $TRANSCRIPT_PATH" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: transcript not found ($TRANSCRIPT_PATH). Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
 # Read last assistant message from transcript (JSONL format - one JSON per line)
 if ! grep -q '"role":"assistant"' "$TRANSCRIPT_PATH"; then
-  echo "⚠️  Milhouse loop: No assistant messages found in transcript" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: no assistant messages in transcript. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
@@ -77,8 +68,7 @@ fi
 # Extract last assistant message
 LAST_LINE=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" | tail -1)
 if [[ -z "$LAST_LINE" ]]; then
-  echo "⚠️  Milhouse loop: Failed to extract last assistant message" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: failed to extract assistant message. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
@@ -90,16 +80,13 @@ if ! LAST_OUTPUT=$(echo "$LAST_LINE" | jq -r '
   map(.text) |
   join("\n")
 ' 2>&1); then
-  echo "⚠️  Milhouse loop: Failed to parse assistant message JSON" >&2
-  echo "   Error: $LAST_OUTPUT" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: JSON parse failed. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
 if [[ -z "$LAST_OUTPUT" ]]; then
-  echo "⚠️  Milhouse loop: Assistant message contained no text content" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: no text in assistant message. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
@@ -115,8 +102,7 @@ fi
 
 # Use = for literal string comparison
 if [[ -n "$PROMISE_TEXT" ]] && [[ "$PROMISE_TEXT" = "$COMPLETION_PROMISE" ]]; then
-  echo "✅ Milhouse loop: Detected completion promise on its own line"
-  echo "   Task complete!"
+  echo "✅ Milhouse complete."
   rm "$STATE_FILE"
   exit 0
 fi
@@ -128,8 +114,7 @@ NEXT_ITERATION=$((ITERATION + 1))
 PROMPT_TEXT=$(awk '/^---$/{i++; next} i>=2' "$STATE_FILE")
 
 if [[ -z "$PROMPT_TEXT" ]]; then
-  echo "⚠️  Milhouse loop: Could not read prompt from state file" >&2
-  echo "   Milhouse loop is stopping." >&2
+  echo "⚠️  Milhouse: no prompt in state file. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi

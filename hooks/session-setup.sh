@@ -16,34 +16,12 @@ PREFIX="[bluera-base]"
 # =====================
 
 if ! command -v jq &> /dev/null; then
-    echo -e "${YELLOW}${PREFIX} jq is not installed${NC}"
-    echo -e "${YELLOW}Some hooks require jq for JSON parsing${NC}"
-    echo ""
-
-    # Attempt auto-install based on OS
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        if command -v brew &> /dev/null; then
-            echo -e "${YELLOW}${PREFIX} Installing jq via Homebrew...${NC}"
-            if brew install jq 2>/dev/null; then
-                echo -e "${GREEN}${PREFIX} jq installed ✓${NC}"
-            else
-                echo -e "${YELLOW}${PREFIX} Auto-install failed. Install manually: brew install jq${NC}"
-            fi
-        else
-            echo -e "${YELLOW}Install manually: brew install jq${NC}"
-        fi
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
-        if command -v apt-get &> /dev/null; then
-            echo -e "${YELLOW}Install manually: sudo apt-get install jq${NC}"
-        elif command -v yum &> /dev/null; then
-            echo -e "${YELLOW}Install manually: sudo yum install jq${NC}"
-        else
-            echo -e "${YELLOW}Install jq from: https://stedolan.github.io/jq/download/${NC}"
-        fi
+    # Attempt silent auto-install on macOS
+    if [[ "$OSTYPE" == "darwin"* ]] && command -v brew &> /dev/null; then
+        brew install jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
+            echo -e "${YELLOW}${PREFIX} jq missing. Install: brew install jq${NC}"
     else
-        echo -e "${YELLOW}Install jq from: https://stedolan.github.io/jq/download/${NC}"
+        echo -e "${YELLOW}${PREFIX} jq missing. Install: https://stedolan.github.io/jq/download/${NC}"
     fi
 else
     echo -e "${GREEN}${PREFIX} jq ready ✓${NC}"
@@ -58,9 +36,8 @@ PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$(dirname "$0")")}"
 check_executable() {
     local hook_file="$1"
     if [[ -f "$hook_file" ]] && [[ ! -x "$hook_file" ]]; then
-        chmod +x "$hook_file" 2>/dev/null && \
-            echo -e "${GREEN}${PREFIX} Fixed permissions: $(basename "$hook_file") ✓${NC}" || \
-            echo -e "${YELLOW}${PREFIX} Could not fix permissions: $(basename "$hook_file")${NC}"
+        chmod +x "$hook_file" 2>/dev/null || \
+            echo -e "${YELLOW}${PREFIX} chmod failed: $(basename "$hook_file")${NC}"
     fi
 }
 

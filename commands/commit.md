@@ -9,7 +9,7 @@ Create atomic, well-organized commits. See @bluera-base/skills/atomic-commits/SK
 
 ## Context
 
-!`git status && echo "---STAGED---" && git diff --cached --stat && echo "---UNSTAGED---" && git diff --stat && echo "---UNTRACKED---" && git ls-files --others --exclude-standard && echo "---HISTORY---" && git log --oneline -10`
+!`git status -s && git diff --cached --stat | head -20 && git diff --stat | head -20 && git log --oneline -5`
 
 ## Workflow
 

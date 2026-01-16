@@ -9,7 +9,7 @@ Review the local codebase using multi-agent analysis. See @bluera-base/skills/co
 
 ## Context
 
-!`echo "---PROJECT---" && ls -la && echo "---CLAUDE.md FILES---" && find . -name CLAUDE.md 2>/dev/null`
+!`find . -name CLAUDE.md -type f 2>/dev/null | head -20`
 
 ## Workflow
 

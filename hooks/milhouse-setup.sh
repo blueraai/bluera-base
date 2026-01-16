@@ -105,27 +105,8 @@ started_at: "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 $PROMPT_TEXT
 EOF
 
-# Output setup message
-cat <<EOF
-🔄 Milhouse loop activated!
-
-Iteration: 1
-Max iterations: $(if [[ $MAX_ITERATIONS -gt 0 ]]; then echo "$MAX_ITERATIONS"; else echo "unlimited"; fi)
-Completion promise: $COMPLETION_PROMISE
-
-═══════════════════════════════════════════════════════════
-To complete this loop, output this EXACT text on its own line:
-  <promise>$COMPLETION_PROMISE</promise>
-
-STRICT REQUIREMENTS:
-  ✓ Use <promise> XML tags EXACTLY as shown above
-  ✓ ONLY output when the task is genuinely complete
-  ✓ Do NOT output false promises to exit the loop
-═══════════════════════════════════════════════════════════
-
-🔄
-
-EOF
-
-# Output the prompt
+# Output compact setup message
+MAX_DISPLAY=$(if [[ $MAX_ITERATIONS -gt 0 ]]; then echo "$MAX_ITERATIONS"; else echo "unlimited"; fi)
+echo "🔄 Milhouse: iteration 1/$MAX_DISPLAY | Complete: <promise>$COMPLETION_PROMISE</promise>"
+echo ""
 echo "$PROMPT_TEXT"
