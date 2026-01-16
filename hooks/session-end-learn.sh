@@ -90,9 +90,7 @@ if [[ -n "$SUGGESTIONS" ]]; then
 Run \`/claude-md learn \"<learning>\"\` to add any of these."
 
   jq -n --arg msg "$MSG" '{
-    "hookSpecificOutput": {
-      "systemMessage": $msg
-    }
+    "systemMessage": $msg
   }'
 fi
 
