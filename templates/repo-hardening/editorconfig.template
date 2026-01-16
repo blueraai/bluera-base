@@ -1,0 +1,27 @@
+# EditorConfig - https://editorconfig.org
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Python, Rust use 4 spaces
+[*.{py,pyi,rs}]
+indent_size = 4
+
+# Go uses tabs
+[*.go]
+indent_style = tab
+indent_size = 4
+
+# Markdown preserves trailing whitespace for line breaks
+[*.md]
+trim_trailing_whitespace = false
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab

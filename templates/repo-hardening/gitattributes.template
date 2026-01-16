@@ -1,0 +1,33 @@
+# Git attributes - normalize line endings and mark binary files
+# https://git-scm.com/docs/gitattributes
+
+# Auto-detect text files and normalize line endings
+* text=auto eol=lf
+
+# Force LF for shell scripts
+*.sh text eol=lf
+
+# Force CRLF for Windows batch files
+*.{cmd,bat} text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Lock files - don't diff
+package-lock.json -diff
+yarn.lock -diff
+pnpm-lock.yaml -diff
+bun.lockb binary
+Cargo.lock -diff

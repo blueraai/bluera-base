@@ -1,0 +1,19 @@
+#!/bin/sh
+# Native git pre-commit hook for Rust projects
+# Install: cp this-file .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+
+echo "Running rustfmt..."
+cargo fmt --check || {
+    echo "Format check failed. Run 'cargo fmt' to fix."
+    exit 1
+}
+
+echo "Running clippy..."
+cargo clippy -- -D warnings || {
+    echo "Clippy found issues. Fix them before committing."
+    exit 1
+}
+
+echo "Pre-commit checks passed!"

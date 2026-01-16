@@ -1,0 +1,6 @@
+#!/bin/sh
+# Husky pre-commit hook for JavaScript/TypeScript projects
+# Setup: npm install -D husky lint-staged && npx husky init
+
+# Run lint-staged
+npx lint-staged
