@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.0](https://github.com/blueraai/bluera-base/compare/v0.7.0...v0.8.0) (2026-01-16)
+
+### Features
+
+* **hooks:** add lint suppression and strict typing checks ([ad43a56](https://github.com/blueraai/bluera-base/commit/ad43a5636066c34048711fc2945a7cdec43800fa))
+* **hooks:** add repo hardening with husky, lint-staged, markdownlint ([b0cf141](https://github.com/blueraai/bluera-base/commit/b0cf141075bed228f777418ecdc4c8c6bd5ee479))
+
+### Bug Fixes
+
+* **changelog:** remove duplicate header content ([3daced2](https://github.com/blueraai/bluera-base/commit/3daced21835e011634a85153336a01fb5dc9e20d))
+* **hooks:** move observe-learning to PreToolUse for reliable triggering ([8329865](https://github.com/blueraai/bluera-base/commit/83298653e67ebd46b2c2b12bca5378edca7c8a4f))
+* quiet lint-staged output and fix hook schema ([45a4bd1](https://github.com/blueraai/bluera-base/commit/45a4bd199970ef3ea0b4b200d389f1c27bf06bcd))
+
 ## [0.7.0](https://github.com/blueraai/bluera-base/compare/v0.6.0...v0.7.0) (2026-01-16)
 
 ### Features
