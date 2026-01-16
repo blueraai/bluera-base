@@ -117,6 +117,124 @@ grep -A 20 '^\[project.scripts\]' pyproject.toml | grep '=' | cut -d'=' -f1 | tr
 
 ---
 
+## Learn Algorithm
+
+For `/claude-md learn` - adds learnings to marker-delimited regions.
+
+### Marker Format
+
+```markdown
+## Auto-Learned (bluera-base)
+<!-- AUTO:bluera-base:learned -->
+- Learning 1
+- Learning 2
+<!-- END:bluera-base:learned -->
+```
+
+### Algorithm Steps
+
+1. **Determine target file**:
+   - Default: `CLAUDE.local.md` (personal, gitignored)
+   - With `--shared`: `CLAUDE.md` (team-shared)
+
+2. **Read target file** (or create if missing)
+
+3. **Find markers**:
+   - Start: `<!-- AUTO:bluera-base:learned -->`
+   - End: `<!-- END:bluera-base:learned -->`
+
+4. **If markers missing**: Insert at end of file:
+   ```markdown
+
+   ---
+
+   ## Auto-Learned (bluera-base)
+   <!-- AUTO:bluera-base:learned -->
+   <!-- END:bluera-base:learned -->
+   ```
+
+5. **Parse existing learnings** between markers into list
+
+6. **Dedupe check**:
+   - Normalize: trim whitespace, lowercase
+   - If learning already exists (fuzzy match), skip with message
+
+7. **Secrets check** (CRITICAL):
+   - Regex: `api[_-]?key|token|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API`
+   - If match: REJECT with warning, do NOT write
+
+8. **Hard cap check**:
+   - Max 50 lines in auto-managed section
+   - If exceeded: warn user, suggest pruning old learnings
+
+9. **Insert learning** as new bullet point
+
+10. **Write file** using Edit tool (replace marker region only)
+
+### Secrets Denylist
+
+```regex
+api[_-]?key
+token
+password
+secret
+-----BEGIN
+AWS_
+GITHUB_TOKEN
+ANTHROPIC_API_KEY
+OPENAI_API_KEY
+private[_-]?key
+credential
+```
+
+### Example Implementation
+
+```bash
+# Pseudo-code for the Edit operation
+OLD_CONTENT="<!-- AUTO:bluera-base:learned -->
+- Old learning 1
+<!-- END:bluera-base:learned -->"
+
+NEW_CONTENT="<!-- AUTO:bluera-base:learned -->
+- Old learning 1
+- New learning here
+<!-- END:bluera-base:learned -->"
+```
+
+---
+
+## User Control Modes
+
+Control auto-learning behavior via `/config` command:
+
+```bash
+/config enable auto-learn    # Opt-in to learning observation
+/config set .autoLearn.mode auto  # Change mode
+```
+
+Configuration stored in `.bluera/bluera-base/config.json`:
+
+```json
+{
+  "autoLearn": {
+    "enabled": false,    // opt-in by default
+    "mode": "suggest",   // suggest | auto
+    "threshold": 3,      // occurrences before suggesting
+    "target": "local"    // local | shared
+  }
+}
+```
+
+| Mode | Behavior |
+|------|----------|
+| `suggest` | Show learning suggestions at session end |
+| `auto` | Automatically add learnings to marker regions |
+
+**Session signals** are tracked in `.bluera/bluera-base/state/session-signals.json` (ephemeral, gitignored).
+Commands with ≥threshold occurrences trigger learning suggestions.
+
+---
+
 ## References
 
 - **Audit Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/templates/`

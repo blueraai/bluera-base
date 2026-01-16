@@ -148,6 +148,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `/commit` | Create atomic, well-organized commits with documentation checks |
 | `/code-review` | Run multi-agent codebase review |
 | `/release` | Cut a release with conventional commits auto-detection and CI monitoring |
+| `/config` | Manage bluera-base plugin configuration |
 | `/milhouse-loop` | Start iterative development loop with configurable completion criteria |
 | `/cancel-milhouse` | Cancel active milhouse loop |
 | `/install-rules` | Install bluera-base rule templates to `.claude/rules/` |

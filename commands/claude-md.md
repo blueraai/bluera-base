@@ -1,6 +1,6 @@
 ---
 description: Audit + maintain CLAUDE.md memory files (validate, update, create where helpful)
-argument-hint: <audit|init> [options]
+argument-hint: <audit|init|learn> [options]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls:*), Bash(wc:*), Bash(head:*), Bash(tail:*), Bash(jq:*), AskUserQuestion
 ---
 
@@ -12,6 +12,58 @@ Audit and maintain `CLAUDE.md` files in this repository. See @bluera-base/skills
 
 - **`/claude-md audit`** (default) - Validate existing CLAUDE.md files
 - **`/claude-md init`** - Create new CLAUDE.md via auto-detection + interview
+- **`/claude-md learn "<text>"`** - Add a learning to the auto-managed section
+
+---
+
+## Learn Workflow
+
+When action is `learn`:
+
+### Marker-Based Editing
+
+Learnings are written to a marker-delimited region in `CLAUDE.local.md` (or `CLAUDE.md` with `--shared`).
+
+**Marker format:**
+```markdown
+## Auto-Learned (bluera-base)
+<!-- AUTO:bluera-base:learned -->
+- Learning 1
+- Learning 2
+<!-- END:bluera-base:learned -->
+```
+
+### Algorithm
+
+1. **Target file**: Default `CLAUDE.local.md`, or `CLAUDE.md` if `--shared` flag
+2. **Find markers**: Search for `<!-- AUTO:bluera-base:learned -->` and `<!-- END:bluera-base:learned -->`
+3. **Insert if missing**: Add markers at end of file with section header
+4. **Dedupe**: Check if learning already exists (case-insensitive, trimmed)
+5. **Validate**: Check against secrets denylist (see below)
+6. **Hard cap**: Max 50 lines in auto-managed section
+7. **Write**: Update only the content between markers
+
+### Secrets Filtering
+
+**NEVER write learnings that match:**
+```
+api[_-]?key|token|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API
+```
+
+If a suspected secret is detected, output a warning and do NOT write.
+
+### Usage Examples
+
+```bash
+# Add to local memory (default)
+/claude-md learn "Always run bun test before committing"
+
+# Add to shared project memory
+/claude-md learn "Use conventional commits format" --shared
+
+# View current learnings
+/claude-md learn --list
+```
 
 ---
 

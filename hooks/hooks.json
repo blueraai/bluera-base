@@ -1,5 +1,5 @@
 {
-  "description": "bluera-base shared hooks - validation, notifications, release protection, and milhouse loop",
+  "description": "bluera-base shared hooks - validation, notifications, release protection, milhouse loop, and auto-improvement",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,26 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-setup.sh",
             "timeout": 30
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start-inject.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-compact.sh",
+            "timeout": 5
           }
         ]
       }
@@ -35,6 +55,16 @@
             "timeout": 60
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/observe-learning.sh",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "Notification": [
@@ -56,6 +86,16 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-stop.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end-learn.sh",
             "timeout": 10
           }
         ]
