@@ -24,6 +24,7 @@ Detect duplicate code across your codebase using jscpd (cross-language copy/past
 ### Scan (default)
 
 1. **Check jscpd availability**:
+
    ```bash
    if command -v jscpd &>/dev/null; then
      JSCPD="jscpd"
@@ -33,11 +34,13 @@ Detect duplicate code across your codebase using jscpd (cross-language copy/past
    ```
 
 2. **Ensure output directory exists**:
+
    ```bash
    mkdir -p .bluera/bluera-base/state
    ```
 
 3. **Run jscpd scan**:
+
    ```bash
    $JSCPD . \
      --min-tokens 70 \
@@ -175,6 +178,7 @@ jscpd supports 150+ languages. Primary focus:
 **Required**: Node.js (for jscpd or npx)
 
 **Recommended**: Install jscpd globally for faster scans:
+
 ```bash
 npm install -g jscpd
 ```

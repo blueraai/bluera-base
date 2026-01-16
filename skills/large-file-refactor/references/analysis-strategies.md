@@ -58,11 +58,12 @@ grep -n "^type \|^func " file.go
 
 The most accurate way to get file structure:
 
-```
+```text
 LSP documentSymbol file.rs
 ```
 
 Returns hierarchical list of:
+
 - Functions/methods
 - Classes/structs/enums
 - Interfaces/traits
@@ -70,6 +71,7 @@ Returns hierarchical list of:
 - Nested symbols
 
 **Advantages over grep**:
+
 - Handles multi-line signatures
 - Shows nesting/hierarchy
 - Language-aware parsing
@@ -78,7 +80,7 @@ Returns hierarchical list of:
 
 Once you identify sections via grep or LSP:
 
-```
+```text
 Read file.rs offset=100 limit=200
 ```
 
@@ -86,6 +88,7 @@ Read file.rs offset=100 limit=200
 - `limit`: Number of lines to read
 
 **Strategy**:
+
 1. Use grep to find line numbers of interest
 2. Read specific sections (add buffer: `offset=line-10 limit=section_size+20`)
 3. Build mental map of file structure
@@ -95,12 +98,14 @@ Read file.rs offset=100 limit=200
 ### Cohesion Indicators
 
 **Strong cohesion** (keep together):
+
 - Type definition + its impl blocks
 - Struct + associated functions
 - Interface + implementations
 - Test module for specific functionality
 
 **Weak cohesion** (split candidates):
+
 - Unrelated utilities in same file
 - Multiple distinct features
 - Different domains/concerns
@@ -127,7 +132,8 @@ Estimate resulting file sizes before splitting:
 3. Allow some variance for cohesion
 
 **Example**:
-```
+
+```text
 File: 2500 lines
 impl UserService: lines 50-600    (550 lines) → user_service.rs
 impl AuthService: lines 601-1200  (600 lines) → auth_service.rs
@@ -138,6 +144,7 @@ Types + tests: lines 1801-2500    (700 lines) → keep in mod.rs + tests.rs
 ## Token Estimation
 
 Claude Code's limit is ~25000 tokens. Rough conversion:
+
 - 1 line of code ≈ 5-15 tokens (varies by language/density)
 - 2000 lines ≈ 10000-30000 tokens
 

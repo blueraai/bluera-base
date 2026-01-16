@@ -38,7 +38,7 @@ Changes take effect on Claude Code restart (no reinstall needed).
 
 ## Project Structure
 
-```
+```text
 bluera-base/
 ├── .claude-plugin/
 │   └── plugin.json               # Plugin manifest

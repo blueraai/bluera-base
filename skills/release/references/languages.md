@@ -13,6 +13,7 @@ __SKILL__=release git push --follow-tags
 ```
 
 If project has custom release scripts in package.json:
+
 ```bash
 __SKILL__=release <runner> release         # Auto-detect bump
 __SKILL__=release <runner> release:patch   # Force patch
@@ -25,6 +26,7 @@ Where `<runner>` is: `bun run`, `yarn`, `pnpm`, or `npm run`.
 ## Python
 
 **Poetry:**
+
 ```bash
 __SKILL__=release poetry version patch  # or minor, major
 __SKILL__=release git add pyproject.toml
@@ -34,12 +36,14 @@ __SKILL__=release git push --follow-tags
 ```
 
 **Hatch:**
+
 ```bash
 __SKILL__=release hatch version patch  # or minor, major
 # Then commit and tag as above
 ```
 
 **bump2version:**
+
 ```bash
 __SKILL__=release bump2version patch  # or minor, major
 __SKILL__=release git push --follow-tags
@@ -48,11 +52,13 @@ __SKILL__=release git push --follow-tags
 ## Rust
 
 **With cargo-release (recommended):**
+
 ```bash
 __SKILL__=release cargo release patch --execute  # or minor, major
 ```
 
 **Manual:**
+
 ```bash
 # Edit Cargo.toml version field, then:
 __SKILL__=release git add Cargo.toml Cargo.lock

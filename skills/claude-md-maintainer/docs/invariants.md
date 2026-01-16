@@ -7,11 +7,13 @@ Every `CLAUDE.md` file (root or nested) MUST satisfy these invariants:
 The file must explicitly state it is Claude's **memory**, not user documentation.
 
 **Required header block:**
+
 ```markdown
 # THIS IS CLAUDE.md - PROJECT MEMORY (or DIRECTORY MEMORY)
 ```
 
 **Anti-pattern to detect:**
+
 - Starts with `# Project Name` without the memory declaration
 - Contains "Welcome to" or installation instructions
 - Has sections like "Getting Started", "Installation", "API Reference"
@@ -24,6 +26,7 @@ The file must explicitly state it is Claude's **memory**, not user documentation
 - Target: < 100 lines for root, < 50 lines for modules
 
 **What to trim:**
+
 - Verbose explanations of standard tools
 - Full command output examples
 - Lists of every file in a directory
@@ -31,12 +34,14 @@ The file must explicitly state it is Claude's **memory**, not user documentation
 ## 3. Be Actionable
 
 Must include the canonical commands for the scope:
+
 - Build command
 - Test command
 - Lint command
 - Dev/run command
 
 **If commands can't be determined:**
+
 - Add a TODO with pointers (e.g., "TODO: Confirm build command - check package.json scripts")
 
 ## 4. Use Progressive Disclosure
@@ -48,6 +53,7 @@ Must include the canonical commands for the scope:
 ## 5. Section Order
 
 Normalize sections in this order:
+
 1. Purpose header
 2. Quick facts (languages, frameworks, shape)
 3. Commands (build/test/lint/dev)

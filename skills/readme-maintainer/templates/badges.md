@@ -13,6 +13,7 @@ Common shields.io badge patterns for README files. Replace `ORG`, `REPO`, `PACKA
 ## Package Registries
 
 ### npm
+
 ```markdown
 ![npm version](https://img.shields.io/npm/v/PACKAGE)
 ![npm downloads](https://img.shields.io/npm/dm/PACKAGE)
@@ -20,6 +21,7 @@ Common shields.io badge patterns for README files. Replace `ORG`, `REPO`, `PACKA
 ```
 
 ### PyPI
+
 ```markdown
 ![PyPI version](https://img.shields.io/pypi/v/PACKAGE)
 ![PyPI downloads](https://img.shields.io/pypi/dm/PACKAGE)
@@ -27,6 +29,7 @@ Common shields.io badge patterns for README files. Replace `ORG`, `REPO`, `PACKA
 ```
 
 ### crates.io (Rust)
+
 ```markdown
 ![crates.io](https://img.shields.io/crates/v/PACKAGE)
 ![crates.io downloads](https://img.shields.io/crates/d/PACKAGE)

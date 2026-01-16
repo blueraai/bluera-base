@@ -108,6 +108,7 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
 **Known issue**: Plugin SessionStart hooks may not receive `CLAUDE_ENV_FILE`.
 
 **Workaround**:
+
 - Provide a manual `/init` command that runs the same setup logic
 - Design commands to lazily initialize if state is missing
 
@@ -118,23 +119,27 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
 ### Plugin Not Appearing
 
 **Symptoms**:
+
 - Commands not available via `/plugin-name:command`
 - Skills not being applied
 
 **Solutions**:
 
 1. Clear plugin cache:
+
    ```bash
    rm -rf ~/.claude/plugins/cache
    ```
 
 2. Validate manifest:
+
    ```bash
    claude plugin validate
    ```
 
 3. Check plugin structure:
-   ```
+
+   ```text
    my-plugin/
    ├─ .claude-plugin/
    │  └─ plugin.json    # Manifest here
@@ -148,6 +153,7 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
 **Symptom**: Skill not being applied automatically.
 
 **Causes**:
+
 - `description` field not matching task intent
 - `disable-model-invocation: true` set (manual only)
 - SKILL.md too large (context bloat)
@@ -161,6 +167,7 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
 ### Hooks Not Firing
 
 1. Check `hooks.json` structure:
+
    ```json
    {
      "hooks": {
@@ -175,6 +182,7 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
    ```
 
 2. Verify script is executable:
+
    ```bash
    chmod +x hooks/*.sh
    ```
@@ -274,6 +282,7 @@ fi
 **Solutions**:
 
 1. Use `SessionStart` hook to inject critical invariants:
+
    ```json
    {
      "hookSpecificOutput": {
@@ -295,6 +304,7 @@ fi
 **Symptom**: Version bump doesn't result in updated plugin.
 
 **Solution**:
+
 ```bash
 # Update marketplace cache
 /plugin marketplace update <marketplace>
@@ -307,6 +317,7 @@ git pull
 ### Self-Hosted Marketplace Stale
 
 **Workaround**: Always update marketplace before install:
+
 ```bash
 /plugin marketplace update my-marketplace
 /plugin install my-plugin

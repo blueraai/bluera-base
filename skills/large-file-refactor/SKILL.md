@@ -32,6 +32,7 @@ Use `LSP documentSymbol` for accurate symbol outline.
 ### 2. Identify Natural Breakpoints
 
 Look for cohesive groups:
+
 - Related functions (CRUD operations, handlers, validators)
 - Type + its impl blocks
 - Feature-specific code
@@ -73,7 +74,8 @@ When you can't read the whole file:
 | `wc -l` | Total line count |
 
 **Example workflow**:
-```
+
+```text
 1. wc -l file.rs                    # 3500 lines
 2. grep -n "^impl" file.rs          # Find impl blocks at lines 100, 800, 2000
 3. LSP documentSymbol file.rs       # Get full structure
@@ -97,7 +99,7 @@ See `@large-file-refactor/references/breakout-patterns.md` for detailed examples
 |----------|-----------------|
 | Rust | Submodules in directory, re-export from mod.rs |
 | TypeScript | Separate files, barrel export from index.ts |
-| Python | Package with __init__.py |
+| Python | Package with **init**.py |
 | Go | Multiple files in same package |
 
 ## Common Pitfalls

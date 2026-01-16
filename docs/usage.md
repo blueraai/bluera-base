@@ -30,6 +30,7 @@ Create a `CLAUDE.md` in your project root:
 ```
 
 The `@bluera-base/includes/CLAUDE-BASE.md` pulls in:
+
 - Header explaining CLAUDE.md vs README.md
 - Hierarchical CLAUDE.md explanation
 - ALWAYS/NEVER conventions
@@ -53,6 +54,7 @@ cp /path/to/bluera-base/templates/settings.local.json.example .claude/settings.l
 ```
 
 This provides:
+
 - Pre-approved commands for multiple package managers and languages
 - PostToolUse hook for validation
 - Notification hook for permission prompts

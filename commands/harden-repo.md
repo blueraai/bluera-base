@@ -62,6 +62,7 @@ npx husky init
 ```
 
 Create configs from templates:
+
 - `.husky/pre-commit` from `@bluera-base/templates/repo-hardening/husky-pre-commit.template`
 - `lint-staged.config.js` from `@bluera-base/templates/repo-hardening/lint-staged.config.template`
 
@@ -78,9 +79,11 @@ pre-commit install
 ```
 
 Create configs from templates:
+
 - `.pre-commit-config.yaml` from `@bluera-base/templates/repo-hardening/pre-commit-config.yaml.template`
 
 Add to `pyproject.toml`:
+
 ```toml
 [tool.ruff]
 line-length = 88
@@ -98,12 +101,14 @@ rustup component add clippy rustfmt
 ```
 
 Create native git hook from `@bluera-base/templates/repo-hardening/git-pre-commit-rust.template`:
+
 ```bash
 cp template .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
 Add to `Cargo.toml`:
+
 ```toml
 [lints.clippy]
 all = "warn"
@@ -118,6 +123,7 @@ go install github.com/golangci-lint/golangci-lint/cmd/golangci-lint@latest
 ```
 
 Create native git hook from `@bluera-base/templates/repo-hardening/git-pre-commit-go.template`:
+
 ```bash
 cp template .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
@@ -137,7 +143,7 @@ If selected, create:
 
 Report what was set up:
 
-```
+```text
 ## Repo Hardening Complete
 
 ### Installed
@@ -162,6 +168,7 @@ Report what was set up:
 ## Error Recovery
 
 If installation fails:
+
 1. Check package manager is available
 2. Check network connectivity
 3. Offer manual installation instructions

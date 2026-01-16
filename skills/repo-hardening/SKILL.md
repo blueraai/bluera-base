@@ -30,6 +30,7 @@ npm install -D eslint @eslint/js typescript-eslint
 ```
 
 **Recommended rules**:
+
 - `@typescript-eslint/no-unused-vars`
 - `@typescript-eslint/no-explicit-any`
 - `no-console` (warn)
@@ -41,6 +42,7 @@ npm install -D prettier eslint-config-prettier
 ```
 
 **Config: .prettierrc**
+
 ```json
 {
   "semi": true,
@@ -57,6 +59,7 @@ npm install -D typescript
 ```
 
 **tsconfig.json strict options**:
+
 ```json
 {
   "compilerOptions": {
@@ -77,6 +80,7 @@ npx husky init
 ```
 
 **package.json**:
+
 ```json
 {
   "lint-staged": {
@@ -87,6 +91,7 @@ npx husky init
 ```
 
 **.husky/pre-commit**:
+
 ```bash
 npx lint-staged
 ```
@@ -103,6 +108,7 @@ pip install ruff
 ```
 
 **pyproject.toml**:
+
 ```toml
 [tool.ruff]
 line-length = 88
@@ -123,6 +129,7 @@ pip install mypy
 ```
 
 **pyproject.toml**:
+
 ```toml
 [tool.mypy]
 python_version = "3.11"
@@ -139,6 +146,7 @@ pre-commit install
 ```
 
 **.pre-commit-config.yaml**:
+
 ```yaml
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -167,6 +175,7 @@ rustup component add clippy
 ```
 
 **Cargo.toml**:
+
 ```toml
 [lints.clippy]
 all = "warn"
@@ -181,6 +190,7 @@ rustup component add rustfmt
 ```
 
 **rustfmt.toml**:
+
 ```toml
 edition = "2021"
 max_width = 100
@@ -190,6 +200,7 @@ tab_spaces = 4
 ### Git Hooks: Native
 
 **.git/hooks/pre-commit**:
+
 ```bash
 #!/bin/sh
 cargo fmt --check || exit 1
@@ -208,6 +219,7 @@ go install github.com/golangci-lint/golangci-lint/cmd/golangci-lint@latest
 ```
 
 **.golangci.yml**:
+
 ```yaml
 linters:
   enable:
@@ -235,6 +247,7 @@ go fmt ./...
 ### Git Hooks: Native
 
 **.git/hooks/pre-commit**:
+
 ```bash
 #!/bin/sh
 go fmt ./... || exit 1
@@ -278,7 +291,7 @@ indent_style = tab
 
 Normalize line endings:
 
-```
+```text
 * text=auto eol=lf
 *.{cmd,[cC][mM][dD]} text eol=crlf
 *.{bat,[bB][aA][tT]} text eol=crlf

@@ -265,36 +265,43 @@ MIT - See [LICENSE](./LICENSE)
 ## Section Guidelines
 
 ### Title + Badges
+
 - Project name as h1
 - 3-6 relevant badges immediately after
 - One-line tagline as blockquote or bold
 
 ### Table of Contents
+
 - Use collapsible for 5+ sections
 - Link to all major sections
 - Update when adding sections
 
 ### Features
+
 - Use table if features have multiple attributes
 - Use list if just names/descriptions
 - Include status (stable/beta/planned) if relevant
 
 ### Installation
+
 - Show primary method prominently
 - Collapse alternative methods
 - Include prerequisites if any
 
 ### API/Configuration
+
 - Use tables for options/parameters
 - Include types and defaults
 - Show examples for complex options
 
 ### Troubleshooting
+
 - Use collapsible for each issue
 - Include cause and solution
 - Add as users report problems
 
 ### Contributing
+
 - Keep brief in README
 - Link to CONTRIBUTING.md for details
 - Include basic steps inline

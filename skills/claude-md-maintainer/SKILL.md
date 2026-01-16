@@ -35,6 +35,7 @@ Audit and maintain `CLAUDE.md` files across any repository. Ensures they functio
 ### Phase 2: Apply (with confirmation)
 
 Only after user confirms:
+
 1. Update existing files
 2. Create missing files from templates
 3. Report final state
@@ -49,7 +50,7 @@ For `/bluera-base:claude-md init` - creates new CLAUDE.md from scratch.
 
 Check files in order (stop at first match):
 
-```
+```text
 package.json → JavaScript/TypeScript
 Cargo.toml   → Rust
 pyproject.toml → Python
@@ -71,11 +72,13 @@ go.mod       → Go
 ### Script Extraction
 
 **JavaScript/TypeScript:**
+
 ```bash
 jq -r '.scripts | keys[]' package.json 2>/dev/null | head -10
 ```
 
 **Python (pyproject.toml):**
+
 ```bash
 grep -A 20 '^\[project.scripts\]' pyproject.toml | grep '=' | cut -d'=' -f1 | tr -d ' "'
 ```
@@ -144,6 +147,7 @@ For `/bluera-base:claude-md learn` - adds learnings to marker-delimited regions.
    - End: `<!-- END:bluera-base:learned -->`
 
 4. **If markers missing**: Insert at end of file:
+
    ```markdown
 
    ---
@@ -264,6 +268,7 @@ Commands with ≥threshold occurrences trigger learning suggestions.
 ## Output Format
 
 Report these sections:
+
 - Memory files found
 - Files to create
 - Files to update (with diff summary)

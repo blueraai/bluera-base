@@ -18,7 +18,7 @@ See @bluera-base/docs/claude-code-best-practices.md for the full best practices 
 
 ### 1. Plugin Structure
 
-```
+```text
 plugin/
 ├─ .claude-plugin/
 │  └─ plugin.json          # Manifest ONLY here
@@ -30,6 +30,7 @@ plugin/
 ```
 
 **Check**:
+
 - [ ] `plugin.json` is in `.claude-plugin/` (not root)
 - [ ] Commands/skills/hooks are at plugin root, not nested in `.claude-plugin/`
 - [ ] No files outside plugin root referenced via `../`
@@ -37,6 +38,7 @@ plugin/
 ### 2. Plugin Manifest (plugin.json)
 
 **Required fields**:
+
 ```json
 {
   "name": "plugin-name",
@@ -49,6 +51,7 @@ plugin/
 ```
 
 **Check**:
+
 - [ ] All required fields present
 - [ ] Version follows semver
 - [ ] Description is meaningful (not placeholder)
@@ -56,6 +59,7 @@ plugin/
 ### 3. Commands
 
 **Frontmatter requirements**:
+
 ```yaml
 ---
 description: Clear, actionable description
@@ -65,6 +69,7 @@ argument-hint: [optional] Arguments if any
 ```
 
 **Check**:
+
 - [ ] All commands have description
 - [ ] allowed-tools are explicit (not `*`)
 - [ ] No dangerous tool patterns (`Bash(*)`)
@@ -72,7 +77,8 @@ argument-hint: [optional] Arguments if any
 ### 4. Skills
 
 **Structure**:
-```
+
+```text
 skills/
 └─ skill-name/
    ├─ SKILL.md              # Main skill file
@@ -80,6 +86,7 @@ skills/
 ```
 
 **Check**:
+
 - [ ] SKILL.md exists for each skill
 - [ ] Progressive disclosure (SKILL.md lean, references for detail)
 - [ ] Description in frontmatter matches purpose
@@ -88,6 +95,7 @@ skills/
 ### 5. Hooks
 
 **Registration** (`hooks/hooks.json`):
+
 ```json
 {
   "hooks": {
@@ -97,6 +105,7 @@ skills/
 ```
 
 **Check**:
+
 - [ ] hooks.json has valid structure
 - [ ] Scripts use `${CLAUDE_PLUGIN_ROOT}` for paths
 - [ ] Scripts are executable (`chmod +x`)
@@ -106,6 +115,7 @@ skills/
 ### 6. Token Efficiency
 
 **Check**:
+
 - [ ] SKILL.md files are lean (< 200 lines ideally)
 - [ ] Large content in references/, not main files
 - [ ] No large inline code dumps
@@ -114,6 +124,7 @@ skills/
 ### 7. Security
 
 **Check**:
+
 - [ ] No secrets in committed files
 - [ ] No `--no-verify` patterns
 - [ ] allowed-tools are scoped narrowly
@@ -136,6 +147,7 @@ fi
 ### Phase 2: Run Audits
 
 For each checklist item:
+
 1. Run check
 2. Record pass/fail/warning
 3. Note specific issues
@@ -180,6 +192,7 @@ For each checklist item:
 ### Phase 4: Apply Fixes (if --fix)
 
 If `--fix` flag provided:
+
 1. Fix executable permissions
 2. Add missing frontmatter fields
 3. Restructure if needed
@@ -195,6 +208,7 @@ git log --oneline --all --grep="optimize" --grep="perf" --grep="token"
 ```
 
 Key optimizations from our history:
+
 - Pointer-based data passing (80-90% token savings)
 - Progressive skill disclosure
 - State file scoping per session

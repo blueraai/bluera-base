@@ -20,6 +20,7 @@ README.md is **user documentation** (unlike CLAUDE.md which is Claude's memory).
 Use tables for structured comparisons, feature matrices, and option lists.
 
 **Syntax:**
+
 ```markdown
 | Header 1 | Header 2 | Header 3 |
 |----------|:--------:|---------:|
@@ -33,12 +34,14 @@ Use tables for structured comparisons, feature matrices, and option lists.
 **Escape pipes:** Use `\|` for literal pipe characters.
 
 **When to use tables:**
+
 - Feature comparisons (columns: feature, description, status)
 - Command reference (columns: command, description, example)
 - Configuration options (columns: option, type, default, description)
 - Side-by-side comparisons (with/without, before/after)
 
 **When NOT to use tables:**
+
 - Simple lists with no comparison dimension
 - Content requiring long prose descriptions
 
@@ -47,6 +50,7 @@ Use tables for structured comparisons, feature matrices, and option lists.
 Use `<details>` for optional or lengthy content that shouldn't dominate the page.
 
 **Syntax:**
+
 ```html
 <details>
 <summary>Click to expand</summary>
@@ -59,6 +63,7 @@ Content here (leave blank line after summary tag)
 **Open by default:** Add `open` attribute: `<details open>`
 
 **When to collapse:**
+
 - Installation instructions for multiple platforms/methods
 - Troubleshooting sections
 - Advanced configuration
@@ -67,6 +72,7 @@ Content here (leave blank line after summary tag)
 - FAQ sections
 
 **When NOT to collapse:**
+
 - Critical getting-started content
 - Primary installation method
 - Core features (these should be visible)
@@ -96,6 +102,7 @@ Badges communicate project status at a glance. Use shields.io for consistent sty
 GitHub renders Mermaid diagrams in fenced code blocks.
 
 **CRITICAL RULES:**
+
 1. **Keep node labels SHORT (1-2 words max)** - Long labels get truncated
 2. **Do NOT use `%%{init:...}%%` theme blocks** - These cause node sizing issues that truncate text
 3. **DO use `style` directives** - Individual node styling works fine
@@ -108,6 +115,7 @@ GitHub renders Mermaid diagrams in fenced code blocks.
 | No colors | `style A fill:#6366f1,color:#fff` |
 
 **Flowchart with colors:**
+
 ````markdown
 ```mermaid
 flowchart LR
@@ -122,6 +130,7 @@ flowchart LR
 ````
 
 **Sequence diagram:**
+
 ````markdown
 ```mermaid
 sequenceDiagram
@@ -136,6 +145,7 @@ sequenceDiagram
 ````
 
 **When to use diagrams:**
+
 - Architecture overviews
 - Data flow / message flow
 - State machines
@@ -143,11 +153,13 @@ sequenceDiagram
 - Component relationships
 
 **When NOT to use diagrams:**
+
 - Simple linear processes (use numbered list)
 - When prose is clearer
 - Decorative purposes (diagram must clarify)
 
 **Best practices:**
+
 - Max 1-2 words per node label
 - Never use `%%{init:...}%%` theme configuration (causes truncation)
 - Use `style NodeId fill:#color,color:#fff` for colored nodes
@@ -254,6 +266,7 @@ For READMEs with 5+ sections, add a collapsible ToC:
 ### Preserve Author Intent
 
 When beautifying an existing README:
+
 - Respect the existing structure if it's reasonable
 - Don't force a completely different format
 - Enhance, don't replace
@@ -277,11 +290,13 @@ When beautifying an existing README:
 For large READMEs (> 400 lines) that should be split into modular documentation.
 
 **Thresholds:**
+
 - Total lines > 400 → Consider breakout
 - Single section > 75 lines → Break out to dedicated file
 - Target after breakout: 200-350 lines
 
 **Algorithm:**
+
 1. Read README.md and count lines
 2. Parse sections by heading level
 3. Classify sections by keywords (Contributing → CONTRIBUTING.md, etc.)
@@ -290,6 +305,7 @@ For large READMEs (> 400 lines) that should be split into modular documentation.
 6. Execute and add Documentation links table
 
 **Details:** Read `${CLAUDE_PLUGIN_ROOT}/skills/readme-maintainer/templates/breakout.md` for:
+
 - GitHub special files (CONTRIBUTING.md, SECURITY.md, etc.)
 - Content type detection keywords
 - docs/ folder structure

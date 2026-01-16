@@ -42,7 +42,7 @@ Do NOT install rules into the bluera-base plugin directory itself.
 
 ## Example AskUserQuestion
 
-```
+```yaml
 question: "Which optional rules would you like to install?"
 header: "Rules"
 options:

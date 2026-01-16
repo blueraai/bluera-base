@@ -37,9 +37,11 @@ This file is for **Claude Code**. It is **not** user documentation. It is **not*
 ## Guardrails
 
 ALWAYS:
+
 - ...
 
 NEVER:
+
 - ...
 
 ## Directory map

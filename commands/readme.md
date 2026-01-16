@@ -21,7 +21,7 @@ Parse `$ARGUMENTS` to determine action:
 
 If `$ARGUMENTS` is empty or not a recognized action, show available subcommands:
 
-```
+```text
 README Maintainer - Available Commands:
 
   /bluera-base:readme beautify [instructions]
@@ -53,6 +53,7 @@ Look for README.md in current directory. If not found, fail with helpful message
 ### 2. Analyze Current State
 
 Read the README and identify:
+
 - Current structure (headings, sections)
 - Existing formatting (tables, code blocks, badges, collapsed sections)
 - Missing opportunities for improvement
@@ -60,6 +61,7 @@ Read the README and identify:
 ### 3. Plan Improvements
 
 Based on skill guidelines and user instructions, identify:
+
 - Sections that could use tables instead of lists
 - Long content that should be collapsed
 - Missing badges (CI, npm, license, coverage)
@@ -71,6 +73,7 @@ If user provided instructions (e.g., "use mermaid diagrams"), prioritize those.
 ### 4. Apply Changes
 
 Use Edit tool to apply improvements. Present a summary:
+
 - Changes made (with before/after examples if significant)
 - Formatting features added
 - Suggestions for manual improvements (if any)
@@ -97,7 +100,8 @@ When action is `breakout`:
 ### Phase 2: Apply (after confirmation)
 
 Use AskUserQuestion to confirm:
-```
+
+```yaml
 question: "Apply the breakout plan?"
 header: "Confirm"
 options:
@@ -110,6 +114,7 @@ options:
 ```
 
 If confirmed:
+
 1. Create docs/ folder if needed
 2. Create new documentation files with moved content
 3. Remove content from README.md

@@ -35,6 +35,7 @@ Review the entire local codebase for bugs, issues, and CLAUDE.md compliance.
 ## False Positive Examples
 
 Avoid flagging:
+
 - Issues that linters/typecheckers catch (imports, types, formatting)
 - General quality issues unless in CLAUDE.md
 - Code with lint-ignore comments for that specific issue
@@ -57,6 +58,6 @@ Found N issues:
 
 Or if no issues:
 
-### Code review
+### Code review (no issues)
 
 No issues found. Checked for bugs and CLAUDE.md compliance.

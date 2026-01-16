@@ -118,12 +118,14 @@ cd ~/.claude/barista && ./install.sh
 ### Recommended Presets
 
 **Espresso (Minimal)**:
+
 ```bash
 DISPLAY_MODE="compact"
 MODULE_ORDER="directory,context,git,model"
 ```
 
 **Americano (Developer)**:
+
 ```bash
 MODULE_DOCKER="true"
 MODULE_CPU="true"

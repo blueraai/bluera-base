@@ -64,6 +64,7 @@ cp /path/to/bluera-base/skills/architectural-constraints/SKILL.md.template \
 ```
 
 The template provides structure for:
+
 - What violates the constraint (with code examples)
 - Where constrained code IS allowed (table format)
 - The correct pattern (with code examples)

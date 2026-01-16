@@ -37,11 +37,13 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 2. Create `.bluera/bluera-base/` directory structure
 3. Write default `config.json`
 4. Update `.gitignore` with required patterns:
-   ```
+
+   ```gitignore
    .bluera/
    !.bluera/bluera-base/
    !.bluera/bluera-base/config.json
    ```
+
 5. Report created files
 
 ### Set
@@ -65,10 +67,12 @@ Shortcuts for common boolean settings:
 | `auto-push` | `.autoCommit.push` |
 | `dry-check` | `.dryCheck.enabled` |
 | `dry-auto` | `.dryCheck.onStop` |
+| `strict-typing` | `.strictTyping.enabled` |
 
 ### Reset
 
 Options:
+
 - No args: Remove `config.local.json` only (keep shared config)
 - `--all`: Remove both config files
 
@@ -82,7 +86,8 @@ Show state file status for debugging and visibility.
 4. Report environment variables if set (BLUERA_STATE_DIR, BLUERA_CONFIG)
 
 **Output format:**
-```
+
+```text
 Config: .bluera/bluera-base/
 ├── config.json (exists, 250 bytes)
 └── config.local.json (not found)
@@ -129,6 +134,9 @@ Env (from CLAUDE_ENV_FILE):
     "threshold": 5,      // max allowed duplicate %
     "minTokens": 70,     // min tokens to consider duplicate
     "minLines": 5        // min lines to consider duplicate
+  },
+  "strictTyping": {
+    "enabled": false     // opt-in: block 'any', 'as' casts, type: ignore
   }
 }
 ```
@@ -137,7 +145,7 @@ Env (from CLAUDE_ENV_FILE):
 
 ## Directory Structure
 
-```
+```text
 .bluera/bluera-base/
 ├── config.json              # Team-shareable (committed)
 ├── config.local.json        # Personal overrides (gitignored)
@@ -197,6 +205,9 @@ Env (from CLAUDE_ENV_FILE):
 
 # Set custom DRY thresholds
 /bluera-base:config set .dryCheck.minTokens 50 --shared
+
+# Enable strict typing enforcement (blocks any, as casts, type: ignore)
+/bluera-base:config enable strict-typing
 ```
 
 ---
@@ -215,6 +226,7 @@ The `/bluera-base:config init` command adds these patterns to `.gitignore`:
 ```
 
 This ensures:
+
 - `.bluera/` data is ignored by default
 - `config.json` is committed (team-shareable)
 - `config.local.json` and `state/` are gitignored

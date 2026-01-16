@@ -7,13 +7,15 @@
 Convert single file to directory with submodules.
 
 **Before**:
-```
+
+```text
 src/
 └── policies.rs  (3000 lines)
 ```
 
 **After**:
-```
+
+```text
 src/
 └── policies/
     ├── mod.rs           # Re-exports, shared types
@@ -23,6 +25,7 @@ src/
 ```
 
 **mod.rs structure**:
+
 ```rust
 mod user_policies;
 mod auth_policies;
@@ -44,6 +47,7 @@ For loosely related code.
 **Before**: `lib.rs` with mixed concerns
 
 **After**:
+
 ```rust
 // lib.rs
 mod types;
@@ -67,13 +71,15 @@ pub use handlers::*;
 ### Pattern: Barrel Export (index.ts)
 
 **Before**:
-```
+
+```text
 src/
 └── services.ts  (2000 lines)
 ```
 
 **After**:
-```
+
+```text
 src/
 └── services/
     ├── index.ts         # Re-exports
@@ -83,6 +89,7 @@ src/
 ```
 
 **index.ts**:
+
 ```typescript
 export * from './userService';
 export * from './authService';
@@ -93,7 +100,7 @@ export type * from './types';
 
 For React/component code:
 
-```
+```text
 src/
 └── features/
     └── auth/
@@ -117,13 +124,15 @@ src/
 ### Pattern: Package Structure
 
 **Before**:
-```
+
+```text
 src/
 └── handlers.py  (2500 lines)
 ```
 
 **After**:
-```
+
+```text
 src/
 └── handlers/
     ├── __init__.py      # Re-exports
@@ -132,7 +141,8 @@ src/
     └── base.py          # Shared base classes
 ```
 
-**__init__.py**:
+****init**.py**:
+
 ```python
 from .user_handlers import UserHandler, create_user
 from .auth_handlers import AuthHandler, login, logout
@@ -174,13 +184,15 @@ from .repository import UserRepository
 Go naturally supports multiple files in one package.
 
 **Before**:
-```
+
+```text
 pkg/
 └── service.go  (3000 lines)
 ```
 
 **After**:
-```
+
+```text
 pkg/
 ├── service.go       # Main entry, shared types
 ├── user.go          # User operations
@@ -189,6 +201,7 @@ pkg/
 ```
 
 **Key**: All files declare same package:
+
 ```go
 package pkg
 ```
@@ -199,7 +212,7 @@ No explicit imports needed between files in same package.
 
 For distinct concerns:
 
-```
+```text
 pkg/
 ├── service.go
 └── internal/

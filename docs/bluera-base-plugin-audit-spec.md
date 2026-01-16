@@ -1,4 +1,5 @@
 # bluera-base plugin audit + upgrade spec
+
 _Date: 2026-01-15_  
 _Target plugin version: 0.2.0 (from 0.1.0)_
 
@@ -31,18 +32,23 @@ It is written to be directly actionable: file-by-file changes, with copy/paste-r
 ## 1) High-impact findings (current gaps)
 
 ### 1.1 post-edit-check misses new files
+
 `post-edit-check.sh` detects modified files using `git diff --name-only HEAD`. That **does not include untracked files**, so a `Write` of a brand new file can bypass lint/type checks entirely.
 
 ### 1.2 Anti-pattern scan doesn’t recurse into subdirectories
+
 `check_anti_patterns()` builds `PATTERNS` like `*.ts`, `*.py`, `*.rs`, `*.go`. Git pathspec `*.ts` only matches files in the repo root (it doesn’t match `src/foo.ts`). So the anti-pattern check is currently ineffective for most repos.
 
 ### 1.3 “NO --no-verify” is declared but not enforced
+
 `includes/CLAUDE-BASE.md` contains a strict “NO `--no-verify`” policy, but `hooks/hooks.json` does not enforce it deterministically.
 
 ### 1.4 `dist/` / generated files can trigger validation
+
 Because this plugin itself requires committing `dist/`, any build step can create diffs in generated JS that unintentionally trigger JS lint checks.
 
 ### 1.5 Hooks are leaving leverage on the table
+
 Hooks receive structured JSON on stdin. Today, `post-edit-check.sh` ignores stdin, which forces it to infer “what changed” via git. Using stdin gives a **precise file_path** for Write/Edit events and solves multiple issues above.
 
 ---
@@ -50,11 +56,13 @@ Hooks receive structured JSON on stdin. Today, `post-edit-check.sh` ignores stdi
 ## 2) Proposed new architecture
 
 ### 2.1 Add rule templates (project-installable)
+
 Add a `templates/claude/rules/` directory in the plugin with modular rule files. Then add a command to install them into any repo (`/bluera-base:install-rules`).
 
-This bridges the gap that rules are not “plugin-scoped” by default: the plugin *ships templates + an installer*.
+This bridges the gap that rules are not “plugin-scoped” by default: the plugin _ships templates + an installer_.
 
-### 2.2 Update hooks to:
+### 2.2 Update hooks to
+
 - enforce “NO --no-verify” deterministically (PreToolUse on Bash)
 - rely on stdin JSON for Write/Edit validation
 - skip generated outputs
@@ -68,10 +76,12 @@ This bridges the gap that rules are not “plugin-scoped” by default: the plug
 ## 3.1 `.claude-plugin/plugin.json`
 
 ### Change
+
 - Bump version.
 - Optional: add `homepage` for discoverability.
 
 ### Patch (example)
+
 ```json
 {
   "name": "bluera-base",
@@ -86,6 +96,7 @@ This bridges the gap that rules are not “plugin-scoped” by default: the plug
 ```
 
 Notes:
+
 - You **do not need** to add `hooks`, `commands`, `skills` path fields if you use standard directories (they’ll auto-load). Add them only if you intentionally deviate.
 
 ---
@@ -93,6 +104,7 @@ Notes:
 ## 3.2 `hooks/hooks.json`
 
 ### Changes
+
 1. **PreToolUse**: replace the single-purpose script (`block-manual-release.sh`) with a consolidated guard:
    - block `git commit --no-verify` (hard block)
    - block manual release/tag/publish commands (hard block → instruct to use `/bluera-base:release`)
@@ -105,6 +117,7 @@ Notes:
 4. **Stop**: remove `matcher` (Stop doesn’t need it) and ensure `milhouse-stop.sh` uses `stop_hook_active`.
 
 ### Proposed `hooks/hooks.json`
+
 ```json
 {
   "description": "bluera-base shared hooks - validation, notifications, release protection, and milhouse loop",
@@ -168,6 +181,7 @@ Notes:
 Create a new script that reads stdin JSON (the hook event payload) and blocks unsafe Bash commands.
 
 ### Behavior
+
 - If tool is not Bash → no-op.
 - If command contains `git commit` and `--no-verify` → exit **2** with message.
 - If command appears to be a manual release/publish:
@@ -180,6 +194,7 @@ Create a new script that reads stdin JSON (the hook event payload) and blocks un
   → exit **2** with message "Use /bluera-base:release".
 
 ### Implementation (copy/paste)
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
@@ -237,6 +252,7 @@ exit 0
 ```
 
 Notes:
+
 - `exit 2` is the “blocking” codepath for PreToolUse. Keep messages short and specific.
 - Make the script executable: `chmod +x hooks/pretool-guard.sh`.
 
@@ -245,6 +261,7 @@ Notes:
 ## 3.4 `hooks/post-edit-check.sh` (major refactor)
 
 ### Summary of required changes
+
 1. **Read stdin JSON** and pull `tool_name` + `tool_input.file_path`.
 2. Use file extension and path to decide which checks to run.
 3. **Skip generated paths** (`dist/`, `target/`, `node_modules/`, `.venv/`, etc.).
@@ -255,6 +272,7 @@ Notes:
 5. Add a **lock** to avoid concurrent runs (PostToolUse can trigger frequently).
 
 ### Proposed behavior
+
 - On every Write/Edit, validate the single touched file:
   - JS/TS: eslint (fix + check) on that file, then optional `tsc --noEmit` (rate-limited)
   - Python: ruff/flake8 on that file, optional mypy (rate-limited)
@@ -263,6 +281,7 @@ Notes:
 - Always run anti-pattern scan for the touched file (added-lines for tracked; full file for new).
 
 ### Implementation notes
+
 - Use **rate limiting** for heavy “project-wide” checks:
   - keep a timestamp file in `"$TMPDIR"` (or `/tmp`)
   - don’t re-run `tsc` / `cargo check` / `golangci-lint` more than once every N seconds
@@ -271,6 +290,7 @@ Notes:
 - Avoid `xargs` on unknown filenames; pass the file path as a single quoted argument.
 
 ### Suggested refactor (skeleton)
+
 This is a skeleton to guide the rewrite; you can keep your existing check logic but change the “what changed” detection and anti-pattern scan.
 
 ```bash
@@ -343,6 +363,7 @@ esac
 ```
 
 ### Anti-pattern scan implementation (recommended)
+
 Add a helper:
 
 ```bash
@@ -386,6 +407,7 @@ Then call `anti_pattern_scan_file "$REL"` at the end (or earlier).
 ## 3.5 NEW: `hooks/notify.sh` (cross-platform)
 
 Replace the inline `osascript` with a script that:
+
 - reads stdin JSON to get `notification_type` and `message` (if available)
 - works on macOS and degrades gracefully elsewhere
 
@@ -436,9 +458,11 @@ exit 0
 ## 3.6 `hooks/milhouse-stop.sh` (safety hardening)
 
 ### Required check
+
 Ensure it reads stdin JSON and checks `stop_hook_active`. If `stop_hook_active` is already true, it should avoid re-triggering a continuation loop.
 
 Implementation approach:
+
 - Parse stdin JSON for `stop_hook_active`
 - If true → exit 0 (do nothing)
 - Else apply your milhouse logic
@@ -448,9 +472,11 @@ Implementation approach:
 ## 3.7 `includes/CLAUDE-BASE.md` → convert to modular rule templates
 
 ### Goal
-Keep `includes/CLAUDE-BASE.md` as a *human-maintained source of truth*, but split it into installable `.claude/rules/*.md` templates so projects don’t need to `@include` a big blob.
+
+Keep `includes/CLAUDE-BASE.md` as a _human-maintained source of truth_, but split it into installable `.claude/rules/*.md` templates so projects don’t need to `@include` a big blob.
 
 ### Proposed split
+
 Create templates:
 
 1. `templates/claude/rules/00-base.md` (unconditional)
@@ -465,7 +491,9 @@ Create templates:
 This avoids polluting non-plugin repos with plugin-specific distribution rules.
 
 ### YAML frontmatter guidance
+
 Always **quote** glob patterns to avoid YAML parsing edge cases:
+
 ```yaml
 ---
 paths:
@@ -482,6 +510,7 @@ paths:
 > Your installer command will copy them into the target repo’s `.claude/rules/`.
 
 ### 4.1 `templates/claude/rules/00-base.md`
+
 ```md
 # Bluera Base Rules (global)
 
@@ -492,6 +521,7 @@ paths:
 ```
 
 ### 4.2 `templates/claude/rules/anti-patterns.md`
+
 ```md
 # Forbidden anti-patterns
 
@@ -503,6 +533,7 @@ Reject on sight:
 ```
 
 ### 4.3 `templates/claude/rules/git.md`
+
 ```md
 # Git rules
 
@@ -511,6 +542,7 @@ Reject on sight:
 ```
 
 ### 4.4 `templates/claude/rules/plugins/distribution.md`
+
 ```md
 ---
 paths:
@@ -525,9 +557,11 @@ paths:
 ```
 
 ### 4.5 Optional per-language templates
+
 Create these only if you want more explicit guidance inside Claude’s memory.
 
 `templates/claude/rules/languages/typescript.md`
+
 ```md
 ---
 paths:
@@ -542,6 +576,7 @@ paths:
 ```
 
 `templates/claude/rules/languages/python.md`
+
 ```md
 ---
 paths:
@@ -559,21 +594,27 @@ paths:
 ## 5) NEW: Installer command to add to the plugin
 
 ### Why
+
 Rules are project/user-level. The plugin should provide a one-shot command to install rule templates into a repo.
 
 ### Add
+
 Create `commands/install-rules.md` in the plugin.
 
 ### Behavior
+
 When a user runs:
+
 - `/bluera-base:install-rules`
 
 Claude should:
+
 1. Create `.claude/rules/` in the current repo.
 2. Copy the template rule content into corresponding files.
 3. Optionally create/update `.claude/CLAUDE.md` with a minimal “project specific” header (do NOT paste the full rules there).
 
 ### `commands/install-rules.md` (spec)
+
 ```md
 ---
 description: Install Bluera base rule templates into this repo under .claude/rules/
@@ -611,11 +652,13 @@ After writing, summarize what was installed and remind the user that rules auto-
 ## 6) Test plan / verification checklist
 
 ### 6.1 Plugin validity
+
 - Validate manifest JSON.
 - Ensure scripts are executable:
   - `chmod +x hooks/*.sh`
 
 ### 6.2 Hook behavior tests (manual)
+
 You can simulate hook input by piping example JSON into scripts:
 
 ```bash
@@ -645,7 +688,9 @@ JSON
 Expected: lint/type checks run for `src/foo.ts` (or no-op if tools absent).
 
 ### 6.3 Rules behavior tests
+
 After running `/bluera-base:install-rules` in a repo:
+
 - Verify `.claude/rules/*.md` exist
 - Run `/status` or `/context` in Claude Code and confirm rules appear in loaded memory
 

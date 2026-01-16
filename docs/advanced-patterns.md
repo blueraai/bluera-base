@@ -15,11 +15,13 @@ Naively passing data between Claude Code components means dumping large content 
 ### The Solution: Two-Channel Architecture
 
 **In-band channel (small)**: Pass only compact "routing" information through model context:
+
 - File path pointer
 - Capsule ID
 - Short digest/summary
 
 **Out-of-band channel (large)**: Store real payload outside LLM context:
+
 - Files on disk
 - Structured JSON state file
 - Model fetches slices only when needed
@@ -347,7 +349,7 @@ Structured development with agent coordination.
 
 ### Pattern: Feature Development Phases
 
-```
+```text
 1. Research     → Explore agent gathers context
 2. Design       → Plan agent proposes approach
 3. Implement    → Main thread writes code

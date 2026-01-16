@@ -41,62 +41,75 @@ Execute each test in order. Mark each as PASS or FAIL.
 ### Part 1: Hook Registration
 
 1. **Hook File Structure**: Verify hooks.json has expected structure
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    cat "$PLUGIN_PATH/hooks/hooks.json" | jq -e '.hooks.PreToolUse and .hooks.PostToolUse and .hooks.Stop and .hooks.Notification'
    ```
+
    - Expected: Returns `true` (all hook types registered)
    - PASS if command succeeds with truthy output
 
 2. **Hook Scripts Exist**: Verify all hook scripts are present and executable
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    ls -la "$PLUGIN_PATH/hooks/"*.sh | wc -l
    ```
+
    - Expected: 10 shell scripts (block-manual-release, milhouse-setup, milhouse-stop, notify, observe-learning, post-edit-check, pre-compact, session-end-learn, session-setup, session-start-inject)
    - PASS if count is 10
 
 ### Part 2: PreToolUse Hook (block-manual-release.sh)
 
-3. **Block npm version**: Test that manual npm version is blocked
+1. **Block npm version**: Test that manual npm version is blocked
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"tool_input": {"command": "npm version patch"}}' | bash "$PLUGIN_PATH/hooks/block-manual-release.sh" 2>&1
    echo "Exit code: $?"
    ```
+
    - Expected: Message about using /release, exit code 2
    - PASS if output contains "Use /release" and exits 2
 
-4. **Block git tag**: Test that manual git tagging is blocked
+2. **Block git tag**: Test that manual git tagging is blocked
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"tool_input": {"command": "git tag v1.0.0"}}' | bash "$PLUGIN_PATH/hooks/block-manual-release.sh" 2>&1
    echo "Exit code: $?"
    ```
+
    - Expected: Blocked with exit code 2
    - PASS if exits 2
 
-5. **Allow skill-prefixed release**: Test that /bluera-base:release skill can run version commands
+3. **Allow skill-prefixed release**: Test that /bluera-base:release skill can run version commands
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"tool_input": {"command": "__SKILL__=release npm version patch"}}' | bash "$PLUGIN_PATH/hooks/block-manual-release.sh"
    echo "Exit code: $?"
    ```
+
    - Expected: Allowed (exit code 0)
    - PASS if exits 0
 
-6. **Allow normal commands**: Test that non-release commands pass through
+4. **Allow normal commands**: Test that non-release commands pass through
+
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
    echo '{"tool_input": {"command": "npm install express"}}' | bash "$PLUGIN_PATH/hooks/block-manual-release.sh"
    echo "Exit code: $?"
    ```
+
    - Expected: Allowed (exit code 0)
    - PASS if exits 0
 
 ### Part 3: PostToolUse Hook (post-edit-check.sh)
 
-7. **Anti-pattern Detection**: Test detection of forbidden words
+1. **Anti-pattern Detection**: Test detection of forbidden words
+
    ```bash
    cd /tmp/bluera-base-test
    echo 'const fallback = true;' >> index.js
@@ -106,10 +119,12 @@ Execute each test in order. Mark each as PASS or FAIL.
    git checkout index.js 2>/dev/null
    echo "Exit code: $EXIT"
    ```
+
    - Expected: Detects "fallback" anti-pattern, exit code 2
    - PASS if output mentions anti-pattern and exits 2
 
-8. **Clean Code Passes**: Test that clean code passes validation
+2. **Clean Code Passes**: Test that clean code passes validation
+
    ```bash
    cd /tmp/bluera-base-test
    echo 'const clean = true;' >> index.js
@@ -119,12 +134,14 @@ Execute each test in order. Mark each as PASS or FAIL.
    git checkout index.js 2>/dev/null
    echo "Exit code: $EXIT"
    ```
+
    - Expected: No output, exit code 0
    - PASS if exits 0
 
 ### Part 4: Stop Hook (milhouse-stop.sh)
 
-9. **No State File**: Test that hook exits cleanly when no milhouse loop active
+1. **No State File**: Test that hook exits cleanly when no milhouse loop active
+
    ```bash
    cd /tmp/bluera-base-test
    rm -rf .bluera/bluera-base/state/milhouse-loop.md
@@ -132,32 +149,29 @@ Execute each test in order. Mark each as PASS or FAIL.
    echo '{"transcript_path": "/tmp/test.jsonl"}' | bash "$PLUGIN_PATH/hooks/milhouse-stop.sh" 2>&1
    echo "Exit code: $?"
    ```
+
    - Expected: Silent exit 0 (no active loop)
    - PASS if exits 0 with no output
 
-10. **Invalid Iteration**: Test handling of corrupted state file
+2. **Invalid Iteration**: Test handling of corrupted state file
+
     ```bash
     cd /tmp/bluera-base-test
     mkdir -p .bluera/bluera-base/state
-    cat > .bluera/bluera-base/state/milhouse-loop.md << 'EOF'
----
-iteration: invalid
-max_iterations: 5
-completion_promise: "done"
----
-test prompt
-EOF
+    printf '%s\n' '---' 'iteration: invalid' 'max_iterations: 5' 'completion_promise: "done"' '---' '' 'test prompt' > .bluera/bluera-base/state/milhouse-loop.md
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     echo '{"transcript_path": "/tmp/test.jsonl"}' | bash "$PLUGIN_PATH/hooks/milhouse-stop.sh" 2>&1
     EXIT=$?
     echo "Exit code: $EXIT"
     ```
+
     - Expected: Warning about invalid iteration, removes file, exits 0
     - PASS if mentions "invalid" and exits 0
 
 ### Part 5: Milhouse Setup Hook
 
-11. **Setup Creates State File**: Test milhouse-setup.sh creates proper state
+1. **Setup Creates State File**: Test milhouse-setup.sh creates proper state
+
     ```bash
     cd /tmp/bluera-base-test
     rm -rf .bluera/bluera-base/state/milhouse-loop.md
@@ -165,63 +179,76 @@ EOF
     CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/milhouse-setup.sh" --inline "Build the feature" --max-iterations 10 2>&1
     cat .bluera/bluera-base/state/milhouse-loop.md 2>/dev/null | head -10
     ```
+
     - Expected: State file created with iteration: 1, max_iterations: 10
     - PASS if file exists with correct fields
 
 ### Part 6: Slash Commands (Invocation Test)
 
-12. **Commit Command Available**: Run `/bluera-base:commit` (will show clean status)
+1. **Commit Command Available**: Run `/bluera-base:commit` (will show clean status)
     - Expected: Shows git status and workflow instructions
     - PASS if command executes without error
 
-13. **Cancel Milhouse Available**: Verify cancel command works when no loop active
+2. **Cancel Milhouse Available**: Verify cancel command works when no loop active
+
     ```bash
     rm -rf /tmp/bluera-base-test/.bluera/bluera-base/state/milhouse-loop.md
     ```
+
     Then run `/bluera-base:cancel-milhouse`
     - Expected: Message about no active loop
     - PASS if command executes
 
 ### Part 7: Skills Verification
 
-14. **Skills Directory Structure**: Verify all skills exist
+1. **Skills Directory Structure**: Verify all skills exist
+
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     ls -d "$PLUGIN_PATH/skills/"*/
     ```
+
     - Expected: Lists 7 skill directories (architectural-constraints, atomic-commits, claude-md-maintainer, code-review-repo, milhouse, readme-maintainer, release)
     - PASS if all 7 skill directories exist
 
-15. **Atomic Commits Skill**: Verify skill file is readable
+2. **Atomic Commits Skill**: Verify skill file is readable
+
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     head -5 "$PLUGIN_PATH/skills/atomic-commits/SKILL.md"
     ```
+
     - Expected: Shows skill header/title
     - PASS if file is readable
 
-16. **Milhouse Skill**: Verify skill file is readable
+3. **Milhouse Skill**: Verify skill file is readable
+
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     head -5 "$PLUGIN_PATH/skills/milhouse/SKILL.md"
     ```
+
     - Expected: Shows skill header/title
     - PASS if file is readable
 
 ### Part 8: Cleanup
 
-17. **Remove Test Directory**: Clean up test artifacts
+1. **Remove Test Directory**: Clean up test artifacts
+
     ```bash
     rm -rf /tmp/bluera-base-test
     rm -rf .bluera/bluera-base/state/milhouse-loop.md
     ```
+
     - Expected: Directory removed
     - PASS if command succeeds
 
-18. **Verify Cleanup**: Confirm test directory is gone
+2. **Verify Cleanup**: Confirm test directory is gone
+
     ```bash
     ls /tmp/bluera-base-test 2>&1 || echo "Cleanup successful"
     ```
+
     - Expected: Directory not found
     - PASS if directory doesn't exist
 

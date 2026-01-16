@@ -24,6 +24,7 @@ Before committing, evaluate if changes need documentation updates.
 | Installation changes | Installation section |
 
 **Trigger files (project-specific - customize in your .claude/skills/):**
+
 - `src/cli.ts` or `src/index.ts` - Entry points
 - `.claude-plugin/plugin.json` - Plugin metadata
 - `commands/*.md` - Command definitions
@@ -31,6 +32,7 @@ Before committing, evaluate if changes need documentation updates.
 ### CLAUDE.md (Claude Code memory - hierarchical)
 
 CLAUDE.md stores context that helps future sessions "do the right thing". Update when:
+
 - You struggled with something and the insight would prevent future mistakes
 - Important patterns or conventions that aren't obvious from code alone
 - Workflows or commands that are non-trivial to discover
@@ -45,13 +47,14 @@ CLAUDE.md is hierarchical - use the directory level matching the changed files. 
 ## Grouping Rules
 
 Identify logical features by grouping related files:
+
 - Same feature = same commit
 - Infrastructure/config = separate commit
 - Tests = with their implementation OR separate if test-only
 
 ## Commit Message Format
 
-```
+```text
 <type>(<scope>): <description>
 ```
 

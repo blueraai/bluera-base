@@ -82,7 +82,7 @@ See `@dry-refactor/references/patterns.md` for detailed examples:
 | Language | Primary Pattern |
 |----------|-----------------|
 | JS/TS | Module export, barrel index |
-| Python | Module with __init__.py |
+| Python | Module with **init**.py |
 | Rust | Submodule with pub use |
 | Go | Same-package separate file |
 

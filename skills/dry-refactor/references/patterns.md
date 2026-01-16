@@ -9,6 +9,7 @@ Detailed extraction patterns for each supported language.
 ### Pattern: Module Export with Barrel
 
 **Before** (duplicated validation in two handlers):
+
 ```typescript
 // handlers/user.ts
 function validateEmail(email: string): boolean {
@@ -30,6 +31,7 @@ export function createAdmin(data: AdminInput) {
 ```
 
 **After**:
+
 ```typescript
 // utils/validators.ts
 export function validateEmail(email: string): boolean {
@@ -104,6 +106,7 @@ async function getUser(id: string) {
 ### Pattern: Module Package
 
 **Before**:
+
 ```python
 # handlers/user.py
 def validate_email(email: str) -> bool:
@@ -117,6 +120,7 @@ def validate_email(email: str) -> bool:
 ```
 
 **After**:
+
 ```python
 # utils/validators.py
 import re
@@ -215,6 +219,7 @@ def process_order(order):
 ### Pattern: Module Extraction
 
 **Before**:
+
 ```rust
 // handlers/user.rs
 fn validate_email(email: &str) -> bool {
@@ -236,6 +241,7 @@ fn validate_email(email: &str) -> bool {
 ```
 
 **After**:
+
 ```rust
 // utils/validators.rs
 pub fn validate_email(email: &str) -> bool {
@@ -332,6 +338,7 @@ define_error!(ProductError);
 Go naturally supports multiple files in one package.
 
 **Before**:
+
 ```go
 // handlers/user.go
 func validateEmail(email string) bool {
@@ -352,6 +359,7 @@ func validateEmail(email string) bool {  // Duplicate!
 ```
 
 **After**:
+
 ```go
 // handlers/validators.go
 package handlers
@@ -464,6 +472,7 @@ server := NewServer(":8080", WithTimeout(30*time.Second), WithTLS("cert.pem", "k
 ### Import Organization
 
 After extraction, organize imports:
+
 1. Standard library
 2. External dependencies
 3. Internal/shared modules

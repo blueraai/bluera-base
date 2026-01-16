@@ -17,10 +17,12 @@ Create atomic, well-organized commits. See @bluera-base/skills/atomic-commits/SK
 2. **Documentation Check**: Check if README.md or CLAUDE.md need updates (see skill)
 3. **Group**: Identify logical features (see skill for grouping rules)
 4. **Commit each group**:
+
    ```bash
    git add <files>
    git commit -m "<type>(<scope>): <description>"
    ```
+
 5. **Handle untracked**: Categorize as commit/ignore/intentional
 6. **Report**: Show commits created and final `git status --short`
 

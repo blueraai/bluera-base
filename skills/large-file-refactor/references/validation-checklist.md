@@ -90,6 +90,7 @@ Pre and post-refactor validation to ensure the split doesn't break anything.
 **Symptom**: Build fails with circular dependency error
 
 **Fix**:
+
 1. Identify the cycle
 2. Extract shared types to separate file
 3. Have both modules import from shared file
@@ -99,6 +100,7 @@ Pre and post-refactor validation to ensure the split doesn't break anything.
 **Symptom**: "unresolved import" or "not found" errors
 
 **Fix**:
+
 1. Add `pub` to item in new location
 2. Add re-export in original module
 3. Update import path in caller
@@ -108,6 +110,7 @@ Pre and post-refactor validation to ensure the split doesn't break anything.
 **Symptom**: "impl doesn't use only types defined in current crate"
 
 **Fix**:
+
 1. Keep trait impl in same module as trait or type
 2. Use newtype pattern if needed
 3. Consider different module organization
@@ -117,6 +120,7 @@ Pre and post-refactor validation to ensure the split doesn't break anything.
 **Symptom**: Types don't match after move
 
 **Fix**:
+
 1. Ensure using same type (not copy)
 2. Check import paths point to same definition
 3. Verify generics are consistent

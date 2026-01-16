@@ -18,15 +18,18 @@ Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for wo
 ### Safe Release Pattern (Recommended)
 
 1. **Analyze commits** to determine version bump:
+
    ```bash
    git fetch --tags -q
    git log $(git describe --tags --abbrev=0)..HEAD --oneline
    ```
+
    - `fix:` commits → patch (0.0.x)
    - `feat:` commits → minor (0.x.0)
    - `feat!:` or `BREAKING CHANGE:` → major (x.0.0)
 
 2. **Bump version** (creates commit, NO tag):
+
    ```bash
    # JavaScript/TypeScript (with commit-and-tag-version)
    __SKILL__=release npx commit-and-tag-version --release-as patch --skip.tag
@@ -39,11 +42,13 @@ Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for wo
    ```
 
 3. **Push commit** (triggers CI):
+
    ```bash
    git push
    ```
 
 4. **Wait for CI to pass**, then create tag:
+
    ```bash
    gh run list --limit 3  # Wait for success
    VERSION=$(jq -r .version package.json)  # Or read from your version file

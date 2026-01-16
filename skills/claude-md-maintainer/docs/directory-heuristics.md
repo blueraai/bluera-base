@@ -21,6 +21,7 @@ A directory is a **module root** if it contains one of:
 ## Exclusion Rules
 
 **Never create CLAUDE.md in:**
+
 - `.git/`
 - `node_modules/`
 - `.venv/` or `venv/`
@@ -34,6 +35,7 @@ A directory is a **module root** if it contains one of:
 ## Monorepo Conventions
 
 Prefer creating module CLAUDE.md for directories that:
+
 - Are under conventional roots: `packages/`, `apps/`, `services/`, `libs/`
 - Have their own CI workflow path filters
 - Have a manifest file (see table above)
@@ -41,6 +43,7 @@ Prefer creating module CLAUDE.md for directories that:
 ## Hard Cap
 
 If > 25 module roots are detected:
+
 1. Create root `CLAUDE.md`
 2. Create `CLAUDE.md` at each top-level monorepo bucket summarizing navigation
 3. Defer per-package creation (report as follow-up, not auto-write)
@@ -48,6 +51,7 @@ If > 25 module roots are detected:
 ## Priority Order
 
 When deciding where to create:
+
 1. Root `CLAUDE.md` - always first
 2. `CLAUDE.local.md` - for personal notes
 3. Top-level monorepo buckets (`packages/CLAUDE.md`, etc.)

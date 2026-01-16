@@ -17,7 +17,7 @@ GitHub gives these files special UI treatment. Always place at repository root.
 
 For extended documentation that doesn't need GitHub special treatment:
 
-```
+```text
 docs/
 ├── README.md              # Optional: docs index/navigation
 ├── getting-started.md     # Extended installation + first steps
@@ -71,6 +71,7 @@ Each broken-out file should start with a link back to README:
 ## When NOT to Break Out
 
 Keep content in README if:
+
 - Section is < 50 lines
 - It's essential for first-time users
 - Breaking it out would leave README too sparse

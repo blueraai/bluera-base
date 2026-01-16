@@ -248,4 +248,4 @@ bluera-base works with any language Claude Code supports. Language-specific feat
 - `/bluera-base:help <topic>` - Specific topic help
 - `@skill-name` - Reference skill documentation
 - `/bluera-base:config status` - Debug configuration issues
-- GitHub: https://github.com/anthropics/bluera-base
+- GitHub: <https://github.com/anthropics/bluera-base>

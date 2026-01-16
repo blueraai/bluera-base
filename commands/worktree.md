@@ -46,12 +46,15 @@ Arguments: `<branch> [path]`
 1. Validate branch exists or offer to create it
 2. Determine path (default: `../<repo>-<branch>`)
 3. Create worktree:
+
    ```bash
    git worktree add <path> <branch>
    ```
+
 4. Report created worktree location
 
 **Path conventions**:
+
 - Default: `../<repo-name>-<branch-name>`
 - Example: `../bluera-base-feature-xyz`
 - Keeps worktrees adjacent to main repo
@@ -63,9 +66,11 @@ Arguments: `<path>`
 1. Verify path is a valid worktree
 2. Confirm with user if uncommitted changes exist
 3. Remove worktree:
+
    ```bash
    git worktree remove <path>
    ```
+
 4. Optionally force with `--force` if locked
 
 ### Prune
@@ -86,7 +91,8 @@ Show condensed status of all worktrees:
 4. Highlight worktrees needing attention
 
 **Output format**:
-```
+
+```text
 Worktrees for bluera-base:
 
   /Users/chris/repos/bluera-base (main)
@@ -178,16 +184,19 @@ When user runs `/bluera-base:worktree prune`:
 ## Implementation Notes
 
 Detect repo name for path defaults:
+
 ```bash
 REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
 ```
 
 Check if branch exists:
+
 ```bash
 git rev-parse --verify "$BRANCH" 2>/dev/null
 ```
 
 Get worktree count:
+
 ```bash
 git worktree list --porcelain | grep -c "^worktree"
 ```

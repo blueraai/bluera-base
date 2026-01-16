@@ -52,16 +52,18 @@ The milhouse loop is a powerful pattern for iterative development tasks. It work
 
 To signal genuine completion, output this EXACT format on its own line:
 
-```
+```text
 <promise>TASK COMPLETE</promise>
 ```
 
 Or with a custom promise:
-```
+
+```text
 <promise>YOUR_CUSTOM_PROMISE</promise>
 ```
 
 **STRICT REQUIREMENTS:**
+
 - The promise must appear on its OWN LINE (last non-empty line)
 - Do NOT output false promises to escape the loop
 - Only output when the task is genuinely complete
@@ -75,6 +77,7 @@ Gates are commands that must pass AFTER the promise matches, before the loop exi
 ```
 
 **Behavior:**
+
 1. You output `<promise>TASK COMPLETE</promise>`
 2. Each gate runs sequentially
 3. If all pass → loop exits
@@ -109,6 +112,7 @@ For long-running loops, use `--init-harness` to create tracking files:
 ```
 
 Creates:
+
 - `.bluera/bluera-base/state/milhouse-plan.md` - Acceptance criteria checklist
 - `.bluera/bluera-base/state/milhouse-activity.md` - Per-iteration progress log
 
@@ -121,6 +125,7 @@ Each milhouse loop is tied to the terminal session that started it. If you have 
 ## State File
 
 The loop state is stored in `.bluera/bluera-base/state/milhouse-loop.md`:
+
 - Automatically gitignored via `.bluera/` pattern (with config.json excepted)
 - Contains: iteration, max_iterations, completion_promise, session_id, gates, failure_hashes
 - Full prompt text stored in file body (after `---` frontmatter)
@@ -136,7 +141,8 @@ The milhouse hook uses pointer-based continuation to minimize token usage:
 This design saves ~80-90% of tokens compared to re-injecting the full prompt each iteration.
 
 **Continuation message format:**
-```
+
+```text
 Continue working on the milhouse task. Review your previous work visible in files and git history.
 State: .bluera/bluera-base/state/milhouse-loop.md
 ```
@@ -161,6 +167,7 @@ If you need to refresh on the original task, read the state file directly.
 ```
 
 With prompt file:
+
 ```markdown
 # Add JWT Authentication
 

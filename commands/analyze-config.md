@@ -17,6 +17,7 @@ Scan the repo's `.claude/**` for functionality that overlaps with bluera-base, r
 This plugin provides:
 
 ### Commands
+
 - `/bluera-base:commit` - atomic commits with documentation awareness
 - `/bluera-base:release` - version bumping and release workflow
 - `/bluera-base:milhouse-loop` - iterative development loop
@@ -30,6 +31,7 @@ This plugin provides:
 - `/bluera-base:test-plugin` - plugin validation
 
 ### Skills
+
 - `atomic-commits` - commit grouping and documentation checks
 - `claude-md-maintainer` - CLAUDE.md structure and validation
 - `code-review-repo` - code review guidelines
@@ -40,6 +42,7 @@ This plugin provides:
 - `architectural-constraints` - design constraints
 
 ### Hooks
+
 - `SessionStart` - dependency checks, env setup
 - `PreToolUse` - block manual releases, --no-verify
 - `PostToolUse` - anti-pattern detection, linting
@@ -82,6 +85,7 @@ Compare each found item against bluera-base components:
 | Hooks | pre-commit, post-edit, session |
 
 For each potential overlap, categorize:
+
 - **Duplicate**: Same functionality, can be removed
 - **Overlap**: Similar functionality, may need merge
 - **Complementary**: Different but related, keep both
@@ -141,7 +145,7 @@ If `--cleanup` flag and user approved:
 
 ## Example Output
 
-```
+```text
 ## Analysis Complete
 
 Scanned: 5 commands, 3 skills, 8 rules, 2 hook configs

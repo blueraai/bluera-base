@@ -25,6 +25,7 @@ When action is `learn`:
 Learnings are written to a marker-delimited region in `CLAUDE.local.md` (or `CLAUDE.md` with `--shared`).
 
 **Marker format:**
+
 ```markdown
 ## Auto-Learned (bluera-base)
 <!-- AUTO:bluera-base:learned -->
@@ -46,7 +47,8 @@ Learnings are written to a marker-delimited region in `CLAUDE.local.md` (or `CLA
 ### Secrets Filtering
 
 **NEVER write learnings that match:**
-```
+
+```regex
 api[_-]?key|token|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API
 ```
 
@@ -75,6 +77,7 @@ When action is `init`:
 
 1. **Check for existing CLAUDE.md** - If found, offer to run `audit` instead
 2. **Detect project type** from files:
+
    | File | Project Type |
    |------|--------------|
    | `package.json` | JavaScript/TypeScript |
@@ -83,6 +86,7 @@ When action is `init`:
    | `go.mod` | Go |
 
 3. **Detect package manager** from lockfiles:
+
    | Lockfile | Package Manager |
    |----------|-----------------|
    | `bun.lock` or `bun.lockb` | bun |
@@ -104,20 +108,20 @@ When action is `init`:
 
 Use AskUserQuestion for:
 
-```
+```yaml
 question: "Which package manager should be documented?"
 header: "Pkg Mgr"
 options: [detected options + "Other"]
 ```
 
-```
+```yaml
 question: "Which scripts should be documented?"
 header: "Scripts"
 multiSelect: true
 options: [detected scripts, limited to 6 most common]
 ```
 
-```
+```yaml
 question: "Any project-specific conventions to add?"
 header: "Conventions"
 options:
@@ -153,7 +157,7 @@ options:
 
 Ask user to confirm before making any writes:
 
-```
+```yaml
 question: "Apply the proposed changes to CLAUDE.md files?"
 header: "Confirm"
 options:
@@ -168,11 +172,13 @@ options:
 ## Excluded Directories
 
 Skip these during discovery:
+
 - `.git/`, `node_modules/`, `.venv/`, `dist/`, `build/`, `out/`, `target/`, `vendor/`, `.idea/`, `.vscode/`
 
 ## Memory File Locations
 
 Standard locations (check all):
+
 - `./CLAUDE.md` - Root project memory
 - `./.claude/CLAUDE.md` - Alternative root location
 - `./CLAUDE.local.md` - Personal notes (gitignored)
@@ -182,6 +188,7 @@ Standard locations (check all):
 ## Output
 
 After each phase, report:
+
 1. Files found (paths)
 2. Files to create (paths)
 3. Files to update (paths + change summary)

@@ -16,6 +16,7 @@ Execute the setup script to initialize the milhouse loop:
 Work on the development task. When you try to exit, the milhouse loop will feed the SAME PROMPT back for the next iteration. You'll see your previous work in files and git history, allowing you to iterate and improve.
 
 CRITICAL RULES:
+
 1. Output `<promise>YOUR_PROMISE</promise>` when the task is genuinely complete
 2. Do NOT output false promises to escape the loop
 3. The loop continues until genuine completion or max iterations

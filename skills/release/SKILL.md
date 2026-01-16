@@ -8,6 +8,7 @@ description: Release workflow with conventional commits auto-detection and GitHu
 Standardized release workflow that auto-detects version bump, bumps version, commits, pushes, and monitors CI.
 
 **CRITICAL:** Do NOT push tags directly. Tags should only be created AFTER CI passes. Either:
+
 1. Use auto-release workflow (creates tags after CI passes)
 2. Or manually create tag only after verifying CI success
 
@@ -37,6 +38,7 @@ git log $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD --oneline
 ## Language-Specific Commands
 
 See `references/languages.md` for detailed commands by language:
+
 - JavaScript/TypeScript (npm/yarn/pnpm/bun)
 - Python (poetry/hatch/bump2version)
 - Rust (cargo-release)
@@ -56,6 +58,7 @@ gh run view <run-id>  # For failed run details
 ```
 
 **Not complete until:**
+
 - All workflows show `completed` with `success`
 - GitHub release is published (if configured)
 

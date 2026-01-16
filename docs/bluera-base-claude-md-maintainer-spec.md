@@ -1,6 +1,6 @@
 # Spec: CLAUDE.md Maintainer (slash command + Skill) for bluera-base
 
-Target repo: bluera-base Claude Code plugin (https://github.com/blueraai/bluera-base)
+Target repo: bluera-base Claude Code plugin (<https://github.com/blueraai/bluera-base>)
 
 ## Goal
 
@@ -25,24 +25,24 @@ This is designed to address the recurring failure mode where Claude Code treats 
   - Project memory can live in `./CLAUDE.md` or `./.claude/CLAUDE.md`; local project prefs in `./CLAUDE.local.md`; and modular rules in `./.claude/rules/*.md`. These are auto-loaded by Claude Code (with precedence).  
   - Claude Code reads memories by **walking up** from the current working directory and also discovers nested `CLAUDE.md` files in subtrees **only when files in those subtrees are read**.  
   - `CLAUDE.md` supports `@path/to/import` includes (not evaluated inside code blocks/spans), recursive to depth 5.  
-  Source: https://code.claude.com/docs/en/memory
+  Source: <https://code.claude.com/docs/en/memory>
 
 - **Plugin command + Skill mechanics**:
   - Plugin commands live in `commands/` and are invoked as `/plugin-name:command-name` (prefix optional unless collisions).
   - The `Skill` tool can programmatically invoke both custom slash commands and Skills; there is a metadata character budget (default 15k chars) for command/Skill name + args + description.  
-  Source: https://code.claude.com/docs/en/slash-commands and https://code.claude.com/docs/en/plugins-reference
+  Source: <https://code.claude.com/docs/en/slash-commands> and <https://code.claude.com/docs/en/plugins-reference>
 
 - **Agent Skills progressive disclosure**:
   - Keep `SKILL.md` concise; move deep details into supporting files; scripts can run without their contents being loaded into context.  
-  Source: https://code.claude.com/docs/en/skills
+  Source: <https://code.claude.com/docs/en/skills>
 
 - **Known footguns (must design around)**:
   - Skill discovery can break when `description` wraps to multiple lines (e.g., prettier `proseWrap`).  
-    Issue: https://github.com/anthropics/claude-code/issues/9817
+    Issue: <https://github.com/anthropics/claude-code/issues/9817>
   - Slash command frontmatter YAML styles (folded `description: >` and YAML list `allowed-tools:`) can cause Claude Code to think **no tools are permitted**.  
-    Issue: https://github.com/anthropics/claude-code/issues/9857
+    Issue: <https://github.com/anthropics/claude-code/issues/9857>
   - `allowed-tools` may still prompt for approval for Bash in some versions; do not depend on bypassing prompts.  
-    Issue: https://github.com/anthropics/claude-code/issues/5598
+    Issue: <https://github.com/anthropics/claude-code/issues/5598>
 
 ## Single recommendation (do this)
 
@@ -64,6 +64,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls
 ```
 
 > Notes:
+>
 > - The Bash patterns above are intentionally narrow and only for repo inspection / reporting.
 > - The workflow must still function if approvals are prompted anyway.
 
@@ -79,6 +80,7 @@ The command runs in **two phases** every time:
    - Only after the user confirms, perform edits/creates.
 
 The command must explicitly instruct Claude to:
+
 - Prefer *directory-scoped* memory over dumping everything in root.
 - Prefer `.claude/rules/*.md` with `paths:` for language/framework rules when appropriate.
 - Keep each memory file lean (see invariants below).
@@ -106,12 +108,13 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls
 #### Skill body structure (progressive disclosure)
 
 `SKILL.md` must be **short** and should mainly:
+
 - Define the invariants + algorithm.
 - Reference supporting files for templates and checklists.
 
 Add supporting files in the same skill directory:
 
-```
+```text
 skills/claude-md-maintainer/
   SKILL.md
   templates/
@@ -140,6 +143,7 @@ From repo root (or `git rev-parse --show-toplevel`):
 2. Find `.claude/rules/**/*.md`
 
 Ignore directories:
+
 - `.git/`, `node_modules/`, `.venv/`, `dist/`, `build/`, `out/`, `target/`, `vendor/`, `.idea/`, `.vscode/`
 
 ### Step B — Validate invariants (every CLAUDE.md)
@@ -191,6 +195,7 @@ Create **at most**:
 #### Module root heuristics (create CLAUDE.md when true)
 
 A directory is a module root if it contains one of:
+
 - `package.json` (Node)
 - `pyproject.toml` or `requirements.txt` (Python)
 - `Cargo.toml` (Rust)
@@ -202,10 +207,12 @@ A directory is a module root if it contains one of:
 AND is not excluded/ignored.
 
 Additionally, prefer creating module CLAUDE.md for directories that:
+
 - Have their own CI workflow path filters, or
 - Are under conventional monorepo roots (`packages/`, `apps/`, `services/`, `libs/`) with a manifest.
 
 Hard cap: if > 25 module roots are detected, create:
+
 - root CLAUDE.md
 - CLAUDE.md at each top-level monorepo bucket (`packages/`, `apps/`, etc) summarizing how to navigate + which packages matter
 …and defer per-package CLAUDE.md creation (report it as a follow-up item, not an automatic write).
@@ -353,4 +360,3 @@ The command/skill must output a concise report:
 - [ ] Add templates + docs under `skills/claude-md-maintainer/`
 - [ ] Update bluera-base README command list to include `/bluera-base:claude-md`
 - [ ] Bump plugin version + publish workflow per bluera-base release process
-
