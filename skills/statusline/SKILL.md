@@ -788,9 +788,43 @@ echo "$OUTPUT"
 
 ---
 
+## File Operations (REQUIRED)
+
+After generating the statusline script, you MUST complete these steps:
+
+1. **Determine config directory**:
+
+   ```bash
+   CLAUDE_CONFIG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+   ```
+
+2. **Write the script** to the config directory:
+
+   ```bash
+   cat > "$CLAUDE_CONFIG/statusline.sh" << 'STATUSLINE_EOF'
+   <generated script content here>
+   STATUSLINE_EOF
+   ```
+
+3. **Make executable**:
+
+   ```bash
+   chmod +x "$CLAUDE_CONFIG/statusline.sh"
+   ```
+
+4. **Verify** the file exists and is executable:
+
+   ```bash
+   ls -la "$CLAUDE_CONFIG/statusline.sh"
+   ```
+
+**The statusline will not work until these steps are completed.**
+
+---
+
 ## Preserving User Customizations
 
-When modifying an existing `~/.claude/statusline.sh`, preserve user-added content:
+When modifying an existing `$CLAUDE_CONFIG/statusline.sh`, preserve user-added content:
 
 ### Detection Patterns
 
