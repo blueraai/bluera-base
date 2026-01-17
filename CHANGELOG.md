@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.1](https://github.com/blueraai/bluera-base/compare/v0.10.0...v0.10.1) (2026-01-17)
+
+### Bug Fixes
+
+* **explain:** add Algorithm section to ensure output is displayed ([afdd864](https://github.com/blueraai/bluera-base/commit/afdd864c6c03ebdfa579abdbb386a3c1707e6964))
+
 ## [0.10.0](https://github.com/blueraai/bluera-base/compare/v0.9.2...v0.10.0) (2026-01-17)
 
 ### Features
