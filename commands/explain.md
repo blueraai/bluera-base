@@ -20,6 +20,40 @@ A comprehensive, human-readable guide to understanding all bluera-base plugin fu
 
 ---
 
+## Algorithm
+
+**Present the documentation below to the user.** This is a documentation command - output the content directly, don't just acknowledge it.
+
+### Show All (default)
+
+Present all sections: Overview, How It Works, Commands, Skills, Hooks, Configuration, and Philosophy.
+
+### Overview
+
+Present only the Overview section.
+
+### Commands
+
+Present only the Commands Explained section.
+
+### Skills
+
+Present only the Skills Explained section.
+
+### Hooks
+
+Present only the Hooks Explained section.
+
+### Config
+
+Present only the Configuration Explained section.
+
+### Philosophy
+
+Present only the Philosophy Explained section.
+
+---
+
 ## Overview
 
 bluera-base is a Claude Code plugin that establishes shared development conventions for your projects. It provides automated guardrails, workflow commands, and documentation standards that help teams maintain consistent code quality.
