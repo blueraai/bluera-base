@@ -100,64 +100,10 @@ claude --plugin-dir /path/to/bluera-base
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
-| `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop if uncommitted changes exist (opt-in) |
+| `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
-```mermaid
-flowchart LR
-    A[Start] --> B[Setup]
-    B --> C{Tool?}
-    C -->|Bash| D{Release?}
-    C -->|Edit| E[Lint]
-    D -->|No| F[Allow]
-    D -->|Yes| G[Block]
-    E --> H{Pass?}
-    H -->|No| G
-    H -->|Yes| F
-    F --> I[Continue]
-
-    style A fill:#6366f1,color:#fff
-    style G fill:#dc2626,color:#fff
-    style F fill:#16a34a,color:#fff
-    style I fill:#16a34a,color:#fff
-```
-
-<details>
-<summary><b>What post-edit-check.sh does</b></summary>
-
-On every Write/Edit operation, the hook auto-detects your project type and runs appropriate checks:
-
-**JavaScript/TypeScript:**
-
-- Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
-- Runs ESLint with `--fix` on modified files
-- Type-checks with `tsc --noEmit` if tsconfig.json exists
-
-**Python:**
-
-- Runs `ruff check --fix` (preferred) or `flake8`
-- Type-checks with `mypy` if pyproject.toml/mypy.ini exists
-
-**Rust:**
-
-- Auto-formats with `cargo fmt`
-- Runs `cargo clippy` for linting
-- Runs `cargo check` for compile errors
-
-**Go:**
-
-- Runs `golangci-lint` (preferred) or `go vet`
-
-**All Languages:**
-
-- Anti-pattern detection: blocks `fallback`, `deprecated`, `backward compatibility`, `legacy`
-- Strict typing (opt-in via `/bluera-base:config enable strict-typing`):
-  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-ignore`, `@ts-nocheck`
-  - Python: blocks `Any`, `type: ignore` without code, `cast()`
-
-Exit code 2 blocks the operation and shows the error to Claude.
-
-</details>
+→ [Full hooks documentation](docs/hooks.md)
 
 ### Commands
 
@@ -196,95 +142,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets and barista integration |
 
-<details>
-<summary><b>code-review-repo details</b></summary>
-
-Launches 5 parallel agents to independently review your codebase:
-
-1. **CLAUDE.md compliance** - Check code follows all CLAUDE.md guidelines
-2. **Bug scan** - Look for obvious bugs, error handling issues
-3. **Git history context** - Use blame/history to identify patterns
-4. **PR comments** - Check closed PRs for applicable feedback
-5. **Code comment compliance** - Ensure TODO/FIXME notes are addressed
-
-Each issue gets a confidence score (0-100). Only issues scoring >= 80 are reported.
-
-</details>
-
-<details>
-<summary><b>release skill details</b></summary>
-
-The `/bluera-base:release` command provides a standardized release workflow:
-
-```mermaid
-flowchart LR
-    A[/release] --> B{Clean?}
-    B -->|No| C[Abort]
-    B -->|Yes| D[Analyze]
-    D --> E{Type?}
-    E -->|fix| F[patch]
-    E -->|feat| G[minor]
-    E -->|BREAKING| H[major]
-    F --> I[Bump]
-    G --> I
-    H --> I
-    I --> J[Push]
-
-    style A fill:#6366f1,color:#fff
-    style C fill:#dc2626,color:#fff
-    style J fill:#16a34a,color:#fff
-```
-
-| Commit Type | Version Bump | Example |
-|-------------|--------------|---------|
-| `fix:` | patch (0.0.x) | Bug fixes |
-| `feat:` | minor (0.x.0) | New features |
-| `feat!:` / `BREAKING CHANGE:` | major (x.0.0) | Breaking changes |
-
-**Language-specific tools:**
-
-- **JS/TS:** `npm version`
-- **Python:** `poetry version`, `hatch version`, or `bump2version`
-- **Rust:** `cargo release`
-- **Go:** git tags
-
-The `block-manual-release.sh` hook prevents bypassing this workflow by blocking direct version/release commands.
-
-</details>
-
-<details>
-<summary><b>milhouse loop details</b></summary>
-
-The milhouse loop is an iterative development pattern:
-
-```mermaid
-flowchart LR
-    A[/milhouse] --> B[Load]
-    B --> C[Work]
-    C --> D{Done?}
-    D -->|No| E[Intercept]
-    E --> C
-    D -->|Yes| F[Exit]
-
-    style A fill:#6366f1,color:#fff
-    style F fill:#16a34a,color:#fff
-```
-
-**Usage:**
-
-```bash
-/bluera-base:milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
-```
-
-**Exit conditions:**
-
-| Condition | What Happens |
-|-----------|--------------|
-| `<promise>TEXT</promise>` in output | Loop exits successfully |
-| Max iterations reached | Loop exits with warning |
-| `/bluera-base:cancel-milhouse` | Loop cancelled |
-
-</details>
+→ [Full skills documentation](docs/skills.md)
 
 ### CLAUDE.md Includes
 
@@ -350,6 +208,8 @@ Default coverage threshold: **80%** (user-configurable)
 
 | Guide | Description |
 |-------|-------------|
+| [Hooks](docs/hooks.md) | Hook details, flow diagrams, configuration |
+| [Skills](docs/skills.md) | Skill workflows, usage examples |
 | [Usage](docs/usage.md) | @includes, overriding skills, settings templates |
 | [Customization](docs/customization.md) | Trigger files, hooks, rules, architectural constraints |
 | [Development](docs/development.md) | Setup, dogfooding, project structure |
