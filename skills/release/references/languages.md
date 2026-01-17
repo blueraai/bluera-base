@@ -1,80 +1,90 @@
 # Language-Specific Release Commands
 
+**IMPORTANT:** Always run `detect-version-tool.sh` first. These are fallback commands for when detection doesn't apply or for manual override.
+
 All commands MUST be prefixed with `__SKILL__=release` to bypass the manual-release hook.
 
-## JavaScript/TypeScript
-
-Detect package manager from lockfile, then use `npm version` (works universally):
+## Detection First
 
 ```bash
-# Auto-detect runner (for scripts), but npm version works everywhere
-__SKILL__=release npm version patch  # or minor, major
-__SKILL__=release git push --follow-tags
+PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-}"
+COMMAND=$(bash "$PLUGIN_PATH/hooks/lib/detect-version-tool.sh" patch)
+__SKILL__=release $COMMAND
 ```
 
-If project has custom release scripts in package.json:
+---
+
+## Fallback Commands
+
+Use these only when detection returns a comment (`# ...`) or fails.
+
+### JavaScript/TypeScript
+
+**If project has `version:*` or `release:*` scripts** (detection will find these):
 
 ```bash
-__SKILL__=release <runner> release         # Auto-detect bump
-__SKILL__=release <runner> release:patch   # Force patch
-__SKILL__=release <runner> release:minor   # Force minor
-__SKILL__=release <runner> release:major   # Force major
+__SKILL__=release bun run version:patch   # bun.lock/bun.lockb
+__SKILL__=release npm run version:patch   # package-lock.json
+__SKILL__=release yarn version:patch      # yarn.lock
+__SKILL__=release pnpm version:patch      # pnpm-lock.yaml
 ```
 
-Where `<runner>` is: `bun run`, `yarn`, `pnpm`, or `npm run`.
+**Bare fallback** (no custom scripts):
 
-## Python
+```bash
+__SKILL__=release npm version patch
+```
+
+### Python
 
 **Poetry:**
 
 ```bash
-__SKILL__=release poetry version patch  # or minor, major
-__SKILL__=release git add pyproject.toml
-__SKILL__=release git commit -m "chore: bump version to $(poetry version -s)"
-__SKILL__=release git tag "v$(poetry version -s)"
-__SKILL__=release git push --follow-tags
+__SKILL__=release poetry version patch
 ```
 
 **Hatch:**
 
 ```bash
-__SKILL__=release hatch version patch  # or minor, major
-# Then commit and tag as above
+__SKILL__=release hatch version patch
 ```
 
-**bump2version:**
+### Rust
+
+**With cargo-release:**
 
 ```bash
-__SKILL__=release bump2version patch  # or minor, major
-__SKILL__=release git push --follow-tags
+__SKILL__=release cargo release patch --execute
 ```
 
-## Rust
-
-**With cargo-release (recommended):**
-
-```bash
-__SKILL__=release cargo release patch --execute  # or minor, major
-```
-
-**Manual:**
+**Manual** (no cargo-release):
 
 ```bash
 # Edit Cargo.toml version field, then:
 __SKILL__=release git add Cargo.toml Cargo.lock
-__SKILL__=release git commit -m "chore: bump version to X.Y.Z"
-__SKILL__=release git tag vX.Y.Z
-__SKILL__=release git push --follow-tags
+__SKILL__=release git commit -m "chore: bump version"
 ```
 
-## Go
+### Go
 
-Go modules use git tags for versioning:
+Go uses git tags for versioning:
 
 ```bash
-# Determine next version based on commits
 __SKILL__=release git tag v1.2.3
 __SKILL__=release git push --tags
 ```
 
-For Go modules with major version > 1, update `go.mod` module path.
+For major version > 1, also update `go.mod` module path.
+
+---
+
+## Why Detection Matters
+
+Project scripts (`version:patch`, `release:patch`) may:
+
+- Sync multiple version files (`.versionrc.json`)
+- Run prerelease hooks
+- Generate changelogs
+- Handle monorepo versioning
+
+Direct tool calls (`npm version`, `poetry version`) bypass all of this.

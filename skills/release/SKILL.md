@@ -55,14 +55,38 @@ git log --oneline
 | `feat!:` or `BREAKING CHANGE:` | major (x.0.0) |
 | Other types | patch |
 
-## Language-Specific Commands
+## Detect Version Command
 
-See `references/languages.md` for detailed commands by language:
+**Always detect what the project uses, then use that.** Project scripts may sync multiple files, run hooks, or handle project-specific logic that direct tool calls would bypass.
 
-- JavaScript/TypeScript (npm/yarn/pnpm/bun)
-- Python (poetry/hatch/bump2version)
-- Rust (cargo-release)
-- Go (git tags)
+Run the detection script to find the appropriate version command:
+
+```bash
+PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-}"
+bash "$PLUGIN_PATH/hooks/lib/detect-version-tool.sh" patch  # or minor, major
+```
+
+Then execute with the `__SKILL__=release` prefix:
+
+```bash
+__SKILL__=release <detected-command>
+```
+
+### Detection Priority
+
+1. **Makefile** with `release:` or `version:` targets
+2. **package.json** with `version:*` scripts (e.g., `version:patch`)
+3. **package.json** with `release:*` scripts
+4. **pyproject.toml** with Poetry or Hatch
+5. **Cargo.toml** (Rust)
+6. **go.mod** (Go)
+7. **Fallback:** `npm version patch`
+
+**Why this matters:** The bluera-knowledge bug was caused by using `npm version patch` directly instead of `bun run version:patch`, which would have synced both `package.json` and `.claude-plugin/plugin.json` via `.versionrc.json`.
+
+## Language Reference
+
+See `references/languages.md` for fallback commands when detection doesn't apply.
 
 ## CI Monitoring
 
@@ -108,10 +132,11 @@ gh release view "v$VERSION" --json tagName -q .tagName 2>/dev/null && echo "OK" 
 ## Workflow Summary
 
 1. **Pre-flight:** `git status` - ensure clean working directory
-2. **Analyze:** Check commits since last tag, determine bump type
-3. **Bump:** Run version command with `__SKILL__=release` prefix (NO tag yet)
-4. **Push:** Push version bump commit (triggers CI)
-5. **Wait:** Poll `gh run list --commit SHA` until ALL workflows complete
-6. **Verify workflows:** Compare `.github/workflows/` files vs actual runs - ensure none missing
-7. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
-8. **Verify release:** `gh release list --limit 1` to confirm published
+2. **Analyze:** Check commits since last tag, determine bump type (patch/minor/major)
+3. **Detect:** Run `detect-version-tool.sh` to find the right command
+4. **Bump:** Run detected command with `__SKILL__=release` prefix (NO tag yet)
+5. **Push:** Push version bump commit (triggers CI)
+6. **Wait:** Poll `gh run list --commit SHA` until ALL workflows complete
+7. **Verify workflows:** Compare `.github/workflows/` files vs actual runs - ensure none missing
+8. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
+9. **Verify release:** `gh release list --limit 1` to confirm published
