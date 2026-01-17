@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.11.1](https://github.com/blueraai/bluera-base/compare/v0.10.2...v0.11.1) (2026-01-17)
+
+### Features
+
+* **harden-repo:** add test coverage and expand to 13 languages ([4a7ef7f](https://github.com/blueraai/bluera-base/commit/4a7ef7fae104991aa15fea6b39d9f4274dde06ed))
+
+### Bug Fixes
+
+* **harden-repo:** add Phase 0 to detect gaps in existing hardening ([f6ae8f2](https://github.com/blueraai/bluera-base/commit/f6ae8f268e67d366144467c29d21e2cccebdbfe9))
+
 ## [0.11.0](https://github.com/blueraai/bluera-base/compare/v0.10.2...v0.11.0) (2026-01-17)
 
 ### Features
