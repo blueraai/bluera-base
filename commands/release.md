@@ -66,15 +66,21 @@ __SKILL__=release bun run release:patch  # Bumps, commits, pushes (no tag)
 
 ## Monitor
 
-After push, poll until all workflows pass:
+After push, verify **ALL workflows** triggered and succeeded:
 
 ```bash
-# Quick status check (silent unless issues)
-gh run list --limit 5 --json status,conclusion -q '.[] | select(.status != "completed" or .conclusion != "success")' | grep -q . && echo "PENDING" || echo "ALL PASSED"
+COMMIT_SHA=$(git rev-parse HEAD)
 
-# On failure, inspect with verbose output
-gh run list --limit 5
-gh run view <run-id>
+# Wait for completion (silent polling)
+while gh run list --commit "$COMMIT_SHA" --json status -q '.[] | select(.status != "completed")' | grep -q .; do sleep 10; done
+
+# Show only failures (empty = all passed)
+gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | select(.conclusion != "success") | "\(.name): \(.conclusion)"'
+
+# Count: workflows in repo vs workflows that ran
+echo "Expected: $(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ') | Ran: $(gh run list --commit "$COMMIT_SHA" --json name -q 'length')"
 ```
 
-Verify release published: `gh release list --limit 1`
+If counts don't match or any failures shown, investigate before confirming release.
+
+Verify release: `gh release view "v$(jq -r .version package.json)" --json tagName -q .tagName 2>/dev/null && echo "OK" || echo "NOT FOUND"`
