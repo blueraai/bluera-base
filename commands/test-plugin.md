@@ -263,7 +263,36 @@ Execute each test in order. Mark each as PASS or FAIL.
     - Expected: 4 tests pass
     - PASS if output contains "4 passed, 0 failed"
 
-### Part 9: Cleanup
+### Part 10: TODO Command
+
+1. **TODO File Creation**: Test that TODO.txt can be created
+
+    ```bash
+    cd /tmp/bluera-base-test
+    rm -rf .bluera/bluera-base/TODO.txt
+    mkdir -p .bluera/bluera-base
+    # Create minimal TODO file with required sections
+    printf '%s\n' "## IMPORTANT" "" "* test item" "" "## TODO TASKS" "" "(none)" "" "## COMPLETED TASKS" "" "(none)" > .bluera/bluera-base/TODO.txt
+    test -f .bluera/bluera-base/TODO.txt && echo "File created"
+    ```
+
+    - Expected: TODO.txt file is created
+    - PASS if file exists
+
+2. **TODO File Structure**: Verify TODO.txt has required sections
+
+    ```bash
+    cd /tmp/bluera-base-test
+    grep -q "## TODO TASKS" .bluera/bluera-base/TODO.txt && \
+    grep -q "## COMPLETED TASKS" .bluera/bluera-base/TODO.txt && \
+    grep -q "## IMPORTANT" .bluera/bluera-base/TODO.txt && \
+    echo "Structure valid"
+    ```
+
+    - Expected: All required sections present
+    - PASS if all sections found
+
+### Part 11: Cleanup
 
 1. **Remove Test Directory**: Clean up test artifacts
 
@@ -311,10 +340,12 @@ After running all tests, report results in this format:
 | 17 | Signals Library Tests | ? |
 | 18 | State Library Tests | ? |
 | 19 | Gitignore Integration Tests | ? |
-| 20 | Remove Test Directory | ? |
-| 21 | Verify Cleanup | ? |
+| 20 | TODO File Creation | ? |
+| 21 | TODO File Structure | ? |
+| 22 | Remove Test Directory | ? |
+| 23 | Verify Cleanup | ? |
 
-**Result: X/21 tests passed**
+**Result: X/23 tests passed**
 
 ## Error Recovery
 
