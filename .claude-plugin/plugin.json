@@ -3,8 +3,8 @@
   "version": "0.10.1",
   "description": "Shared development conventions for Bluera projects - hooks, skills, CLAUDE.md patterns",
   "author": {
-    "name": "Bluera",
-    "email": "contact@bluera.ai"
+    "name": "Bluera Inc",
+    "url": "https://bluera.ai"
   },
   "repository": "https://github.com/blueraai/bluera-base",
   "license": "MIT",
