@@ -25,8 +25,8 @@ while [[ $# -gt 0 ]]; do
 Milhouse Loop - Iterative Development Loop
 
 USAGE:
-  /milhouse-loop <prompt-file> [OPTIONS]
-  /milhouse-loop --inline "Your prompt here" [OPTIONS]
+  /bluera-base:milhouse-loop <prompt-file> [OPTIONS]
+  /bluera-base:milhouse-loop --inline "Your prompt here" [OPTIONS]
 
 OPTIONS:
   --max-iterations <n>    Maximum iterations (default: unlimited)
@@ -40,19 +40,19 @@ OPTIONS:
 STOPPING:
   - Output <promise>YOUR_PROMISE</promise> when complete
   - Reach --max-iterations limit
-  - Run /cancel-milhouse to stop manually
+  - Run /bluera-base:cancel-milhouse to stop manually
   - Stuck detection (same failure 3x in a row)
 
 GATES:
   Gates run AFTER the promise matches. All must pass to exit.
-  Example: /milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+  Example: /bluera-base:milhouse-loop task.md --gate "npm test" --gate "npm run lint"
 
 MONITORING:
   # View current iteration:
-  grep '^iteration:' .bluera/bluera-base/state/milhouse-loop.md
+  grep '^iteration:' .bluera/bluera-base/state/bluera-base:milhouse-loop.md
 
   # View full state:
-  head -10 .bluera/bluera-base/state/milhouse-loop.md
+  head -10 .bluera/bluera-base/state/bluera-base:milhouse-loop.md
 EOF
       exit 0
       ;;
@@ -119,7 +119,7 @@ done
 if [[ -z "$PROMPT_TEXT" ]]; then
   if [[ -z "$PROMPT_FILE" ]]; then
     echo "Error: Prompt file required. Use --inline or provide file path." >&2
-    echo "Usage: /milhouse-loop <prompt-file> [--max-iterations N] [--promise TEXT]" >&2
+    echo "Usage: /bluera-base:milhouse-loop <prompt-file> [--max-iterations N] [--promise TEXT]" >&2
     exit 1
   fi
   if [[ ! -f "$PROMPT_FILE" ]]; then
@@ -132,7 +132,7 @@ fi
 # Create state file
 bluera_ensure_config_dir
 STATE_DIR="$(bluera_state_dir)"
-STATE_FILE="$STATE_DIR/milhouse-loop.md"
+STATE_FILE="$STATE_DIR/bluera-base:milhouse-loop.md"
 
 # Build gates YAML array
 GATES_YAML=""

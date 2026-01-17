@@ -42,7 +42,7 @@ RUST_PATTERNS='cargo release'
 GIT_PATTERNS='git tag v[0-9]|gh release create'
 
 if echo "$COMMAND" | grep -qE "($JS_PATTERNS)|($PY_PATTERNS)|($RUST_PATTERNS)|($GIT_PATTERNS)"; then
-  echo "Manual release commands are blocked. Use /release instead." >&2
+  echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2
   exit 2
 fi
 

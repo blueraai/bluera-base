@@ -21,7 +21,7 @@ source "$SCRIPT_DIR/lib/config.sh"
 source "$SCRIPT_DIR/lib/state.sh"
 
 # Check if milhouse-loop is active
-STATE_FILE="$(bluera_state_dir)/milhouse-loop.md"
+STATE_FILE="$(bluera_state_dir)/bluera-base:milhouse-loop.md"
 
 if [[ ! -f "$STATE_FILE" ]]; then
   # No active loop - allow exit
@@ -85,13 +85,13 @@ fi
 
 # Validate numeric fields before arithmetic operations
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse: iteration invalid ('$ITERATION'). Run /milhouse-loop again." >&2
+  echo "⚠️  Milhouse: iteration invalid ('$ITERATION'). Run /bluera-base:milhouse-loop again." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
 if [[ ! "$MAX_ITERATIONS" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse: max_iterations invalid ('$MAX_ITERATIONS'). Run /milhouse-loop again." >&2
+  echo "⚠️  Milhouse: max_iterations invalid ('$MAX_ITERATIONS'). Run /bluera-base:milhouse-loop again." >&2
   rm "$STATE_FILE"
   exit 0
 fi

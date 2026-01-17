@@ -70,8 +70,8 @@ Execute each test in order. Mark each as PASS or FAIL.
    echo "Exit code: $?"
    ```
 
-   - Expected: Message about using /release, exit code 2
-   - PASS if output contains "Use /release" and exits 2
+   - Expected: Message about using /bluera-base:release, exit code 2
+   - PASS if output contains "Use /bluera-base:release" and exits 2
 
 2. **Block git tag**: Test that manual git tagging is blocked
 

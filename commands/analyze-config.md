@@ -118,7 +118,7 @@ Generate a report:
 
 For each duplicate/overlap, use AskUserQuestion:
 
-1. **Duplicates**: "Remove `.claude/commands/commit.md`? (bluera-base provides /commit)"
+1. **Duplicates**: "Remove `.claude/commands/commit.md`? (bluera-base provides /bluera-base:commit)"
    - Remove
    - Keep (disable bluera-base equivalent)
    - Keep both
