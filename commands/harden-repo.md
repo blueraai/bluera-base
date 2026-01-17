@@ -375,8 +375,11 @@ If coverage was selected:
    | `justfile` | just |
    | `Taskfile.yml` | task |
    | `pyproject.toml` (with `[tool.poetry.scripts]` or `[project.scripts]`) | poetry/pdm |
+   | None of the above | Direct invocation (uv run, pytest, cargo, go test, etc.) |
 
    **Important**: A Python project may use `package.json` for scripts. A Go project may use `Makefile`. Don't assume language = task runner.
+
+   **If no task runner**: Configure coverage via tool-specific config files (pyproject.toml `[tool.coverage.*]`, `.c8rc.json`, etc.) rather than scripts.
 
 2. **Check current coverage** (if tests exist):
 
@@ -390,14 +393,28 @@ If coverage was selected:
    - "Set threshold to current coverage (X%)"
    - "Skip coverage enforcement for now"
 
-4. **Add coverage script to detected task runner**:
+4. **Add coverage configuration to detected task runner**:
 
    | Task Runner | How to Add |
    |-------------|------------|
    | package.json | Add to `"scripts"`: `"test:coverage": "<coverage-command>"` |
    | Makefile | Add target: `test-coverage: <coverage-command>` |
    | justfile | Add recipe: `test-coverage: <coverage-command>` |
-   | pyproject.toml | Add to `[tool.poetry.scripts]` or configure in `[tool.pytest.ini_options]` |
+   | pyproject.toml (poetry/pdm) | Add to `[tool.poetry.scripts]` |
+   | **None (uv/pytest direct)** | Configure in `[tool.pytest.ini_options]` addopts with `--cov-fail-under=80`, or add `[tool.coverage.report]` section |
+
+   **For repos with no task runner (uv, raw pytest, etc.):**
+
+   Add to `pyproject.toml`:
+
+   ```toml
+   [tool.pytest.ini_options]
+   addopts = "--cov=src --cov-report=term-missing --cov-fail-under=80"
+
+   [tool.coverage.report]
+   fail_under = 80
+   show_missing = true
+   ```
 
 5. **Configure coverage tool based on language**:
 
