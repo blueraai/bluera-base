@@ -1,8 +1,10 @@
 # Bluera Base
 
 [![CI](https://github.com/blueraai/bluera-base/actions/workflows/ci.yml/badge.svg)](https://github.com/blueraai/bluera-base/actions/workflows/ci.yml)
+[![Latest Release](https://img.shields.io/github/v/release/blueraai/bluera-base?label=version)](https://github.com/blueraai/bluera-base/releases)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blueviolet)
+![Languages](https://img.shields.io/badge/languages-13-blue)
 
 > **Shared development conventions for any project.** Multi-language hooks, skills, and CLAUDE.md patterns for consistent Claude Code workflows.
 
@@ -53,9 +55,13 @@ flowchart LR
 - [Why Bluera Base?](#why-bluera-base)
 - [Installation](#installation)
 - [What's Included](#whats-included)
+  - [Hooks](#hooks)
+  - [Commands](#commands)
+  - [Skills](#skills)
 - [Supported Languages](#supported-languages)
 - [Documentation](#documentation)
 - [License](#license)
+- [Support](#support)
 
 </details>
 
