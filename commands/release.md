@@ -17,4 +17,7 @@ See @bluera-base/skills/release/SKILL.md for complete workflow.
 
 **Phases:** Analyze commits → Bump version → Push → Monitor CI → Verify release
 
-**Key rule:** Do NOT push tags directly. Tags should only be created AFTER CI passes.
+**Key rules:**
+
+- Do NOT push tags directly. Tags should only be created AFTER CI passes.
+- All version commands MUST use prefix: `__SKILL__=release <command>` (e.g., `__SKILL__=release bun run version:patch`)

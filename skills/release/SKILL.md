@@ -12,7 +12,24 @@ Standardized release workflow that auto-detects version bump, bumps version, com
 1. Use auto-release workflow (creates tags after CI passes)
 2. Or manually create tag only after verifying CI success
 
-**IMPORTANT:** All release commands MUST be prefixed with `__SKILL__=release` to bypass the manual-release hook.
+## Hook Bypass (REQUIRED)
+
+A PreToolUse hook blocks manual release commands. To run version/release commands, you MUST prefix with exactly:
+
+```bash
+__SKILL__=release <command>
+```
+
+**Examples (use these exact formats):**
+
+```bash
+__SKILL__=release bun run version:patch
+__SKILL__=release npm version minor
+__SKILL__=release poetry version patch
+__SKILL__=release cargo release patch --execute
+```
+
+**DO NOT invent alternative prefixes.** The hook checks for the literal string `__SKILL__=release` at the start of the command. Using any other format (like `RELEASE_SKILL_ACTIVE=1`) will be blocked.
 
 ## Pre-flight Checks
 
