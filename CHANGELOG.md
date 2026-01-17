@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.0](https://github.com/blueraai/bluera-base/compare/v0.9.2...v0.10.0) (2026-01-17)
+
+### Features
+
+* **config:** add self-documenting output for show command ([af6b12b](https://github.com/blueraai/bluera-base/commit/af6b12bfb405f20a8118ddd8ce45fb42ac610750))
+* **explain:** add /bluera-base:explain command ([80cf30d](https://github.com/blueraai/bluera-base/commit/80cf30d2d2450f6a9c973c4e520dbf9e99724086))
+* **lib:** add signals and state library abstractions ([15eb013](https://github.com/blueraai/bluera-base/commit/15eb013f7699355bf49a8650e2eadd6d46fd130b))
+* **todo:** add /bluera-base:todo command for task management ([e0bc330](https://github.com/blueraai/bluera-base/commit/e0bc330a8d3d4d403114d2286609ec166e33dfd0))
+
+### Bug Fixes
+
+* **test-plugin:** update counts and add library unit tests ([588c2ca](https://github.com/blueraai/bluera-base/commit/588c2caa82a12a97b1619f70e6280e18225ba9f0))
+
 ## [0.9.2](https://github.com/blueraai/bluera-base/compare/v0.9.1...v0.9.2) (2026-01-16)
 
 ### Bug Fixes
