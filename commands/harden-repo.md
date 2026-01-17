@@ -23,23 +23,30 @@ See @bluera-base/skills/repo-hardening/SKILL.md for language-specific best pract
 Before setting up, check what's already configured:
 
 ```bash
+# Detect task runner (independent of language!)
+ls package.json Makefile justfile Taskfile.yml 2>/dev/null
+
 # Detect existing configs
 ls .editorconfig .gitattributes .pre-commit-config.yaml .husky/pre-commit .git/hooks/pre-commit 2>/dev/null
 ls eslint.config.* .eslintrc* .prettierrc* pyproject.toml .rubocop.yml .clang-format 2>/dev/null
+
+# Detect coverage configs
 ls .c8rc* .nycrc* coveralls.json .simplecov tarpaulin.toml 2>/dev/null
 grep -q "pytest-cov\|coverage" pyproject.toml 2>/dev/null && echo "pytest-cov configured"
 grep -q "tool.coverage" pyproject.toml 2>/dev/null && echo "coverage.py configured"
+grep -q "test:coverage\|test-coverage" package.json Makefile justfile 2>/dev/null && echo "coverage script exists"
 ```
 
 **Status table to show:**
 
 | Component | Status | Notes |
 |-----------|--------|-------|
+| Task Runner | - | (package.json/Makefile/justfile/etc.) |
 | Linter | ✓ / ✗ | (which tool) |
 | Formatter | ✓ / ✗ | (which tool) |
 | Type Checker | ✓ / ✗ | (which tool) |
 | Pre-commit Hooks | ✓ / ✗ | (husky/pre-commit/native) |
-| Test Coverage | ✓ / ✗ | (tool + threshold if configured) |
+| Test Coverage | ✓ / ✗ | (tool + threshold + script location) |
 | .editorconfig | ✓ / ✗ | |
 | .gitattributes | ✓ / ✗ | |
 
@@ -359,19 +366,40 @@ mix format
 
 If coverage was selected:
 
-1. **Check current coverage** (if tests exist):
+1. **Detect task runner/script system** (independent of language):
+
+   | File | Task Runner |
+   |------|-------------|
+   | `package.json` | npm/bun/yarn scripts |
+   | `Makefile` | make |
+   | `justfile` | just |
+   | `Taskfile.yml` | task |
+   | `pyproject.toml` (with `[tool.poetry.scripts]` or `[project.scripts]`) | poetry/pdm |
+
+   **Important**: A Python project may use `package.json` for scripts. A Go project may use `Makefile`. Don't assume language = task runner.
+
+2. **Check current coverage** (if tests exist):
 
    ```bash
    # Run tests with coverage to see current state
    # e.g., npm run test:coverage, pytest --cov, etc.
    ```
 
-2. **If current coverage < threshold**: Use AskUserQuestion with options:
+3. **If current coverage < threshold**: Use AskUserQuestion with options:
    - "Keep 80% threshold (will fail until coverage improves)"
    - "Set threshold to current coverage (X%)"
    - "Skip coverage enforcement for now"
 
-3. **Configure based on language**:
+4. **Add coverage script to detected task runner**:
+
+   | Task Runner | How to Add |
+   |-------------|------------|
+   | package.json | Add to `"scripts"`: `"test:coverage": "<coverage-command>"` |
+   | Makefile | Add target: `test-coverage: <coverage-command>` |
+   | justfile | Add recipe: `test-coverage: <coverage-command>` |
+   | pyproject.toml | Add to `[tool.poetry.scripts]` or configure in `[tool.pytest.ini_options]` |
+
+5. **Configure coverage tool based on language**:
 
 | Language | Tool | Threshold Config |
 |----------|------|------------------|
