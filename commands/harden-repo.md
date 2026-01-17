@@ -1,12 +1,14 @@
 ---
 description: Set up git hooks, linters, formatters, and editor configs for a project
 allowed-tools: Bash, Read, Write, Edit, Glob, AskUserQuestion
-argument-hint: [--language <js|python|rust|go>] [--skip-hooks]
+argument-hint: [--language <lang>] [--skip-hooks] [--coverage <threshold>]
 ---
 
 # Harden Repo
 
-Interactive setup for git hooks, linters, formatters, and quality tooling.
+Interactive setup for git hooks, linters, formatters, coverage, and quality tooling.
+
+**Also checks existing hardening and identifies gaps** (e.g., missing coverage configuration).
 
 See @bluera-base/skills/repo-hardening/SKILL.md for language-specific best practices.
 
@@ -15,6 +17,35 @@ See @bluera-base/skills/repo-hardening/SKILL.md for language-specific best pract
 !`ls package.json pyproject.toml requirements.txt Cargo.toml go.mod pom.xml build.gradle build.gradle.kts Gemfile composer.json Package.swift mix.exs CMakeLists.txt build.sbt 2>/dev/null || echo "No project files detected"`
 
 ## Workflow
+
+### Phase 0: Check Existing Hardening
+
+Before setting up, check what's already configured:
+
+```bash
+# Detect existing configs
+ls .editorconfig .gitattributes .pre-commit-config.yaml .husky/pre-commit .git/hooks/pre-commit 2>/dev/null
+ls eslint.config.* .eslintrc* .prettierrc* pyproject.toml .rubocop.yml .clang-format 2>/dev/null
+ls .c8rc* .nycrc* coveralls.json .simplecov tarpaulin.toml 2>/dev/null
+grep -q "pytest-cov\|coverage" pyproject.toml 2>/dev/null && echo "pytest-cov configured"
+grep -q "tool.coverage" pyproject.toml 2>/dev/null && echo "coverage.py configured"
+```
+
+**Status table to show:**
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Linter | ✓ / ✗ | (which tool) |
+| Formatter | ✓ / ✗ | (which tool) |
+| Type Checker | ✓ / ✗ | (which tool) |
+| Pre-commit Hooks | ✓ / ✗ | (husky/pre-commit/native) |
+| Test Coverage | ✓ / ✗ | (tool + threshold if configured) |
+| .editorconfig | ✓ / ✗ | |
+| .gitattributes | ✓ / ✗ | |
+
+**If already hardened:** Show status table and identify gaps. Use AskUserQuestion to offer adding missing components (especially coverage if not configured).
+
+**If not hardened:** Continue to Phase 1.
 
 ### Phase 1: Detect Language
 
