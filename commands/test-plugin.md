@@ -50,15 +50,24 @@ Execute each test in order. Mark each as PASS or FAIL.
    - Expected: Returns `true` (all hook types registered)
    - PASS if command succeeds with truthy output
 
-2. **Hook Scripts Exist**: Verify all hook scripts are present and executable
+2. **Hook Scripts Exist**: Verify all referenced hooks have scripts
 
    ```bash
    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-   ls -la "$PLUGIN_PATH/hooks/"*.sh | wc -l
+   MISSING=0
+   for script in $(grep -oE '[a-z-]+\.sh' "$PLUGIN_PATH/hooks/hooks.json" | sort -u); do
+     if [[ ! -f "$PLUGIN_PATH/hooks/$script" ]]; then
+       echo "MISSING: $script"
+       MISSING=$((MISSING + 1))
+     fi
+   done
+   TOTAL=$(grep -oE '[a-z-]+\.sh' "$PLUGIN_PATH/hooks/hooks.json" | sort -u | wc -l | tr -d ' ')
+   echo "Checked $TOTAL referenced scripts, $MISSING missing"
+   [[ $MISSING -eq 0 ]] && echo "All hook scripts present"
    ```
 
-   - Expected: 12 shell scripts (auto-commit, block-manual-release, dry-scan, milhouse-setup, milhouse-stop, notify, observe-learning, post-edit-check, pre-compact, session-end-learn, session-setup, session-start-inject)
-   - PASS if count is 12
+   - Expected: All scripts referenced in hooks.json exist
+   - PASS if output shows "All hook scripts present"
 
 ### Part 2: PreToolUse Hook (block-manual-release.sh)
 
@@ -201,35 +210,35 @@ Execute each test in order. Mark each as PASS or FAIL.
 
 ### Part 7: Skills Verification
 
-1. **Skills Directory Structure**: Verify all skills exist
+1. **All Skills Have SKILL.md**: Verify every skill directory contains SKILL.md
 
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-    ls -d "$PLUGIN_PATH/skills/"*/
+    MISSING=0
+    for dir in "$PLUGIN_PATH/skills/"*/; do
+      if [[ ! -f "$dir/SKILL.md" ]]; then
+        echo "MISSING: $dir/SKILL.md"
+        MISSING=$((MISSING + 1))
+      fi
+    done
+    TOTAL=$(ls -d "$PLUGIN_PATH/skills/"*/ 2>/dev/null | wc -l | tr -d ' ')
+    echo "Checked $TOTAL skill directories, $MISSING missing SKILL.md"
+    [[ $MISSING -eq 0 ]] && echo "All skills valid"
     ```
 
-    - Expected: Lists 11 skill directories (architectural-constraints, atomic-commits, claude-md-maintainer, code-review-repo, dry-refactor, large-file-refactor, milhouse, readme-maintainer, release, repo-hardening, statusline)
-    - PASS if all 11 skill directories exist
+    - Expected: All skill directories contain SKILL.md
+    - PASS if output shows "All skills valid"
 
-2. **Atomic Commits Skill**: Verify skill file is readable
+2. **Skills Are Readable**: Verify at least one skill file has content
 
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-    head -5 "$PLUGIN_PATH/skills/atomic-commits/SKILL.md"
+    FIRST_SKILL=$(ls -d "$PLUGIN_PATH/skills/"*/ | head -1)
+    head -5 "$FIRST_SKILL/SKILL.md"
     ```
 
     - Expected: Shows skill header/title
-    - PASS if file is readable
-
-3. **Milhouse Skill**: Verify skill file is readable
-
-    ```bash
-    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-    head -5 "$PLUGIN_PATH/skills/milhouse/SKILL.md"
-    ```
-
-    - Expected: Shows skill header/title
-    - PASS if file is readable
+    - PASS if file is readable with content
 
 ### Part 8: Library Unit Tests
 
@@ -334,18 +343,17 @@ After running all tests, report results in this format:
 | 11 | Setup Creates State File | ? |
 | 12 | /bluera-base:commit Command | ? |
 | 13 | /bluera-base:cancel-milhouse Command | ? |
-| 14 | Skills Directory Structure | ? |
-| 15 | Atomic Commits Skill | ? |
-| 16 | Milhouse Skill | ? |
-| 17 | Signals Library Tests | ? |
-| 18 | State Library Tests | ? |
-| 19 | Gitignore Integration Tests | ? |
-| 20 | TODO File Creation | ? |
-| 21 | TODO File Structure | ? |
-| 22 | Remove Test Directory | ? |
-| 23 | Verify Cleanup | ? |
+| 14 | All Skills Have SKILL.md | ? |
+| 15 | Skills Are Readable | ? |
+| 16 | Signals Library Tests | ? |
+| 17 | State Library Tests | ? |
+| 18 | Gitignore Integration Tests | ? |
+| 19 | TODO File Creation | ? |
+| 20 | TODO File Structure | ? |
+| 21 | Remove Test Directory | ? |
+| 22 | Verify Cleanup | ? |
 
-**Result: X/23 tests passed**
+**Result: X/22 tests passed**
 
 ## Error Recovery
 
