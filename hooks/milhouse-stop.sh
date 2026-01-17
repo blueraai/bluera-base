@@ -15,9 +15,10 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
 
-# Source config library for state directory
+# Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
+source "$SCRIPT_DIR/lib/state.sh"
 
 # Check if milhouse-loop is active
 STATE_FILE="$(bluera_state_dir)/milhouse-loop.md"
@@ -27,13 +28,20 @@ if [[ ! -f "$STATE_FILE" ]]; then
   exit 0
 fi
 
-# Parse markdown frontmatter (YAML between ---) and extract values
+# Parse markdown frontmatter values using state library
+ITERATION=$(bluera_get_state "$STATE_FILE" "iteration")
+MAX_ITERATIONS=$(bluera_get_state "$STATE_FILE" "max_iterations")
+COMPLETION_PROMISE=$(bluera_get_state "$STATE_FILE" "completion_promise")
+COMPLETION_PROMISE="${COMPLETION_PROMISE#\"}"  # Strip leading quote
+COMPLETION_PROMISE="${COMPLETION_PROMISE%\"}"  # Strip trailing quote
+STORED_SESSION=$(bluera_get_state "$STATE_FILE" "session_id")
+STORED_SESSION="${STORED_SESSION#\"}"  # Strip leading quote
+STORED_SESSION="${STORED_SESSION%\"}"  # Strip trailing quote
+STUCK_LIMIT=$(bluera_get_state "$STATE_FILE" "stuck_limit")
+STUCK_LIMIT="${STUCK_LIMIT:-3}"
+
+# Parse frontmatter for gates array (complex YAML, keep manual parsing)
 FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$STATE_FILE")
-ITERATION=$(echo "$FRONTMATTER" | grep '^iteration:' | sed 's/iteration: *//')
-MAX_ITERATIONS=$(echo "$FRONTMATTER" | grep '^max_iterations:' | sed 's/max_iterations: *//')
-COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/completion_promise: *"\(.*\)"/\1/')
-STORED_SESSION=$(echo "$FRONTMATTER" | grep '^session_id:' | sed 's/session_id: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
-STUCK_LIMIT=$(echo "$FRONTMATTER" | grep '^stuck_limit:' | sed 's/stuck_limit: *//' || echo "3")
 
 # Parse gates from YAML (lines starting with "  - " after "gates:")
 GATES=()
@@ -59,16 +67,14 @@ while IFS= read -r line; do
 done <<< "$FRONTMATTER"
 
 # Parse failure_hashes (simple array on one line)
-FAILURE_HASHES=$(echo "$FRONTMATTER" | grep '^failure_hashes:' | sed 's/failure_hashes: *//')
+FAILURE_HASHES=$(bluera_get_state "$STATE_FILE" "failure_hashes")
 
 # Session scoping: derive current session ID from transcript path
 CURRENT_SESSION=$(echo "$HOOK_INPUT" | jq -r '.transcript_path' | md5 -q 2>/dev/null || echo "$HOOK_INPUT" | jq -r '.transcript_path' | md5sum | cut -d' ' -f1)
 
 # If no stored session, capture it (first stop hook for this loop)
 if [[ -z "$STORED_SESSION" ]]; then
-  TEMP_FILE="${STATE_FILE}.tmp.$$"
-  sed "s/^session_id: .*/session_id: \"$CURRENT_SESSION\"/" "$STATE_FILE" > "$TEMP_FILE"
-  mv "$TEMP_FILE" "$STATE_FILE"
+  bluera_set_state "$STATE_FILE" "session_id" "\"$CURRENT_SESSION\""
   STORED_SESSION="$CURRENT_SESSION"
 fi
 
@@ -206,18 +212,14 @@ if [[ "$PROMISE_MATCHED" == true ]] && [[ "$GATES_PASSED" == false ]]; then
   fi
 
   # Update state file with new failure hash
-  TEMP_FILE="${STATE_FILE}.tmp.$$"
-  sed "s/^failure_hashes: .*/failure_hashes: $NEW_HASHES/" "$STATE_FILE" > "$TEMP_FILE"
-  mv "$TEMP_FILE" "$STATE_FILE"
+  bluera_set_state "$STATE_FILE" "failure_hashes" "$NEW_HASHES"
 fi
 
 # Not complete - continue loop
 NEXT_ITERATION=$((ITERATION + 1))
 
 # Update iteration in state file
-TEMP_FILE="${STATE_FILE}.tmp.$$"
-sed "s/^iteration: .*/iteration: $NEXT_ITERATION/" "$STATE_FILE" > "$TEMP_FILE"
-mv "$TEMP_FILE" "$STATE_FILE"
+bluera_set_state "$STATE_FILE" "iteration" "$NEXT_ITERATION"
 
 # Build iteration display
 if [[ $MAX_ITERATIONS -gt 0 ]]; then

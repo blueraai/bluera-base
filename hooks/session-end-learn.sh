@@ -7,9 +7,10 @@ set -euo pipefail
 
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
-# Source config library
+# Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
+source "$SCRIPT_DIR/lib/signals.sh"
 
 # Check if auto-learn is enabled (opt-in)
 if ! bluera_config_enabled ".autoLearn.enabled"; then
@@ -22,19 +23,17 @@ AUTO_LEARN_MODE="${AUTO_LEARN_MODE:-suggest}"
 THRESHOLD=$(bluera_get_config ".autoLearn.threshold")
 THRESHOLD="${THRESHOLD:-3}"
 
-# Signal file path
-SIGNAL_FILE="$(bluera_state_dir)/session-signals.json"
-
 # Skip if no signals accumulated
+SIGNAL_FILE="$(bluera_signals_file)"
 if [[ ! -f "$SIGNAL_FILE" ]]; then
   exit 0
 fi
 
-# Read signals with validation
-SIGNALS=$(cat "$SIGNAL_FILE")
+# Load signals with validation
+SIGNALS=$(bluera_load_signals)
 if ! echo "$SIGNALS" | jq -e . >/dev/null 2>&1; then
   echo "[bluera-base] Warning: Corrupted signals file, removing" >&2
-  rm -f "$SIGNAL_FILE"
+  bluera_clear_signals
   exit 0
 fi
 
@@ -56,7 +55,7 @@ FREQUENT_CMDS=$(echo "$SIGNALS" | jq -r --argjson threshold "$THRESHOLD" '
 # Skip if no frequent commands
 if [[ -z "$FREQUENT_CMDS" ]] || [[ "$FREQUENT_CMDS" == "null" ]]; then
   # Clean up signal file
-  rm -f "$SIGNAL_FILE"
+  bluera_clear_signals
   exit 0
 fi
 
@@ -100,6 +99,6 @@ Run \`/claude-md learn \"<learning>\"\` to add any of these."
 fi
 
 # Clean up signal file after synthesis
-rm -f "$SIGNAL_FILE"
+bluera_clear_signals
 
 exit 0

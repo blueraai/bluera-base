@@ -11,9 +11,10 @@ INPUT=$(cat 2>/dev/null || true)
 
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
-# Source config library
+# Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
+source "$SCRIPT_DIR/lib/signals.sh"
 
 # Check if auto-learn is enabled (opt-in)
 if ! bluera_config_enabled ".autoLearn.enabled"; then
@@ -65,9 +66,6 @@ fi
 # Ensure state directory exists
 bluera_ensure_config_dir
 
-# Signal file path
-SIGNAL_FILE="$(bluera_state_dir)/session-signals.json"
-
 # Get current session ID from transcript path (if available)
 TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 SESSION_ID=""
@@ -75,36 +73,16 @@ if [[ -n "$TRANSCRIPT_PATH" ]]; then
   SESSION_ID=$(echo "$TRANSCRIPT_PATH" | md5 -q 2>/dev/null || echo "$TRANSCRIPT_PATH" | md5sum | cut -d' ' -f1)
 fi
 
-# Initialize or read existing signals
-if [[ ! -f "$SIGNAL_FILE" ]]; then
-  echo '{"commands":{},"session_id":"","started_at":""}' > "$SIGNAL_FILE"
-fi
-
-# Read current signals
-SIGNALS=$(cat "$SIGNAL_FILE")
-
-# Check if this is a new session (different session_id)
-STORED_SESSION=$(echo "$SIGNALS" | jq -r '.session_id // empty')
-if [[ -n "$SESSION_ID" ]] && [[ "$STORED_SESSION" != "$SESSION_ID" ]]; then
-  # New session - reset signals
-  SIGNALS=$(jq -n --arg sid "$SESSION_ID" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{
-    "commands": {},
-    "session_id": $sid,
-    "started_at": $ts
-  }')
+# Check if this is a new session (different session_id) and reset if needed
+if [[ -n "$SESSION_ID" ]] && bluera_signals_session_changed "$SESSION_ID"; then
+  bluera_init_signals "$SESSION_ID"
+elif [[ ! -f "$(bluera_signals_file)" ]]; then
+  # Initialize signals file if it doesn't exist
+  bluera_init_signals "$SESSION_ID"
 fi
 
 # Increment command count
-SIGNALS=$(echo "$SIGNALS" | jq --arg cmd "$BASE_CMD" '
-  .commands[$cmd] = ((.commands[$cmd] // 0) + 1)
-')
-
-# Write updated signals (validate JSON before writing to prevent corruption)
-if echo "$SIGNALS" | jq -e . >/dev/null 2>&1; then
-  echo "$SIGNALS" > "$SIGNAL_FILE"
-else
-  echo "[bluera-base] Warning: Invalid JSON, skipping signal write" >&2
-fi
+bluera_increment_signal "$BASE_CMD"
 
 # Exit successfully (non-blocking)
 exit 0

@@ -28,10 +28,16 @@ else
 fi
 
 # =====================
-# Verify hooks are executable
+# Ensure .gitignore has bluera-base patterns
 # =====================
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$(dirname "$0")")}"
+source "${PLUGIN_ROOT}/hooks/lib/gitignore.sh"
+gitignore_ensure_patterns
+
+# =====================
+# Verify hooks are executable
+# =====================
 
 check_executable() {
     local hook_file="$1"
