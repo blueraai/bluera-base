@@ -26,10 +26,48 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 
 ### Show (default)
 
+Display a **user-friendly summary** with current status and available options.
+
+**Output format:**
+
+```text
+bluera-base configuration
+
+Features (toggle with: /bluera-base:config enable|disable <feature>)
+┌──────────────┬─────────┬─────────────────────────────────────────┐
+│ Feature      │ Status  │ Description                             │
+├──────────────┼─────────┼─────────────────────────────────────────┤
+│ auto-learn   │ OFF     │ Track patterns, suggest CLAUDE.md edits │
+│ auto-commit  │ OFF     │ Commit uncommitted changes on stop      │
+│ auto-push    │ OFF     │ Push after auto-commit                  │
+│ notifications│ ON      │ Desktop notifications on prompts        │
+│ dry-check    │ OFF     │ Detect duplicate code                   │
+│ dry-auto     │ OFF     │ Auto-scan for duplicates on stop        │
+│ strict-typing│ OFF     │ Block any/as casts in TypeScript        │
+└──────────────┴─────────┴─────────────────────────────────────────┘
+
+Settings (change with: /bluera-base:config set <key> <value>)
+  .autoLearn.mode = "suggest"     # suggest | auto
+  .autoLearn.threshold = 3        # occurrences before acting
+  .milhouse.defaultMaxIterations = 0
+  .milhouse.defaultStuckLimit = 3
+  .milhouse.defaultGates = []
+
+Config files:
+  .bluera/bluera-base/config.json       (not found)
+  .bluera/bluera-base/config.local.json (exists)
+
+Run /bluera-base:config init to create shared config.
+```
+
+**Steps:**
+
 1. Check if `.bluera/bluera-base/` exists
 2. Load and merge: defaults ← `config.json` ← `config.local.json`
-3. Display effective configuration as formatted JSON
-4. Note which values are overridden locally
+3. Display feature table with ON/OFF status
+4. Display key settings with current values
+5. Show config file status
+6. Suggest next action if config not initialized
 
 ### Init
 
@@ -57,17 +95,32 @@ Arguments: `<key> <value> [--shared]`
 
 ### Enable / Disable
 
-Shortcuts for common boolean settings:
+Toggle features by name. If the feature name is not recognized, list available features.
 
-| Feature | Config Path |
-|---------|-------------|
-| `auto-learn` | `.autoLearn.enabled` |
-| `notifications` | `.notifications.enabled` |
-| `auto-commit` | `.autoCommit.enabled` |
-| `auto-push` | `.autoCommit.push` |
-| `dry-check` | `.dryCheck.enabled` |
-| `dry-auto` | `.dryCheck.onStop` |
-| `strict-typing` | `.strictTyping.enabled` |
+| Feature | Config Path | Description |
+|---------|-------------|-------------|
+| `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits |
+| `auto-commit` | `.autoCommit.enabled` | Auto-commit uncommitted changes on session stop |
+| `auto-push` | `.autoCommit.push` | Push to remote after auto-commit |
+| `notifications` | `.notifications.enabled` | Desktop notifications on permission prompts |
+| `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate code detection |
+| `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop |
+| `strict-typing` | `.strictTyping.enabled` | Block `any`, `as` casts, `type: ignore` |
+
+**If unrecognized feature name:**
+
+```text
+Unknown feature: "autoLearn"
+
+Available features:
+  auto-learn     Track patterns, suggest CLAUDE.md edits
+  auto-commit    Commit uncommitted changes on stop
+  auto-push      Push after auto-commit
+  notifications  Desktop notifications on prompts
+  dry-check      Detect duplicate code
+  dry-auto       Auto-scan for duplicates on stop
+  strict-typing  Block any/as casts in TypeScript
+```
 
 ### Reset
 
