@@ -59,6 +59,9 @@ flowchart LR
   - [Commands](#commands)
   - [Skills](#skills)
 - [Supported Languages](#supported-languages)
+  - [Auto-Validation](#auto-validation)
+  - [Repo Hardening](#repo-hardening)
+  - [Package Manager Auto-Detection](#package-manager-auto-detection)
 - [Documentation](#documentation)
 - [License](#license)
 - [Support](#support)
@@ -293,9 +296,11 @@ flowchart LR
 
 ## Supported Languages
 
-### Auto-Validation (post-edit-check.sh)
+### Auto-Validation
 
-The `post-edit-check.sh` hook automatically detects and validates:
+*Via `post-edit-check.sh` hook*
+
+The hook automatically detects and validates:
 
 | Language | Detection | Linter | Type Checker |
 |----------|-----------|--------|--------------|
@@ -304,7 +309,9 @@ The `post-edit-check.sh` hook automatically detects and validates:
 | **Rust** | `Cargo.toml` | cargo clippy | cargo check |
 | **Go** | `go.mod` | golangci-lint / go vet | - |
 
-### Repo Hardening (/bluera-base:harden-repo)
+### Repo Hardening
+
+*Via `/bluera-base:harden-repo` command*
 
 Full tooling setup (linting, formatting, hooks, coverage) for 13 languages:
 
@@ -326,7 +333,9 @@ Full tooling setup (linting, formatting, hooks, coverage) for 13 languages:
 
 Default coverage threshold: **80%** (user-configurable)
 
-### Package Manager Auto-Detection (JS/TS)
+### Package Manager Auto-Detection
+
+*For JavaScript/TypeScript projects*
 
 | Lockfile | Runner Used |
 |----------|-------------|
