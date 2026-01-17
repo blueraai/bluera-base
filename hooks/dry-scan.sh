@@ -35,11 +35,11 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
 
-# Find jscpd
+# Find jscpd (local only - no npx to avoid hanging downloads)
 if command -v jscpd &>/dev/null; then
   JSCPD="jscpd"
-elif command -v npx &>/dev/null; then
-  JSCPD="npx --yes jscpd"
+elif [[ -f "node_modules/.bin/jscpd" ]]; then
+  JSCPD="node_modules/.bin/jscpd"
 else
   echo "[bluera-base] DRY scan skipped: jscpd not found (install with: npm install -g jscpd)" >&2
   exit 0

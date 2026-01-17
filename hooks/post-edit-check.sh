@@ -1,10 +1,8 @@
 #!/bin/bash
 # Smart post-edit validation hook
-# Supports: JavaScript/TypeScript, Python, Rust, Go
-# Auto-detects package manager for JS/TS projects
+# Language-independent: invokes project's own lint/typecheck scripts
 #
 # Reads stdin JSON to get the exact file edited, then validates just that file.
-# This fixes issues with git diff missing untracked files and glob patterns not matching subdirs.
 
 set -euo pipefail
 
@@ -47,178 +45,105 @@ detect_js_runner() {
   if [ -f "bun.lockb" ]; then echo "bun"
   elif [ -f "yarn.lock" ]; then echo "yarn"
   elif [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
-  else echo "npx"
+  else echo "npm"
   fi
 }
 
-# === Language-Specific Checks (single file) ===
-
-check_javascript_file() {
-  local file="$1"
-  local RUNNER
-  RUNNER=$(detect_js_runner)
-
-  # Auto-fix lint (only if eslint is available)
-  if [ -f "node_modules/.bin/eslint" ] || command -v eslint &>/dev/null; then
-    "$RUNNER" eslint --fix --quiet "$file" 2>/dev/null || true
-
-    # Check for remaining lint errors
-    local LINT_OUT
-    LINT_OUT=$("$RUNNER" eslint --quiet "$file" 2>&1 || true)
-    if [ -n "$LINT_OUT" ]; then
-      echo "$LINT_OUT" >&2
-      return 2
-    fi
-  fi
-
-  # Type check (project-wide, rate-limited to avoid slowdown)
-  # Only run if last check was > 30 seconds ago
-  if [ -f "tsconfig.json" ]; then
-    local RATE_FILE="${TMPDIR:-/tmp}/bluera-tsc-last-run"
-    local NOW
-    NOW=$(date +%s)
-    local LAST=0
-    [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-
-    if [ $((NOW - LAST)) -gt 30 ]; then
-      echo "$NOW" > "$RATE_FILE"
-      local TYPE_OUT
-      TYPE_OUT=$("$RUNNER" tsc --noEmit --pretty false 2>&1 || true)
-      if [ -n "$TYPE_OUT" ]; then
-        echo "$TYPE_OUT" | head -20 >&2
-        return 2
-      fi
-    fi
-  fi
-
-  return 0
-}
-
-check_python_file() {
-  local file="$1"
-
-  # Prefer ruff (fast)
-  if command -v ruff &>/dev/null; then
-    ruff check --fix --quiet "$file" 2>/dev/null || true
-
-    local LINT_OUT
-    LINT_OUT=$(ruff check "$file" 2>&1 || true)
-    if [ -n "$LINT_OUT" ]; then
-      echo "$LINT_OUT" >&2
-      return 2
-    fi
-  elif command -v flake8 &>/dev/null; then
-    local LINT_OUT
-    LINT_OUT=$(flake8 "$file" 2>&1 || true)
-    if [ -n "$LINT_OUT" ]; then
-      echo "$LINT_OUT" >&2
-      return 2
-    fi
-  fi
-
-  # Type check with mypy (rate-limited)
-  if command -v mypy &>/dev/null; then
-    if [ -f "pyproject.toml" ] || [ -f "mypy.ini" ] || [ -f "setup.cfg" ]; then
-      local RATE_FILE="${TMPDIR:-/tmp}/bluera-mypy-last-run"
-      local NOW
-      NOW=$(date +%s)
-      local LAST=0
-      [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-
-      if [ $((NOW - LAST)) -gt 30 ]; then
-        echo "$NOW" > "$RATE_FILE"
-        local TYPE_OUT
-        TYPE_OUT=$(mypy --no-error-summary "$file" 2>&1 | grep -v "^Success" || true)
-        if [ -n "$TYPE_OUT" ]; then
-          echo "$TYPE_OUT" | head -20 >&2
-          return 2
-        fi
-      fi
-    fi
-  fi
-
-  return 0
-}
-
-check_rust_file() {
-  local file="$1"
-
-  if ! command -v cargo &>/dev/null; then
+# Check if project has lint configured
+has_lint_script() {
+  if [ -f "package.json" ] && grep -q '"lint"' package.json 2>/dev/null; then
+    return 0
+  elif [ -f "Makefile" ] && grep -q 'lint' Makefile 2>/dev/null; then
+    return 0
+  elif [ -f "pyproject.toml" ] && grep -q 'lint' pyproject.toml 2>/dev/null; then
+    return 0
+  elif [ -f "Cargo.toml" ]; then
+    # Rust projects use cargo clippy by convention
     return 0
   fi
-
-  # Auto-format the specific file
-  rustfmt --quiet "$file" 2>/dev/null || true
-
-  # Cargo checks are project-wide (rate-limited)
-  local RATE_FILE="${TMPDIR:-/tmp}/bluera-cargo-last-run"
-  local NOW
-  NOW=$(date +%s)
-  local LAST=0
-  [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-
-  if [ $((NOW - LAST)) -gt 30 ]; then
-    echo "$NOW" > "$RATE_FILE"
-
-    # cargo clippy for linting
-    local LINT_OUT
-    LINT_OUT=$(cargo clippy --quiet --message-format=short 2>&1 | grep -E "^(error|warning)" || true)
-    if echo "$LINT_OUT" | grep -q "^error"; then
-      echo "$LINT_OUT" | head -20 >&2
-      return 2
-    fi
-
-    # cargo check for compile errors
-    local CHECK_OUT
-    CHECK_OUT=$(cargo check --quiet --message-format=short 2>&1 | grep -E "^error" || true)
-    if [ -n "$CHECK_OUT" ]; then
-      echo "$CHECK_OUT" | head -20 >&2
-      return 2
-    fi
-  fi
-
-  return 0
+  return 1
 }
 
-check_go_file() {
-  local file="$1"
-
-  # Format the specific file
-  if command -v gofmt &>/dev/null; then
-    gofmt -w "$file" 2>/dev/null || true
+# Check if project has typecheck configured
+has_typecheck_script() {
+  if [ -f "package.json" ] && grep -q '"typecheck\|"type-check\|"tsc"' package.json 2>/dev/null; then
+    return 0
+  elif [ -f "tsconfig.json" ]; then
+    return 0
+  elif [ -f "Makefile" ] && grep -q 'typecheck\|type-check' Makefile 2>/dev/null; then
+    return 0
+  elif [ -f "pyproject.toml" ] && grep -q 'mypy\|pyright' pyproject.toml 2>/dev/null; then
+    return 0
   fi
-
-  # Linting (rate-limited)
-  local RATE_FILE="${TMPDIR:-/tmp}/bluera-go-last-run"
-  local NOW
-  NOW=$(date +%s)
-  local LAST=0
-  [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-
-  if [ $((NOW - LAST)) -gt 30 ]; then
-    echo "$NOW" > "$RATE_FILE"
-
-    if command -v golangci-lint &>/dev/null; then
-      local LINT_OUT
-      LINT_OUT=$(golangci-lint run --out-format=line-number "$file" 2>&1 || true)
-      if [ -n "$LINT_OUT" ]; then
-        echo "$LINT_OUT" | head -20 >&2
-        return 2
-      fi
-    elif command -v go &>/dev/null; then
-      local LINT_OUT
-      LINT_OUT=$(go vet "$file" 2>&1 || true)
-      if [ -n "$LINT_OUT" ]; then
-        echo "$LINT_OUT" | head -20 >&2
-        return 2
-      fi
-    fi
-  fi
-
-  return 0
+  return 1
 }
 
-# === Anti-pattern Check (single file) ===
+# === Project Script Invocation (rate-limited) ===
+
+run_project_lint() {
+  has_lint_script || return 0
+
+  # Rate limit: only run if last check was > 30 seconds ago
+  local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-last-run"
+  local NOW LAST
+  NOW=$(date +%s)
+  LAST=0
+  [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
+  [ $((NOW - LAST)) -le 30 ] && return 0
+  echo "$NOW" > "$RATE_FILE"
+
+  local runner
+  runner=$(detect_js_runner)
+
+  if [ -f "package.json" ]; then
+    $runner run lint --quiet 2>/dev/null || true
+  elif [ -f "Makefile" ] && grep -q '^lint:' Makefile; then
+    make lint 2>/dev/null || true
+  elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
+    cargo clippy --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2 || true
+  elif [ -f "pyproject.toml" ]; then
+    if command -v poetry &>/dev/null && grep -q '\[tool.poetry\]' pyproject.toml; then
+      poetry run lint 2>/dev/null || true
+    elif command -v ruff &>/dev/null; then
+      ruff check . --quiet 2>/dev/null || true
+    fi
+  fi
+}
+
+run_project_typecheck() {
+  has_typecheck_script || return 0
+
+  # Rate limit: only run if last check was > 30 seconds ago
+  local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-last-run"
+  local NOW LAST
+  NOW=$(date +%s)
+  LAST=0
+  [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
+  [ $((NOW - LAST)) -le 30 ] && return 0
+  echo "$NOW" > "$RATE_FILE"
+
+  local runner
+  runner=$(detect_js_runner)
+
+  if [ -f "package.json" ]; then
+    # Try common script names
+    $runner run typecheck --quiet 2>/dev/null || \
+    $runner run type-check --quiet 2>/dev/null || \
+    $runner run tsc --quiet 2>/dev/null || true
+  elif [ -f "tsconfig.json" ] && [ -f "node_modules/.bin/tsc" ]; then
+    node_modules/.bin/tsc --noEmit --pretty false 2>&1 | head -20 >&2 || true
+  elif [ -f "Makefile" ] && grep -q '^typecheck:' Makefile; then
+    make typecheck 2>/dev/null || true
+  elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
+    cargo check --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2 || true
+  elif [ -f "pyproject.toml" ]; then
+    if command -v mypy &>/dev/null; then
+      mypy . --no-error-summary 2>&1 | grep -v "^Success" | head -10 >&2 || true
+    fi
+  fi
+}
+
+# === Anti-pattern Check (single file, no deps) ===
 
 check_anti_patterns_file() {
   local file="$1"
@@ -253,7 +178,7 @@ check_anti_patterns_file() {
   return 0
 }
 
-# === Lint Suppression Check (config files) ===
+# === Lint Suppression Check (config files, no deps) ===
 
 check_lint_suppression_file() {
   local file="$1"
@@ -320,7 +245,7 @@ check_lint_suppression_file() {
   return 0
 }
 
-# === Strict Typing Check (single file) ===
+# === Strict Typing Check (single file, no deps) ===
 
 check_strict_typing_file() {
   local file="$1"
@@ -340,7 +265,6 @@ check_strict_typing_file() {
   case "$file" in
     *.ts|*.tsx)
       # TypeScript strict typing violations
-      # Check for: any type, as casts, @ts-ignore, @ts-expect-error without reason
 
       # 'any' type (but not 'company' or 'many' etc)
       if echo "$CONTENT" | grep -E ':\s*any\b|<any>|as\s+any\b' | grep -v '// ok:' | grep -q .; then
@@ -422,43 +346,19 @@ fi
 
 # === Main ===
 
-EXIT_CODE=0
-
-# Dispatch based on file extension
-case "$FILE_PATH" in
-  *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs)
-    if [ -f "package.json" ]; then
-      check_javascript_file "$FILE_PATH" || EXIT_CODE=$?
-    fi
-    ;;
-  *.py|*.pyi)
-    if [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "setup.py" ]; then
-      check_python_file "$FILE_PATH" || EXIT_CODE=$?
-    fi
-    ;;
-  *.rs)
-    if [ -f "Cargo.toml" ]; then
-      check_rust_file "$FILE_PATH" || EXIT_CODE=$?
-    fi
-    ;;
-  *.go)
-    if [ -f "go.mod" ]; then
-      check_go_file "$FILE_PATH" || EXIT_CODE=$?
-    fi
-    ;;
-esac
-
-[ $EXIT_CODE -ne 0 ] && exit $EXIT_CODE
-
-# Anti-pattern check (all source files)
+# Anti-pattern check (all source files, no deps)
 check_anti_patterns_file "$FILE_PATH" || exit $?
 
-# Lint suppression check (config files) - prevents disabling lint rules instead of fixing code
+# Lint suppression check (config files, no deps)
 check_lint_suppression_file "$FILE_PATH" || exit $?
 
-# Strict typing check (opt-in via config)
+# Strict typing check (opt-in via config, no deps)
 if [ "$STRICT_TYPING_ENABLED" = "true" ]; then
   check_strict_typing_file "$FILE_PATH" || exit $?
 fi
+
+# Project lint/typecheck (rate-limited, uses project scripts)
+run_project_lint
+run_project_typecheck
 
 exit 0

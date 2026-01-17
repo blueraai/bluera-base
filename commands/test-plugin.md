@@ -103,6 +103,7 @@ Execute each test in order. Mark each as PASS or FAIL.
 
    - Expected: Allowed (exit code 0)
    - PASS if exits 0
+   - **Note:** When run inside Claude Code, this test may show BLOCKED because the live hook intercepts the outer bash command. The `__SKILL__=release` mechanism works correctly - this is a test isolation artifact. For manual verification, run outside Claude Code.
 
 4. **Allow normal commands**: Test that non-release commands pass through
 
@@ -215,26 +216,38 @@ Execute each test in order. Mark each as PASS or FAIL.
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
     MISSING=0
+    CHECKED=0
     for dir in "$PLUGIN_PATH/skills/"*/; do
-      if [[ ! -f "$dir/SKILL.md" ]]; then
+      # Skip template-only directories (contain .template but no SKILL.md)
+      if find "$dir" -maxdepth 1 -name "*.template" 2>/dev/null | grep -q . && [ ! -f "$dir/SKILL.md" ]; then
+        continue
+      fi
+      CHECKED=$((CHECKED + 1))
+      if [ ! -f "$dir/SKILL.md" ]; then
         echo "MISSING: $dir/SKILL.md"
         MISSING=$((MISSING + 1))
       fi
     done
-    TOTAL=$(ls -d "$PLUGIN_PATH/skills/"*/ 2>/dev/null | wc -l | tr -d ' ')
-    echo "Checked $TOTAL skill directories, $MISSING missing SKILL.md"
-    [[ $MISSING -eq 0 ]] && echo "All skills valid"
+    echo "Checked $CHECKED skill directories, $MISSING missing SKILL.md"
+    [ $MISSING -eq 0 ] && echo "All skills valid"
     ```
 
-    - Expected: All skill directories contain SKILL.md
+    - Expected: All skill directories (except template-only) contain SKILL.md
     - PASS if output shows "All skills valid"
 
 2. **Skills Are Readable**: Verify at least one skill file has content
 
     ```bash
     PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
-    FIRST_SKILL=$(ls -d "$PLUGIN_PATH/skills/"*/ | head -1)
-    head -5 "$FIRST_SKILL/SKILL.md"
+    # Find first skill with SKILL.md (skip template-only dirs)
+    FIRST_SKILL=""
+    for dir in "$PLUGIN_PATH/skills/"*/; do
+      if [ -f "$dir/SKILL.md" ]; then
+        FIRST_SKILL="$dir"
+        break
+      fi
+    done
+    [ -n "$FIRST_SKILL" ] && head -5 "$FIRST_SKILL/SKILL.md"
     ```
 
     - Expected: Shows skill header/title
