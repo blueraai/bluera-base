@@ -109,6 +109,24 @@ Create configs from templates:
 - `.husky/pre-commit` from `@bluera-base/templates/repo-hardening/husky-pre-commit.template`
 - `lint-staged.config.js` from `@bluera-base/templates/repo-hardening/lint-staged.config.template`
 
+**Coverage (if selected):**
+
+```bash
+npm install -D c8
+```
+
+Create `.c8rc.json` from `@bluera-base/templates/repo-hardening/c8rc.template`
+
+Add to `package.json` scripts:
+
+```json
+{
+  "scripts": {
+    "test:coverage": "c8 npm test"
+  }
+}
+```
+
 #### Python
 
 ```bash
@@ -136,6 +154,28 @@ target-version = "py311"
 select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
 ```
 
+**Coverage (if selected):**
+
+```bash
+pip install pytest-cov
+# or: uv add --dev pytest-cov
+```
+
+Add to `pyproject.toml`:
+
+```toml
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=term-missing --cov-fail-under=80"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+```
+
 #### Rust
 
 ```bash
@@ -158,6 +198,14 @@ all = "warn"
 pedantic = "warn"
 ```
 
+**Coverage (if selected):**
+
+```bash
+cargo install cargo-tarpaulin
+```
+
+Add script or Makefile target: `cargo tarpaulin --fail-under 80`
+
 #### Go
 
 ```bash
@@ -173,6 +221,19 @@ chmod +x .git/hooks/pre-commit
 ```
 
 Create `.golangci.yml` with recommended linters.
+
+**Coverage (if selected):**
+
+Add to `Makefile` or scripts:
+
+```makefile
+test-coverage:
+ go test -coverprofile=coverage.out ./...
+ @COVERAGE=$$(go tool cover -func=coverage.out | grep total | awk '{print $$3}' | sed 's/%//'); \
+ if [ $$(echo "$$COVERAGE < 80" | bc -l) -eq 1 ]; then \
+  echo "Coverage $$COVERAGE% is below 80%"; exit 1; \
+ fi
+```
 
 #### Java (Maven)
 
@@ -314,7 +375,7 @@ If coverage was selected:
 
 | Language | Tool | Threshold Config |
 |----------|------|------------------|
-| JS/TS | c8 | `.c8rc.json` with `lines`, `branches`, etc. |
+| JS/TS | c8 | `.c8rc.json` + add `"test:coverage": "c8 npm test"` to package.json |
 | Python | pytest-cov | `pyproject.toml` `[tool.coverage.report]` `fail_under` |
 | Rust | cargo-tarpaulin | `--fail-under` flag |
 | Go | go test -cover | Script check against threshold |
