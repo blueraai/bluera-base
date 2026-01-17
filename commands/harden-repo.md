@@ -296,7 +296,21 @@ mix format
 
 ### Phase 3.5: Coverage Setup
 
-If coverage was selected, configure based on language:
+If coverage was selected:
+
+1. **Check current coverage** (if tests exist):
+
+   ```bash
+   # Run tests with coverage to see current state
+   # e.g., npm run test:coverage, pytest --cov, etc.
+   ```
+
+2. **If current coverage < threshold**: Use AskUserQuestion with options:
+   - "Keep 80% threshold (will fail until coverage improves)"
+   - "Set threshold to current coverage (X%)"
+   - "Skip coverage enforcement for now"
+
+3. **Configure based on language**:
 
 | Language | Tool | Threshold Config |
 |----------|------|------------------|
@@ -350,6 +364,11 @@ Report what was set up:
 - Detect existing tooling and offer to update vs replace
 - Skip hooks setup if `--skip-hooks` flag provided
 - Always make hooks executable (`chmod +x`)
+- **NEVER autonomously lower coverage thresholds** - if current coverage is below the target threshold, use AskUserQuestion to let the user decide:
+  - Keep the threshold and work toward it
+  - Lower to match current coverage
+  - Skip coverage enforcement entirely
+- Do not make judgments about "expected" low coverage - let the user decide what's acceptable
 
 ## Error Recovery
 
