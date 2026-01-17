@@ -57,15 +57,15 @@ After push, **verify ALL workflows triggered and succeeded**.
 COMMIT_SHA=$(git rev-parse HEAD)
 
 # Silent wait for completion
-while gh run list --commit "$COMMIT_SHA" --json status -q '.[] | select(.status != "completed")' | grep -q .; do sleep 10; done
+while gh run list --commit "$COMMIT_SHA" --json status -q '[.[] | select(.status == "completed")] | length < (. | length)' | grep -q true; do sleep 10; done
 
 # Show failures only (empty = all passed)
-gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | select(.conclusion != "success") | "\(.name): \(.conclusion)"'
+gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | select(.conclusion == "success" | not) | "\(.name): \(.conclusion)"'
 
 # Verify workflow count: expected vs actual
 EXPECTED=$(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ')
 ACTUAL=$(gh run list --commit "$COMMIT_SHA" --json name -q 'length')
-[ "$EXPECTED" != "$ACTUAL" ] && echo "WARNING: Expected $EXPECTED workflows, got $ACTUAL"
+[ "$EXPECTED" -ne "$ACTUAL" ] && echo "WARNING: Expected $EXPECTED workflows, got $ACTUAL"
 ```
 
 ### Verify Release

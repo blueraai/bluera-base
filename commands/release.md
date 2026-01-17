@@ -5,7 +5,7 @@ allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(bun:*), Bash(poetry:*)
 
 # Release
 
-Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for workflow details.
+Cut a release and monitor CI/CD.
 
 ## Context
 
@@ -13,74 +13,8 @@ Cut a release and monitor CI/CD. See @bluera-base/skills/release/SKILL.md for wo
 
 ## Workflow
 
-**IMPORTANT:** Do NOT push tags directly. Tags should only be created AFTER CI passes.
+See @bluera-base/skills/release/SKILL.md for complete workflow.
 
-### Safe Release Pattern (Recommended)
+**Phases:** Analyze commits → Bump version → Push → Monitor CI → Verify release
 
-1. **Analyze commits** to determine version bump:
-
-   ```bash
-   git fetch --tags -q
-   git log $(git describe --tags --abbrev=0)..HEAD --oneline
-   ```
-
-   - `fix:` commits → patch (0.0.x)
-   - `feat:` commits → minor (0.x.0)
-   - `feat!:` or `BREAKING CHANGE:` → major (x.0.0)
-
-2. **Bump version** (creates commit, NO tag):
-
-   ```bash
-   # JavaScript/TypeScript (with commit-and-tag-version)
-   __SKILL__=release npx commit-and-tag-version --release-as patch --skip.tag
-
-   # Python (Poetry)
-   __SKILL__=release poetry version patch && git add pyproject.toml && git commit -m "chore(release): $(poetry version -s)"
-
-   # Manual
-   # Edit version files, then: git commit -m "chore(release): X.Y.Z"
-   ```
-
-3. **Push commit** (triggers CI):
-
-   ```bash
-   git push
-   ```
-
-4. **Wait for CI to pass**, then create tag:
-
-   ```bash
-   gh run list --limit 3  # Wait for success
-   VERSION=$(jq -r .version package.json)  # Or read from your version file
-   git tag "v$VERSION" && git push origin "v$VERSION"
-   ```
-
-### If Project Has auto-release.yml
-
-Projects with auto-release workflow (like bluera-base) automatically create tags after CI passes. Just push the version bump commit:
-
-```bash
-__SKILL__=release bun run release:patch  # Bumps, commits, pushes (no tag)
-# CI runs → auto-release creates tag → release workflow publishes
-```
-
-## Monitor
-
-After push, verify **ALL workflows** triggered and succeeded:
-
-```bash
-COMMIT_SHA=$(git rev-parse HEAD)
-
-# Wait for completion (silent polling)
-while gh run list --commit "$COMMIT_SHA" --json status -q '.[] | select(.status != "completed")' | grep -q .; do sleep 10; done
-
-# Show only failures (empty = all passed)
-gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | select(.conclusion != "success") | "\(.name): \(.conclusion)"'
-
-# Count: workflows in repo vs workflows that ran
-echo "Expected: $(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ') | Ran: $(gh run list --commit "$COMMIT_SHA" --json name -q 'length')"
-```
-
-If counts don't match or any failures shown, investigate before confirming release.
-
-Verify release: `gh release view "v$(jq -r .version package.json)" --json tagName -q .tagName 2>/dev/null && echo "OK" || echo "NOT FOUND"`
+**Key rule:** Do NOT push tags directly. Tags should only be created AFTER CI passes.
