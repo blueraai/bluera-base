@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.10.2](https://github.com/blueraai/bluera-base/compare/v0.10.1...v0.10.2) (2026-01-17)
+
+### Bug Fixes
+
+* **hooks:** use fully qualified command names in messages ([c7018eb](https://github.com/blueraai/bluera-base/commit/c7018eb4681284880be7449de9b8dece0ef1ab28))
+
 ## [0.10.1](https://github.com/blueraai/bluera-base/compare/v0.10.0...v0.10.1) (2026-01-17)
 
 ### Bug Fixes
