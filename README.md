@@ -18,7 +18,7 @@ When developing projects with Claude Code, you want consistent conventions acros
 | Inconsistent CLAUDE.md patterns | Standardized sections via @includes |
 | Duplicate code-review skills | Shared, battle-tested skill |
 | Manual lint/typecheck validation | Automatic PostToolUse hooks |
-| JS/TS only tooling | Multi-language support (JS/TS, Python, Rust, Go) |
+| JS/TS only tooling | Multi-language support (13 languages) |
 
 **The result:** Every project gets the same quality gates and conventions, without duplication.
 
@@ -165,7 +165,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `/bluera-base:readme` | Maintain README.md files with GitHub advanced formatting |
 | `/bluera-base:test-plugin` | Run plugin validation test suite |
 | `/bluera-base:dry` | Detect duplicate code and suggest DRY refactors using jscpd |
-| `/bluera-base:harden-repo` | Set up git hooks, linters, formatters, and .editorconfig |
+| `/bluera-base:harden-repo` | Set up linters, formatters, git hooks, and test coverage (13 languages) |
 | `/bluera-base:worktree` | Manage Git worktrees for parallel development workflows |
 | `/bluera-base:statusline` | Configure Claude Code's terminal status line display |
 | `/bluera-base:analyze-config` | Scan `.claude/**` for overlap with bluera-base |
@@ -184,7 +184,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 | `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
-| `repo-hardening` | Language-specific best practices for git hooks and linters |
+| `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets and barista integration |
 
 <details>
@@ -287,6 +287,8 @@ flowchart LR
 
 ## Supported Languages
 
+### Auto-Validation (post-edit-check.sh)
+
 The `post-edit-check.sh` hook automatically detects and validates:
 
 | Language | Detection | Linter | Type Checker |
@@ -295,6 +297,28 @@ The `post-edit-check.sh` hook automatically detects and validates:
 | **Python** | `pyproject.toml`, `requirements.txt`, `setup.py` | ruff / flake8 | mypy |
 | **Rust** | `Cargo.toml` | cargo clippy | cargo check |
 | **Go** | `go.mod` | golangci-lint / go vet | - |
+
+### Repo Hardening (/bluera-base:harden-repo)
+
+Full tooling setup (linting, formatting, hooks, coverage) for 13 languages:
+
+| Language | Linter | Formatter | Coverage |
+|----------|--------|-----------|----------|
+| **JavaScript/TypeScript** | ESLint | Prettier | c8 |
+| **Python** | ruff | ruff | pytest-cov |
+| **Rust** | clippy | rustfmt | cargo-tarpaulin |
+| **Go** | golangci-lint | gofmt | go test -cover |
+| **Java** | Checkstyle | google-java-format | JaCoCo |
+| **Kotlin** | detekt | ktlint | Kover |
+| **Ruby** | RuboCop | RuboCop | SimpleCov |
+| **PHP** | PHPStan | PHP-CS-Fixer | PCOV |
+| **C#/.NET** | Roslyn | dotnet format | coverlet |
+| **Swift** | SwiftLint | SwiftFormat | llvm-cov |
+| **Elixir** | Credo | mix format | excoveralls |
+| **C/C++** | clang-tidy | clang-format | gcov/lcov |
+| **Scala** | scalafix | scalafmt | scoverage |
+
+Default coverage threshold: **80%** (user-configurable)
 
 ### Package Manager Auto-Detection (JS/TS)
 
