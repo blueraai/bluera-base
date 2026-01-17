@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.12.0](https://github.com/blueraai/bluera-base/compare/v0.11.7...v0.12.0) (2026-01-17)
+
+### Features
+
+* **init:** add project initialization wizard ([c06869a](https://github.com/blueraai/bluera-base/commit/c06869a949aa9e6f8a41de565d0828f6f9c84ece))
+
+### Bug Fixes
+
+* **release:** monitor ALL workflows by commit SHA ([ceb0648](https://github.com/blueraai/bluera-base/commit/ceb06483a129a1f394667bc2fd067d47813114b8))
+
 ## [0.11.7](https://github.com/blueraai/bluera-base/compare/v0.11.6...v0.11.7) (2026-01-17)
 
 ### Bug Fixes
