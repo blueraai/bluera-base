@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.11.7](https://github.com/blueraai/bluera-base/compare/v0.11.6...v0.11.7) (2026-01-17)
+
+### Bug Fixes
+
+* **readme:** restore nested ToC items with linter-friendly anchors ([4c92dd5](https://github.com/blueraai/bluera-base/commit/4c92dd5fefc35c24d56411d8e85ac573a73c678d))
+
 ## [0.11.6](https://github.com/blueraai/bluera-base/compare/v0.10.2...v0.11.6) (2026-01-17)
 
 ### Features
