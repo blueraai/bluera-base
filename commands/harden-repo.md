@@ -32,8 +32,15 @@ ls eslint.config.* .eslintrc* .prettierrc* pyproject.toml .rubocop.yml .clang-fo
 
 # Detect coverage configs
 ls .c8rc* .nycrc* coveralls.json .simplecov tarpaulin.toml 2>/dev/null
-grep -q "pytest-cov\|coverage" pyproject.toml 2>/dev/null && echo "pytest-cov configured"
-grep -q "tool.coverage" pyproject.toml 2>/dev/null && echo "coverage.py configured"
+
+# Check for coverage TOOL (pytest-cov installed)
+grep -q "pytest-cov" pyproject.toml 2>/dev/null && echo "pytest-cov installed"
+
+# Check for coverage THRESHOLD (this is what matters!)
+grep -q "cov-fail-under\|fail_under" pyproject.toml 2>/dev/null && echo "coverage threshold configured"
+grep -q "check-coverage.*true\|lines.*[0-9]" .c8rc* 2>/dev/null && echo "c8 threshold configured"
+
+# Check for coverage script
 grep -q "test:coverage\|test-coverage" package.json Makefile justfile 2>/dev/null && echo "coverage script exists"
 ```
 
@@ -46,11 +53,18 @@ grep -q "test:coverage\|test-coverage" package.json Makefile justfile 2>/dev/nul
 | Formatter | ✓ / ✗ | (which tool) |
 | Type Checker | ✓ / ✗ | (which tool) |
 | Pre-commit Hooks | ✓ / ✗ | (husky/pre-commit/native) |
-| Test Coverage | ✓ / ✗ | (tool + threshold + script location) |
+| Test Coverage | ✓ / ✗ | **Must have BOTH**: tool installed AND threshold configured |
 | .editorconfig | ✓ / ✗ | |
 | .gitattributes | ✓ / ✗ | |
 
-**If already hardened:** Show status table and identify gaps. Use AskUserQuestion to offer adding missing components (especially coverage if not configured).
+**Coverage is only "configured" if BOTH are true:**
+
+1. Coverage tool is installed (pytest-cov, c8, tarpaulin, etc.)
+2. Coverage threshold is set (`--cov-fail-under`, `fail_under`, etc.)
+
+Having pytest-cov installed but no threshold = coverage is **NOT configured**.
+
+**If already hardened:** Show status table and identify gaps. Use AskUserQuestion to offer adding missing components (especially coverage threshold if tool is installed but threshold is missing).
 
 **If not hardened:** Continue to Phase 1.
 
