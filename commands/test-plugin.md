@@ -57,8 +57,8 @@ Execute each test in order. Mark each as PASS or FAIL.
    ls -la "$PLUGIN_PATH/hooks/"*.sh | wc -l
    ```
 
-   - Expected: 10 shell scripts (block-manual-release, milhouse-setup, milhouse-stop, notify, observe-learning, post-edit-check, pre-compact, session-end-learn, session-setup, session-start-inject)
-   - PASS if count is 10
+   - Expected: 12 shell scripts (auto-commit, block-manual-release, dry-scan, milhouse-setup, milhouse-stop, notify, observe-learning, post-edit-check, pre-compact, session-end-learn, session-setup, session-start-inject)
+   - PASS if count is 12
 
 ### Part 2: PreToolUse Hook (block-manual-release.sh)
 
@@ -208,8 +208,8 @@ Execute each test in order. Mark each as PASS or FAIL.
     ls -d "$PLUGIN_PATH/skills/"*/
     ```
 
-    - Expected: Lists 7 skill directories (architectural-constraints, atomic-commits, claude-md-maintainer, code-review-repo, milhouse, readme-maintainer, release)
-    - PASS if all 7 skill directories exist
+    - Expected: Lists 11 skill directories (architectural-constraints, atomic-commits, claude-md-maintainer, code-review-repo, dry-refactor, large-file-refactor, milhouse, readme-maintainer, release, repo-hardening, statusline)
+    - PASS if all 11 skill directories exist
 
 2. **Atomic Commits Skill**: Verify skill file is readable
 
@@ -231,7 +231,39 @@ Execute each test in order. Mark each as PASS or FAIL.
     - Expected: Shows skill header/title
     - PASS if file is readable
 
-### Part 8: Cleanup
+### Part 8: Library Unit Tests
+
+1. **Signals Library Tests**: Run signals.sh unit tests
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    bash "$PLUGIN_PATH/hooks/lib/tests/test-signals.sh"
+    ```
+
+    - Expected: 6 tests pass
+    - PASS if output contains "6 passed, 0 failed"
+
+2. **State Library Tests**: Run state.sh unit tests
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    bash "$PLUGIN_PATH/hooks/lib/tests/test-state.sh"
+    ```
+
+    - Expected: 8 tests pass
+    - PASS if output contains "8 passed, 0 failed"
+
+3. **Gitignore Integration Tests**: Run gitignore tests
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    bash "$PLUGIN_PATH/hooks/lib/tests/test-gitignore-integration.sh"
+    ```
+
+    - Expected: 4 tests pass
+    - PASS if output contains "4 passed, 0 failed"
+
+### Part 9: Cleanup
 
 1. **Remove Test Directory**: Clean up test artifacts
 
@@ -276,10 +308,13 @@ After running all tests, report results in this format:
 | 14 | Skills Directory Structure | ? |
 | 15 | Atomic Commits Skill | ? |
 | 16 | Milhouse Skill | ? |
-| 17 | Remove Test Directory | ? |
-| 18 | Verify Cleanup | ? |
+| 17 | Signals Library Tests | ? |
+| 18 | State Library Tests | ? |
+| 19 | Gitignore Integration Tests | ? |
+| 20 | Remove Test Directory | ? |
+| 21 | Verify Cleanup | ? |
 
-**Result: X/18 tests passed**
+**Result: X/21 tests passed**
 
 ## Error Recovery
 
