@@ -9,6 +9,7 @@ BLUERA_GITIGNORE_PATTERNS=(
   ".bluera/"
   "!.bluera/bluera-base/"
   "!.bluera/bluera-base/config.json"
+  "!.bluera/bluera-base/TODO.txt"
   "!.bluera/bluera-knowledge/"
   "!.bluera/bluera-knowledge/stores.config.json"
 )
