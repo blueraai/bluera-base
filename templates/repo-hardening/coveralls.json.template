@@ -1,0 +1,10 @@
+{
+  "coverage_options": {
+    "minimum_coverage": {{THRESHOLD}}
+  },
+  "skip_files": [
+    "test/",
+    "priv/",
+    "deps/"
+  ]
+}

@@ -1,0 +1,32 @@
+# detekt configuration
+# https://detekt.dev/docs/rules/
+
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 60
+  LongParameterList:
+    functionThreshold: 6
+    constructorThreshold: 8
+  ComplexCondition:
+    threshold: 4
+
+style:
+  MaxLineLength:
+    maxLineLength: 120
+  WildcardImport:
+    active: true
+  MagicNumber:
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+  VariableNaming:
+    variablePattern: '[a-z][a-zA-Z0-9]*'

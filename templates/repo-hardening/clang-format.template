@@ -1,0 +1,12 @@
+# clang-format configuration
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Attach
+SpaceAfterCStyleCast: false
+PointerAlignment: Left
+SortIncludes: true
+IncludeBlocks: Regroup

@@ -1,0 +1,14 @@
+{
+  "check-coverage": true,
+  "lines": {{THRESHOLD}},
+  "branches": {{THRESHOLD}},
+  "functions": {{THRESHOLD}},
+  "statements": {{THRESHOLD}},
+  "reporter": ["text", "lcov", "html"],
+  "exclude": [
+    "**/*.test.{js,ts}",
+    "**/*.spec.{js,ts}",
+    "**/__tests__/**",
+    "node_modules/**"
+  ]
+}

@@ -1,0 +1,15 @@
+# SwiftFormat configuration
+# https://github.com/nicklockwood/SwiftFormat
+
+--indent 4
+--allman false
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters before-first
+--closingparen balanced
+--commas always
+--semicolons inline
+--trimwhitespace always
+--stripunusedargs closure-only
+--maxwidth 120
+--exclude Pods,.build,DerivedData

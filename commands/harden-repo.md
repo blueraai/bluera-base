@@ -12,7 +12,7 @@ See @bluera-base/skills/repo-hardening/SKILL.md for language-specific best pract
 
 ## Context
 
-!`ls package.json pyproject.toml requirements.txt Cargo.toml go.mod 2>/dev/null || echo "No project files detected"`
+!`ls package.json pyproject.toml requirements.txt Cargo.toml go.mod pom.xml build.gradle build.gradle.kts Gemfile composer.json Package.swift mix.exs CMakeLists.txt build.sbt 2>/dev/null || echo "No project files detected"`
 
 ## Workflow
 
@@ -26,6 +26,15 @@ Check for project files to auto-detect language:
 | `pyproject.toml` or `requirements.txt` | Python |
 | `Cargo.toml` | Rust |
 | `go.mod` | Go |
+| `pom.xml` | Java (Maven) |
+| `build.gradle` or `build.gradle.kts` | Java/Kotlin (Gradle) |
+| `Gemfile` | Ruby |
+| `composer.json` | PHP |
+| `*.csproj` or `*.sln` | C#/.NET |
+| `Package.swift` | Swift |
+| `mix.exs` | Elixir |
+| `CMakeLists.txt` or `Makefile` | C/C++ |
+| `build.sbt` | Scala |
 
 If multiple detected or none, use AskUserQuestion to clarify.
 
@@ -35,11 +44,14 @@ Use AskUserQuestion to determine:
 
 1. **Confirm language/stack** (if not auto-detected)
 2. **Select tools to set up**:
-   - Linter (ESLint, ruff, clippy, golangci-lint)
-   - Formatter (Prettier, ruff, rustfmt, gofmt)
-   - Type checker (TypeScript, mypy, built-in)
+   - Linter (ESLint, ruff, clippy, golangci-lint, etc.)
+   - Formatter (Prettier, ruff, rustfmt, gofmt, etc.)
+   - Type checker (TypeScript, mypy, built-in, etc.)
    - Pre-commit hooks (husky, pre-commit, native git)
-3. **Additional files**:
+3. **Test coverage** (optional):
+   - Enable coverage enforcement? (Yes/No)
+   - Coverage threshold (default: 80%)
+4. **Additional files**:
    - .editorconfig
    - .gitattributes
 
@@ -131,6 +143,146 @@ chmod +x .git/hooks/pre-commit
 
 Create `.golangci.yml` with recommended linters.
 
+#### Java (Maven)
+
+```bash
+# Add JaCoCo plugin to pom.xml for coverage
+# Add Checkstyle plugin for linting
+# Add Spotless plugin for formatting
+```
+
+See @bluera-base/skills/repo-hardening/SKILL.md for full Maven/Gradle configurations.
+
+#### Java/Kotlin (Gradle)
+
+```bash
+# Add plugins to build.gradle(.kts)
+# - JaCoCo or Kover for coverage
+# - Checkstyle or detekt for linting
+# - Spotless or ktlint for formatting
+```
+
+See @bluera-base/skills/repo-hardening/SKILL.md for full Gradle configurations.
+
+#### Ruby
+
+```bash
+# Linting + Formatting
+gem install rubocop
+# or add to Gemfile: gem 'rubocop', require: false, group: :development
+
+# Coverage
+gem install simplecov
+# or add to Gemfile: gem 'simplecov', require: false, group: :test
+
+# Hooks
+gem install overcommit
+overcommit --install
+```
+
+#### PHP
+
+```bash
+# Linting
+composer require --dev phpstan/phpstan
+
+# Formatting
+composer require --dev friendsofphp/php-cs-fixer
+
+# Coverage
+composer require --dev pcov/clobber
+
+# Hooks
+composer require --dev phpro/grumphp
+```
+
+#### C#/.NET
+
+```bash
+# Linting (Roslyn analyzers)
+dotnet add package Microsoft.CodeAnalysis.NetAnalyzers
+
+# Formatting (built-in)
+dotnet format
+
+# Coverage
+dotnet add package coverlet.collector
+dotnet add package coverlet.msbuild
+
+# Hooks
+dotnet tool install --global Husky
+husky install
+```
+
+#### Swift
+
+```bash
+# Linting
+brew install swiftlint
+
+# Formatting
+brew install swiftformat
+
+# Coverage (built-in with Xcode/SwiftPM)
+swift test --enable-code-coverage
+```
+
+#### Elixir
+
+```bash
+# Linting
+mix archive.install hex credo
+
+# Formatting (built-in)
+mix format
+
+# Coverage - add to mix.exs deps:
+# {:excoveralls, "~> 0.18", only: :test}
+```
+
+#### C/C++
+
+```bash
+# Linting
+# clang-tidy (usually installed with LLVM/Clang)
+
+# Formatting
+# clang-format (usually installed with LLVM/Clang)
+
+# Coverage (compile with flags)
+# gcc -fprofile-arcs -ftest-coverage
+# lcov for reports
+```
+
+#### Scala
+
+```bash
+# Add to project/plugins.sbt:
+# - sbt-scalafix for linting
+# - sbt-scalafmt for formatting
+# - sbt-scoverage for coverage
+```
+
+### Phase 3.5: Coverage Setup
+
+If coverage was selected, configure based on language:
+
+| Language | Tool | Threshold Config |
+|----------|------|------------------|
+| JS/TS | c8 | `.c8rc.json` with `lines`, `branches`, etc. |
+| Python | pytest-cov | `pyproject.toml` `[tool.coverage.report]` `fail_under` |
+| Rust | cargo-tarpaulin | `--fail-under` flag |
+| Go | go test -cover | Script check against threshold |
+| Java | JaCoCo | `<minimum>0.80</minimum>` in pom.xml |
+| Kotlin | Kover | `minBound(80)` in build.gradle.kts |
+| Ruby | SimpleCov | `minimum_coverage 80` in config |
+| PHP | PCOV | `--min=80` flag |
+| C#/.NET | coverlet | `/p:Threshold=80` |
+| Swift | llvm-cov | Script check |
+| Elixir | excoveralls | `"minimum_coverage": 80` in coveralls.json |
+| C/C++ | lcov | Script check |
+| Scala | scoverage | `coverageMinimumStmtTotal := 80` |
+
 ### Phase 4: Universal Files
 
 If selected, create:
@@ -147,15 +299,18 @@ Report what was set up:
 ## Repo Hardening Complete
 
 ### Installed
-- [x] ESLint + Prettier
-- [x] husky + lint-staged
+- [x] Linter (ESLint/ruff/clippy/etc.)
+- [x] Formatter (Prettier/ruff/rustfmt/etc.)
+- [x] Pre-commit hooks
+- [x] Test coverage (80% threshold)
 - [x] .editorconfig
 - [x] .gitattributes
 
 ### Next Steps
 1. Review generated configs
-2. Run `npm run lint` to verify
-3. Make a test commit to verify hooks
+2. Run linter to verify setup
+3. Run tests with coverage to verify threshold
+4. Make a test commit to verify hooks
 ```
 
 ## Constraints

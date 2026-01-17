@@ -1,0 +1,19 @@
+#!/bin/sh
+# Universal coverage threshold check script
+# Usage: ./coverage-check.sh <coverage_percentage> <threshold>
+# Example: ./coverage-check.sh 75.5 80
+
+COVERAGE="${1:-0}"
+THRESHOLD="${2:-{{THRESHOLD}}}"
+
+# Remove % sign if present
+COVERAGE=$(echo "$COVERAGE" | sed 's/%//')
+
+# Check if coverage meets threshold
+if [ "$(echo "$COVERAGE < $THRESHOLD" | bc -l)" -eq 1 ]; then
+  echo "Coverage $COVERAGE% is below threshold of $THRESHOLD%"
+  exit 1
+fi
+
+echo "Coverage $COVERAGE% meets threshold of $THRESHOLD%"
+exit 0

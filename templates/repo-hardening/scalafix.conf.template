@@ -1,0 +1,15 @@
+# scalafix configuration
+# https://scalacenter.github.io/scalafix/docs/rules/overview.html
+
+rules = [
+  RemoveUnused,
+  DisableSyntax,
+  OrganizeImports
+]
+
+DisableSyntax.noVars = true
+DisableSyntax.noNulls = true
+DisableSyntax.noReturns = false
+DisableSyntax.noAsInstanceOf = true
+
+OrganizeImports.groupedImports = Merge

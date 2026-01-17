@@ -1,0 +1,22 @@
+# Credo configuration
+# https://hexdocs.pm/credo/config_file.html
+
+%{
+  configs: [
+    %{
+      name: "default",
+      files: %{
+        included: ["lib/", "src/", "test/"],
+        excluded: [~r"/_build/", ~r"/deps/", ~r"/node_modules/"]
+      },
+      strict: true,
+      color: true,
+      checks: [
+        {Credo.Check.Readability.MaxLineLength, max_length: 120},
+        {Credo.Check.Readability.ModuleDoc, false},
+        {Credo.Check.Design.TagTODO, exit_status: 0},
+        {Credo.Check.Design.TagFIXME, exit_status: 0}
+      ]
+    }
+  ]
+}
