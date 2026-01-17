@@ -109,6 +109,7 @@ claude --plugin-dir /path/to/bluera-base
 
 | Command | Purpose |
 |---------|---------|
+| `/bluera-base:init` | Initialize a project with bluera-base conventions |
 | `/bluera-base:commit` | Create atomic, well-organized commits with documentation checks |
 | `/bluera-base:code-review` | Run multi-agent codebase review |
 | `/bluera-base:release` | Cut a release with conventional commits auto-detection and CI monitoring |
