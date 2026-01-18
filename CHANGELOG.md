@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.14.0](https://github.com/blueraai/bluera-base/compare/v0.13.0...v0.14.0) (2026-01-18)
+
+### Features
+
+* **cleaner:** add Claude Code Cleaner for diagnosing slow startup ([f9914dd](https://github.com/blueraai/bluera-base/commit/f9914dda5d24cef513441d4ee5c5d981c90ee9cc))
+* **config:** add interactive init workflow with feature explanations ([65667c1](https://github.com/blueraai/bluera-base/commit/65667c1d50631c0c5cb6bc5d47f71e1ab46f0b97))
+* **statusline:** add preset previews, bluera preset, and ready-to-use scripts ([ea2bde6](https://github.com/blueraai/bluera-base/commit/ea2bde64e753ce4100621f549ca75f17789679dd))
+
+### Bug Fixes
+
+* **readme:** remove @ from mermaid diagram label ([8f4d1df](https://github.com/blueraai/bluera-base/commit/8f4d1df878a417548d79373480b9def5ae45ebde))
+
 ## [0.13.0](https://github.com/blueraai/bluera-base/compare/v0.12.1...v0.13.0) (2026-01-17)
 
 ### Features
