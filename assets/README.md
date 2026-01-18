@@ -1,6 +1,6 @@
 # Assets
 
-## icon.png
+## claude.png
 
 Notification icon for desktop notifications.
 

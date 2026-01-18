@@ -35,7 +35,7 @@ esac
 
 # Icon path (optional - for platforms that support it)
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}"
-ICON="$PLUGIN_ROOT/assets/icon.png"
+ICON="$PLUGIN_ROOT/assets/claude.png"
 
 # Platform-specific notification
 case "$OSTYPE" in
