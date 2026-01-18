@@ -2,20 +2,23 @@
 """Claude Code Cleaner - Fix Actions
 
 Executes remediation actions with safety guarantees:
-- Always creates timestamped backups
-- Supports dry-run mode (default)
-- Never prints secrets
+- Always creates timestamped backups in ~/.claude-backups/
+- Supports preview mode (default) - shows what WOULD happen
+- Requires --confirm to execute destructive actions
+- Fails fast on permission errors (no silent skipping)
 
 Usage:
-    python3 cc-cleaner-fix.py <action> [--confirm] [--days N]
+    python3 cc-cleaner-fix.py <action> [--preview] [--confirm] [--days N]
 
 Actions:
-    reset-claude-json         Backup and move aside ~/.claude.json
-    clear-plugin-cache        Remove plugin cache directories
+    DELETE-auth-config        Backup and move aside ~/.claude.json (requires re-login)
+    DELETE-plugin-cache       Remove plugin cache directories
+    DELETE-old-sessions       Delete old session files (--days N, default 30)
+    DELETE-debug-logs         Delete old debug logs (--days N, default 14)
     disable-nonessential      Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
     set-cleanup-period        Set cleanupPeriodDays in settings.json
-    prune-sessions            Delete old session files (--days N)
-    prune-debug-logs          Delete old debug logs (--days N)
+    list-backups              List available backups
+    restore-backup            Restore from a backup (--timestamp TIMESTAMP)
 """
 
 import argparse
@@ -24,12 +27,15 @@ import os
 import shutil
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Union
 
-# Type alias for result dictionaries
-ResultDict = Dict[str, Union[str, int, List[str]]]
+# Type alias for result dictionaries - flexible to handle various return shapes
+ResultDict = Dict[str, object]
+
+# Centralized backup location
+BACKUP_ROOT = Path.home() / ".claude-backups"
 
 
 def format_size(bytes_val: int) -> str:
@@ -43,32 +49,190 @@ def format_size(bytes_val: int) -> str:
     return f"{bytes_val}B"
 
 
+def get_file_age_days(path: Path) -> int:
+    """Get file age in days."""
+    if not path.exists():
+        return 0
+    mtime = path.stat().st_mtime
+    age_seconds = datetime.now().timestamp() - mtime
+    return int(age_seconds / 86400)
+
+
 def get_dir_size(path: Path) -> int:
-    """Get total size of directory in bytes."""
+    """Get total size of directory in bytes. Fails on permission errors."""
     if not path.exists():
         return 0
     total = 0
-    try:
-        for entry in path.rglob("*"):
-            if entry.is_file():
-                try:
-                    total += entry.stat().st_size
-                except (PermissionError, OSError):
-                    pass
-    except (PermissionError, OSError):
-        pass
+    for entry in path.rglob("*"):
+        if entry.is_file():
+            # No try/except - fail fast on permission errors
+            total += entry.stat().st_size
     return total
+
+
+class BackupManager:
+    """Manage centralized backups in ~/.claude-backups/"""
+
+    def __init__(self) -> None:
+        self.backup_root = BACKUP_ROOT
+
+    def create_backup_dir(self) -> Path:
+        """Create timestamped backup directory, return path."""
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
+        backup_dir = self.backup_root / timestamp
+        backup_dir.mkdir(parents=True, exist_ok=True)
+
+        # Update 'latest' symlink
+        latest = self.backup_root / "latest"
+        if latest.is_symlink():
+            latest.unlink()
+        latest.symlink_to(timestamp)
+
+        return backup_dir
+
+    def create_manifest(
+        self, backup_dir: Path, action: str, description: str = ""
+    ) -> Path:
+        """Create manifest.json in backup directory."""
+        manifest_path = backup_dir / "manifest.json"
+        manifest = {
+            "created": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "action": action,
+            "description": description,
+            "hostname": os.uname().nodename,
+            "user": os.getenv("USER", "unknown"),
+            "files": [],
+        }
+        with open(manifest_path, "w") as f:
+            json.dump(manifest, f, indent=2)
+        return manifest_path
+
+    def add_to_manifest(
+        self, backup_dir: Path, original: str, backup_name: str, size: int
+    ) -> None:
+        """Add file entry to manifest."""
+        manifest_path = backup_dir / "manifest.json"
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+        manifest["files"].append({
+            "original": original,
+            "backup": backup_name,
+            "size": size,
+        })
+        with open(manifest_path, "w") as f:
+            json.dump(manifest, f, indent=2)
+
+    def backup_file(self, backup_dir: Path, source: Path, name: str = "") -> Path:
+        """Backup a single file to backup directory."""
+        if not source.exists():
+            raise FileNotFoundError(f"Cannot backup: {source} not found")
+
+        backup_name = name or source.name
+        dest = backup_dir / backup_name
+        size = source.stat().st_size
+
+        shutil.copy2(source, dest)
+        self.add_to_manifest(backup_dir, str(source), backup_name, size)
+
+        return dest
+
+    def backup_dir_tar(
+        self, backup_dir: Path, source: Path, tarball_name: str
+    ) -> Path:
+        """Backup directory as tarball."""
+        if not source.exists():
+            raise FileNotFoundError(f"Cannot backup: {source} not found")
+
+        dest = backup_dir / tarball_name
+        size = get_dir_size(source)
+
+        subprocess.run(
+            ["tar", "-czf", str(dest), "-C", str(source.parent), source.name],
+            check=True,
+        )
+        self.add_to_manifest(backup_dir, str(source), tarball_name, size)
+
+        return dest
+
+    def list_backups(self) -> List[Dict[str, str]]:
+        """List all available backups."""
+        backups = []
+        if not self.backup_root.exists():
+            return backups
+
+        for item in sorted(self.backup_root.iterdir(), reverse=True):
+            if item.is_dir() and item.name.startswith("20"):
+                manifest_path = item / "manifest.json"
+                entry: Dict[str, Union[str, int]] = {"timestamp": item.name, "path": str(item)}
+
+                if manifest_path.exists():
+                    with open(manifest_path, "r") as f:
+                        manifest = json.load(f)
+                    entry["action"] = manifest.get("action", "unknown")
+                    entry["created"] = manifest.get("created", "")
+                    entry["files"] = len(manifest.get("files", []))
+
+                # Get size
+                size = sum(f.stat().st_size for f in item.rglob("*") if f.is_file())
+                entry["size"] = size
+                entry["size_human"] = format_size(size)
+
+                backups.append(entry)
+
+        return backups
+
+    def restore(self, timestamp: str) -> ResultDict:
+        """Restore from a backup."""
+        backup_dir = self.backup_root / timestamp
+
+        if not backup_dir.exists():
+            return {"status": "error", "message": f"Backup not found: {backup_dir}"}
+
+        manifest_path = backup_dir / "manifest.json"
+        if not manifest_path.exists():
+            return {"status": "error", "message": "No manifest found in backup"}
+
+        with open(manifest_path, "r") as f:
+            manifest = json.load(f)
+
+        restored = []
+        for file_entry in manifest.get("files", []):
+            original = file_entry["original"]
+            backup_name = file_entry["backup"]
+            backup_path = backup_dir / backup_name
+
+            if backup_name.endswith((".tgz", ".tar.gz")):
+                # Extract tarball
+                parent = Path(original).parent
+                subprocess.run(
+                    ["tar", "-xzf", str(backup_path), "-C", str(parent)],
+                    check=True,
+                )
+                restored.append(original)
+            elif backup_path.exists():
+                shutil.copy2(backup_path, original)
+                restored.append(original)
+
+        return {
+            "status": "success",
+            "restored": restored,
+            "message": f"Restored {len(restored)} items from {timestamp}",
+        }
 
 
 class ActionExecutor:
     """Execute remediation actions with safety guarantees."""
 
-    def __init__(self, dry_run: bool = True, verbose: bool = False):
-        self.dry_run = dry_run
+    def __init__(
+        self, preview: bool = True, confirm: bool = False, verbose: bool = False
+    ):
+        self.preview = preview
+        self.confirm = confirm
         self.verbose = verbose
         self.home = Path.home()
-        self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         self.claude_dir = self._resolve_claude_dir()
+        self.backup_mgr = BackupManager()
+        self.permission_errors: List[str] = []
 
     def _resolve_claude_dir(self) -> Path:
         """Resolve ~/.claude or $CLAUDE_CONFIG_DIR."""
@@ -82,212 +246,352 @@ class ActionExecutor:
         if self.verbose:
             print(f"[fix] {msg}", file=sys.stderr)
 
-    def backup(self, path: Path) -> Path:
-        """Create timestamped backup."""
-        backup_path = path.parent / f"{path.name}.bak.{self.timestamp}"
-        self._log(f"Backup: {path} -> {backup_path}")
-        if not self.dry_run:
-            shutil.copy2(path, backup_path)
-        return backup_path
+    def _check_permission(self, path: Path, operation: str = "access") -> None:
+        """Check permission and fail fast if not accessible."""
+        try:
+            if path.is_file():
+                path.stat()
+            elif path.is_dir():
+                list(path.iterdir())
+        except PermissionError as e:
+            raise PermissionError(
+                f"Cannot {operation} {path}: Permission denied. "
+                "Run with appropriate permissions or exclude this path."
+            ) from e
 
-    def reset_claude_json(self) -> ResultDict:
-        """RESET_CLAUDE_JSON action: Backup and move aside ~/.claude.json."""
+    def delete_auth_config(self) -> ResultDict:
+        """DELETE-auth-config: Backup and move aside ~/.claude.json."""
         claude_json = self.home / ".claude.json"
 
         if not claude_json.exists():
-            return {"status": "skip", "reason": "File not found"}
+            return {"status": "skip", "reason": "File not found: ~/.claude.json"}
 
-        size_before = claude_json.stat().st_size
-        backup_path = self.backup(claude_json)
-        disabled_path = claude_json.parent / f".claude.json.disabled.{self.timestamp}"
+        self._check_permission(claude_json, "read")
+        size = claude_json.stat().st_size
 
-        self._log(f"Moving {claude_json} to {disabled_path}")
+        # Preview mode: just show what would happen
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-auth-config",
+                "files": [{"path": str(claude_json), "size": size, "size_human": format_size(size)}],
+                "total_size": size,
+                "total_size_human": format_size(size),
+                "warning": "This will require re-authentication on next Claude start",
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
 
-        if not self.dry_run:
-            shutil.move(str(claude_json), str(disabled_path))
+        # Execute
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir, "DELETE-auth-config", "Backup of auth config before disable"
+        )
+        self.backup_mgr.backup_file(backup_dir, claude_json, "claude.json")
+
+        disabled_path = claude_json.parent / f".claude.json.disabled.{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        shutil.move(str(claude_json), str(disabled_path))
 
         return {
-            "status": "success" if not self.dry_run else "dry-run",
-            "size_before": size_before,
-            "size_before_human": format_size(size_before),
-            "backup": str(backup_path),
+            "status": "success",
+            "size_freed": size,
+            "size_freed_human": format_size(size),
+            "backup": str(backup_dir),
             "disabled": str(disabled_path),
-            "message": "Backed up and moved aside. Re-authenticate on next claude start.",
-            "rollback": f"mv {disabled_path} {claude_json}",
+            "message": "Auth config backed up and disabled. Re-authenticate on next start.",
+            "restore_cmd": f"python3 {__file__} restore-backup --timestamp {backup_dir.name}",
         }
 
-    def clear_plugin_cache(self) -> ResultDict:
-        """CLEAR_PLUGIN_CACHE action: Remove plugin cache directories."""
-        cache_dirs = [
-            self.claude_dir / "plugins" / "cache",
-        ]
+    def delete_plugin_cache(self) -> ResultDict:
+        """DELETE-plugin-cache: Remove plugin cache directories."""
+        cache_dir = self.claude_dir / "plugins" / "cache"
 
-        cleared: List[str] = []
+        if not cache_dir.exists():
+            return {"status": "skip", "reason": "Plugin cache not found"}
+
+        self._check_permission(cache_dir, "read")
+
+        # Collect file list
+        files_info: List[Dict[str, Union[str, int]]] = []
         total_size = 0
-        total_files = 0
 
-        for cache_dir in cache_dirs:
-            if cache_dir.exists():
-                size = get_dir_size(cache_dir)
-                file_count = sum(1 for _ in cache_dir.rglob("*") if _.is_file())
-                total_size += size
-                total_files += file_count
+        for marketplace in cache_dir.iterdir():
+            if marketplace.is_dir():
+                for plugin in marketplace.iterdir():
+                    if plugin.is_dir():
+                        size = get_dir_size(plugin)
+                        total_size += size
+                        files_info.append({
+                            "path": str(plugin),
+                            "size": size,
+                            "size_human": format_size(size),
+                        })
 
-                self._log(f"Clearing {cache_dir} ({format_size(size)}, {file_count} files)")
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-plugin-cache",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "warning": "Plugins will be re-downloaded on next use. Running plugins may break!",
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
 
-                if not self.dry_run:
-                    shutil.rmtree(cache_dir)
+        # Execute - backup manifest only (cache can be redownloaded)
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir, "DELETE-plugin-cache", f"Cleared {format_size(total_size)} plugin cache"
+        )
 
-                cleared.append(str(cache_dir))
+        # Save list of what was deleted for reference
+        with open(backup_dir / "deleted-plugins.json", "w") as f:
+            json.dump(files_info, f, indent=2)
+
+        shutil.rmtree(cache_dir)
 
         return {
-            "status": "success" if not self.dry_run else "dry-run",
-            "cleared": cleared,
+            "status": "success",
             "size_freed": total_size,
             "size_freed_human": format_size(total_size),
-            "files_removed": total_files,
-            "message": f"Cleared {format_size(total_size)} from plugin cache",
+            "files_removed": len(files_info),
+            "backup": str(backup_dir),
+            "message": f"Cleared {format_size(total_size)} from plugin cache ({len(files_info)} plugins)",
+        }
+
+    def delete_old_sessions(self, days: int) -> ResultDict:
+        """DELETE-old-sessions: Delete session files older than N days."""
+        projects_dir = self.claude_dir / "projects"
+
+        if not projects_dir.exists():
+            return {"status": "skip", "reason": "Projects directory not found"}
+
+        self._check_permission(projects_dir, "read")
+
+        # Find old files
+        files_info: List[Dict[str, Union[str, int]]] = []
+        total_size = 0
+
+        for session_file in projects_dir.rglob("*.jsonl"):
+            age = get_file_age_days(session_file)
+            if age > days:
+                size = session_file.stat().st_size
+                total_size += size
+                files_info.append({
+                    "path": str(session_file),
+                    "size": size,
+                    "size_human": format_size(size),
+                    "age_days": age,
+                })
+
+        if not files_info:
+            return {"status": "skip", "reason": f"No session files older than {days} days"}
+
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-old-sessions",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "file_count": len(files_info),
+                "days_threshold": days,
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
+
+        # Execute with backup
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir,
+            "DELETE-old-sessions",
+            f"Sessions older than {days} days ({len(files_info)} files)",
+        )
+
+        # Backup projects directory as tarball
+        self.backup_mgr.backup_dir_tar(backup_dir, projects_dir, "projects.tgz")
+
+        # Delete old files
+        deleted = 0
+        for file_info in files_info:
+            path = Path(str(file_info["path"]))
+            try:
+                path.unlink()
+                deleted += 1
+            except PermissionError as e:
+                self.permission_errors.append(f"{path}: {e}")
+
+        if self.permission_errors:
+            return {
+                "status": "partial",
+                "deleted": deleted,
+                "failed": len(self.permission_errors),
+                "errors": self.permission_errors,
+                "backup": str(backup_dir),
+                "message": f"Deleted {deleted}/{len(files_info)} files. {len(self.permission_errors)} permission errors.",
+            }
+
+        return {
+            "status": "success",
+            "size_freed": total_size,
+            "size_freed_human": format_size(total_size),
+            "files_removed": deleted,
+            "backup": str(backup_dir),
+            "message": f"Deleted {deleted} session files ({format_size(total_size)})",
+            "restore_cmd": f"python3 {__file__} restore-backup --timestamp {backup_dir.name}",
+        }
+
+    def delete_debug_logs(self, days: int = 14) -> ResultDict:
+        """DELETE-debug-logs: Delete debug log files older than N days."""
+        debug_dir = self.claude_dir / "debug"
+
+        if not debug_dir.exists():
+            return {"status": "skip", "reason": "Debug directory not found"}
+
+        self._check_permission(debug_dir, "read")
+
+        # Find old files
+        files_info: List[Dict[str, Union[str, int]]] = []
+        total_size = 0
+
+        for log_file in debug_dir.rglob("*"):
+            if log_file.is_file():
+                age = get_file_age_days(log_file)
+                if age > days:
+                    size = log_file.stat().st_size
+                    total_size += size
+                    files_info.append({
+                        "path": str(log_file),
+                        "size": size,
+                        "size_human": format_size(size),
+                        "age_days": age,
+                    })
+
+        if not files_info:
+            return {"status": "skip", "reason": f"No debug files older than {days} days"}
+
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-debug-logs",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "file_count": len(files_info),
+                "days_threshold": days,
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
+
+        # Execute - debug logs typically don't need backup
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir,
+            "DELETE-debug-logs",
+            f"Debug logs older than {days} days ({len(files_info)} files)",
+        )
+
+        # Save list of deleted files
+        with open(backup_dir / "deleted-logs.json", "w") as f:
+            json.dump(files_info, f, indent=2)
+
+        deleted = 0
+        for file_info in files_info:
+            path = Path(str(file_info["path"]))
+            try:
+                path.unlink()
+                deleted += 1
+            except PermissionError as e:
+                self.permission_errors.append(f"{path}: {e}")
+
+        if self.permission_errors:
+            return {
+                "status": "partial",
+                "deleted": deleted,
+                "failed": len(self.permission_errors),
+                "errors": self.permission_errors,
+                "message": f"Deleted {deleted}/{len(files_info)} files. {len(self.permission_errors)} permission errors.",
+            }
+
+        return {
+            "status": "success",
+            "size_freed": total_size,
+            "size_freed_human": format_size(total_size),
+            "files_removed": deleted,
+            "message": f"Deleted {deleted} debug files ({format_size(total_size)})",
         }
 
     def disable_nonessential_traffic(self) -> ResultDict:
-        """DISABLE_NONESSENTIAL_TRAFFIC action: Set env in settings.json."""
+        """Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 in settings."""
         settings_path = self.claude_dir / "settings.json"
 
-        # Load existing or create new
         data: Dict[str, object] = {}
         if settings_path.exists():
-            self.backup(settings_path)
             with open(settings_path, "r") as f:
                 data = json.load(f)
 
-        # Merge env setting
         if "env" not in data:
             data["env"] = {}
         env_dict = data["env"]
         if isinstance(env_dict, dict):
             env_dict["CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"] = "1"
 
-        self._log(f"Setting CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 in {settings_path}")
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "disable-nonessential",
+                "path": str(settings_path),
+                "change": "Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1",
+            }
 
-        if not self.dry_run:
-            settings_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(settings_path, "w") as f:
-                json.dump(data, f, indent=2)
+        # Backup and write
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(backup_dir, "disable-nonessential", "Settings change")
+        if settings_path.exists():
+            self.backup_mgr.backup_file(backup_dir, settings_path)
+
+        settings_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(settings_path, "w") as f:
+            json.dump(data, f, indent=2)
 
         return {
-            "status": "success" if not self.dry_run else "dry-run",
+            "status": "success",
             "path": str(settings_path),
+            "backup": str(backup_dir),
             "message": "Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1",
         }
 
     def set_cleanup_period(self, days: int) -> ResultDict:
-        """SET_CLEANUP_PERIOD action: Set cleanupPeriodDays in settings.json."""
+        """Set cleanupPeriodDays in settings.json."""
         settings_path = self.claude_dir / "settings.json"
 
-        # Load existing or create new
         data: Dict[str, object] = {}
         if settings_path.exists():
-            self.backup(settings_path)
             with open(settings_path, "r") as f:
                 data = json.load(f)
 
         data["cleanupPeriodDays"] = days
 
-        self._log(f"Setting cleanupPeriodDays={days} in {settings_path}")
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "set-cleanup-period",
+                "path": str(settings_path),
+                "change": f"Set cleanupPeriodDays={days}",
+            }
 
-        if not self.dry_run:
-            settings_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(settings_path, "w") as f:
-                json.dump(data, f, indent=2)
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(backup_dir, "set-cleanup-period", f"Set to {days} days")
+        if settings_path.exists():
+            self.backup_mgr.backup_file(backup_dir, settings_path)
+
+        settings_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(settings_path, "w") as f:
+            json.dump(data, f, indent=2)
 
         return {
-            "status": "success" if not self.dry_run else "dry-run",
+            "status": "success",
             "path": str(settings_path),
+            "backup": str(backup_dir),
             "cleanup_period_days": days,
             "message": f"Set cleanupPeriodDays={days}. Old sessions deleted at startup.",
-        }
-
-    def prune_sessions(self, days: int, backup_first: bool = True) -> ResultDict:
-        """PRUNE_SESSIONS action: Delete old session files."""
-        projects_dir = self.claude_dir / "projects"
-
-        if not projects_dir.exists():
-            return {"status": "skip", "reason": "projects directory not found"}
-
-        # Find old files using find command (cross-platform via subprocess)
-        result = subprocess.run(
-            ["find", str(projects_dir), "-type", "f", "-mtime", f"+{days}"],
-            capture_output=True, text=True
-        )
-        old_files = [f for f in result.stdout.strip().split("\n") if f]
-
-        if not old_files:
-            return {"status": "skip", "reason": f"No files older than {days} days"}
-
-        # Calculate size
-        total_size = sum(Path(f).stat().st_size for f in old_files if Path(f).exists())
-
-        # Create backup tarball
-        backup_tar = ""
-        if backup_first and old_files and not self.dry_run:
-            backup_tar = str(self.home / f"claude-projects-backup.{self.timestamp}.tgz")
-            self._log(f"Creating backup: {backup_tar}")
-            subprocess.run([
-                "tar", "-czf", backup_tar,
-                "-C", str(self.claude_dir), "projects"
-            ], check=True)
-
-        # Delete old files
-        if not self.dry_run:
-            for f in old_files:
-                try:
-                    Path(f).unlink()
-                except (PermissionError, OSError) as e:
-                    self._log(f"Could not delete {f}: {e}")
-
-        return {
-            "status": "success" if not self.dry_run else "dry-run",
-            "pruned_count": len(old_files),
-            "size_freed": total_size,
-            "size_freed_human": format_size(total_size),
-            "backup": backup_tar,
-            "message": f"Pruned {len(old_files)} files ({format_size(total_size)})",
-        }
-
-    def prune_debug_logs(self, days: int = 14) -> ResultDict:
-        """PRUNE_DEBUG_LOGS action: Delete old debug logs."""
-        debug_dir = self.claude_dir / "debug"
-
-        if not debug_dir.exists():
-            return {"status": "skip", "reason": "debug directory not found"}
-
-        # Find old files
-        result = subprocess.run(
-            ["find", str(debug_dir), "-type", "f", "-mtime", f"+{days}"],
-            capture_output=True, text=True
-        )
-        old_files = [f for f in result.stdout.strip().split("\n") if f]
-
-        if not old_files:
-            return {"status": "skip", "reason": f"No debug files older than {days} days"}
-
-        # Calculate size
-        total_size = sum(Path(f).stat().st_size for f in old_files if Path(f).exists())
-
-        # Delete old files
-        if not self.dry_run:
-            for f in old_files:
-                try:
-                    Path(f).unlink()
-                except (PermissionError, OSError) as e:
-                    self._log(f"Could not delete {f}: {e}")
-
-        return {
-            "status": "success" if not self.dry_run else "dry-run",
-            "pruned_count": len(old_files),
-            "size_freed": total_size,
-            "size_freed_human": format_size(total_size),
-            "message": f"Pruned {len(old_files)} debug files ({format_size(total_size)})",
         }
 
 
@@ -295,64 +599,175 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Execute Claude Code Cleaner remediation actions"
     )
-    parser.add_argument("action", choices=[
-        "reset-claude-json", "clear-plugin-cache",
-        "disable-nonessential", "set-cleanup-period",
-        "prune-sessions", "prune-debug-logs"
-    ], help="Action to execute")
-    parser.add_argument("--confirm", action="store_true",
-                        help="Actually execute (disable dry-run)")
-    parser.add_argument("--days", type=int, default=30,
-                        help="Days threshold for prune operations")
-    parser.add_argument("--verbose", "-v", action="store_true",
-                        help="Enable verbose output")
-    parser.add_argument("--json", action="store_true",
-                        help="Output JSON result")
+    parser.add_argument(
+        "action",
+        choices=[
+            "DELETE-auth-config",
+            "DELETE-plugin-cache",
+            "DELETE-old-sessions",
+            "DELETE-debug-logs",
+            "disable-nonessential",
+            "set-cleanup-period",
+            "list-backups",
+            "restore-backup",
+            # Old action names (kept for compatibility)
+            "reset-claude-json",
+            "clear-plugin-cache",
+            "prune-sessions",
+            "prune-debug-logs",
+        ],
+        help="Action to execute",
+    )
+    parser.add_argument(
+        "--preview",
+        action="store_true",
+        default=True,
+        help="Preview what would happen (default)",
+    )
+    parser.add_argument(
+        "--confirm",
+        action="store_true",
+        help="Actually execute destructive action",
+    )
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=30,
+        help="Days threshold for prune operations (default: 30)",
+    )
+    parser.add_argument(
+        "--timestamp",
+        type=str,
+        help="Timestamp for restore-backup action",
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    parser.add_argument("--json", action="store_true", help="Output JSON result")
 
     args = parser.parse_args()
 
-    executor = ActionExecutor(dry_run=not args.confirm, verbose=args.verbose)
+    # Handle backup management actions
+    if args.action == "list-backups":
+        backup_mgr = BackupManager()
+        backups = backup_mgr.list_backups()
+        if args.json:
+            print(json.dumps(backups, indent=2))
+        else:
+            if not backups:
+                print("No backups found.")
+            else:
+                print(f"\nBackups in {BACKUP_ROOT}:\n")
+                for b in backups:
+                    print(f"  {b['timestamp']} - {b.get('action', 'unknown')} ({b['size_human']})")
+        return
+
+    if args.action == "restore-backup":
+        if not args.timestamp:
+            print("ERROR: --timestamp required for restore-backup")
+            sys.exit(1)
+        backup_mgr = BackupManager()
+        result = backup_mgr.restore(args.timestamp)
+        if args.json:
+            print(json.dumps(result, indent=2))
+        else:
+            status_str = str(result.get("status", "unknown"))
+            print(f"\n[{status_str.upper()}] restore-backup")
+            print(result.get("message", ""))
+        return
+
+    # Map old action names to new explicit DELETE-* names
+    action_aliases = {
+        "reset-claude-json": "DELETE-auth-config",
+        "clear-plugin-cache": "DELETE-plugin-cache",
+        "prune-sessions": "DELETE-old-sessions",
+        "prune-debug-logs": "DELETE-debug-logs",
+    }
+    # args.action is required by argparse
+    action_arg: str = args.action
+    action = action_aliases.get(action_arg, action_arg)
+
+    executor = ActionExecutor(
+        preview=not args.confirm, confirm=args.confirm, verbose=args.verbose
+    )
 
     action_map = {
-        "reset-claude-json": executor.reset_claude_json,
-        "clear-plugin-cache": executor.clear_plugin_cache,
+        "DELETE-auth-config": executor.delete_auth_config,
+        "DELETE-plugin-cache": executor.delete_plugin_cache,
+        "DELETE-old-sessions": lambda: executor.delete_old_sessions(args.days),
+        "DELETE-debug-logs": lambda: executor.delete_debug_logs(args.days),
         "disable-nonessential": executor.disable_nonessential_traffic,
         "set-cleanup-period": lambda: executor.set_cleanup_period(args.days),
-        "prune-sessions": lambda: executor.prune_sessions(args.days),
-        "prune-debug-logs": lambda: executor.prune_debug_logs(args.days),
     }
 
-    result = action_map[args.action]()
+    try:
+        result = action_map[action]()
+    except PermissionError as e:
+        result = {"status": "error", "message": str(e)}
+    except Exception as e:
+        result = {"status": "error", "message": f"Unexpected error: {e}"}
 
     if args.json:
         print(json.dumps(result, indent=2))
     else:
-        # Formatted output
-        status = result.get("status", "unknown")
-        message = result.get("message", "")
+        status = str(result.get("status", "unknown"))
 
-        if status == "dry-run":
-            print(f"\n[DRY-RUN] {args.action}")
-            print("-" * 40)
-            print(message)
-            if "size_freed_human" in result:
-                print(f"Would free: {result['size_freed_human']}")
-            print("\nRun with --confirm to execute.")
+        if status == "preview":
+            print(f"\n{'='*60}")
+            print(f"PREVIEW: {action}")
+            print(f"{'='*60}")
+
+            files_raw = result.get("files", [])
+            if isinstance(files_raw, list) and files_raw:
+                print(f"\nFiles that WOULD be affected ({len(files_raw)} total):\n")
+                for f in files_raw[:10]:  # Show first 10
+                    if isinstance(f, dict):
+                        age_days = f.get("age_days")
+                        age = f" ({age_days} days old)" if age_days is not None else ""
+                        print(f"  {f.get('path', '?')} ({f.get('size_human', '?')}){age}")
+                if len(files_raw) > 10:
+                    print(f"  ... and {len(files_raw) - 10} more files")
+
+            print(f"\nTotal size: {result.get('total_size_human', '?')}")
+
+            if "warning" in result:
+                print(f"\n⚠️  WARNING: {result['warning']}")
+
+            print(f"\nBackup will be created in: {result.get('backup_location', BACKUP_ROOT)}")
+            print("\n" + "="*60)
+            print("Run with --confirm to execute this action.")
+            print("="*60)
+
         elif status == "success":
-            print(f"\n[SUCCESS] {args.action}")
+            print(f"\n[SUCCESS] {action}")
             print("-" * 40)
-            print(message)
+            print(result.get("message", ""))
             if "size_freed_human" in result:
                 print(f"Freed: {result['size_freed_human']}")
-            if "backup" in result and result["backup"]:
+            if "backup" in result:
                 print(f"Backup: {result['backup']}")
-            if "rollback" in result:
-                print(f"Rollback: {result['rollback']}")
+            if "restore_cmd" in result:
+                print(f"Restore: {result['restore_cmd']}")
+
+        elif status == "partial":
+            print(f"\n[PARTIAL] {action}")
+            print("-" * 40)
+            print(result.get("message", ""))
+            errors_raw = result.get("errors", [])
+            if isinstance(errors_raw, list) and errors_raw:
+                print("\nPermission errors:")
+                for err in errors_raw[:5]:
+                    print(f"  {err}")
+
         elif status == "skip":
-            print(f"\n[SKIPPED] {args.action}")
+            print(f"\n[SKIPPED] {action}")
             print(f"Reason: {result.get('reason', 'unknown')}")
+
+        elif status == "error":
+            print(f"\n[ERROR] {action}")
+            print(f"Error: {result.get('message', 'Unknown error')}")
+            sys.exit(1)
+
         else:
-            print(f"\n[{status.upper()}] {args.action}")
+            print(f"\n[{status.upper()}] {action}")
             print(json.dumps(result, indent=2))
 
 

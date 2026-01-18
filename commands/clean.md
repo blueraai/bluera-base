@@ -1,19 +1,20 @@
 ---
 description: Diagnose slow Claude Code startup and guide cleanup
-argument-hint: "[scan | fix <action>] [--confirm] [--days N]"
+argument-hint: "[scan | fix <action> | backups <list|restore>] [--days N]"
 allowed-tools: Bash(python3:*), Bash(du:*), Bash(stat:*), Read, AskUserQuestion
 ---
 
 # Clean
 
-> ## ⛔ DANGER ZONE
+> ## GLOBAL IMPACT WARNING
 >
-> **This command modifies `~/.claude` - Claude Code's own configuration directory.**
+> **This command modifies `~/.claude` - Claude Code's configuration directory.**
 >
-> - **NOT TESTABLE** - Excluded from `/test-plugin` because it's too dangerous
-> - **CAN BREAK CLAUDE** - Clearing plugin cache kills running plugins mid-session
 > - **AFFECTS ALL PROJECTS** - Changes are global, not project-scoped
-> - **REQUIRE USER CONSENT** - NEVER run `--confirm` without explicit AskUserQuestion approval
+> - **CAN BREAK CLAUDE** - Clearing plugin cache kills running plugins mid-session
+> - **NOT TESTABLE** - Excluded from `/test-plugin` because it's too dangerous
+>
+> All backups go to: `~/.claude-backups/`
 
 Diagnose and fix slow Claude Code startup.
 
@@ -28,8 +29,44 @@ See @bluera-base/skills/claude-cleaner/SKILL.md for complete workflow.
 
 **Modes:**
 
-- `/clean` - Interactive diagnosis and guided cleanup (default)
+- `/clean` - Interactive wizard: scan, show findings, select actions, confirm, execute
 - `/clean scan` - Read-only scan, no changes
-- `/clean fix <action>` - Non-interactive single action
+- `/clean fix <action>` - Single action with preview and confirmation
+- `/clean backups list` - List available backups
+- `/clean backups restore <timestamp>` - Restore from backup
 
-**Safety:** Dry-run default. Backups before destructive actions. Double-confirm for data deletion.
+**Actions:** DELETE-auth-config, DELETE-plugin-cache, DELETE-old-sessions, DELETE-debug-logs, disable-nonessential, set-cleanup-period
+
+## CRITICAL SAFETY RULES
+
+1. **ALWAYS use AskUserQuestion before ANY destructive action**
+   - Show exactly what files will be affected with paths and sizes
+   - Show where backup will be created
+   - Get explicit "Yes, delete" confirmation
+
+2. **NEVER run --confirm without user approval**
+   - First run without --confirm to get preview
+   - Show preview to user via AskUserQuestion
+   - Only run with --confirm AFTER user explicitly confirms
+
+3. **ALWAYS verify backup exists before proceeding**
+   - Check backup directory was created
+   - Show backup path to user in confirmation
+
+## Workflow Example
+
+```text
+User: /clean fix DELETE-plugin-cache
+
+Step 1: Run preview (no --confirm)
+  python3 scripts/cc-cleaner-fix.py DELETE-plugin-cache
+
+Step 2: Present results to user via AskUserQuestion
+  "Delete 12 plugins (2.1 GB)? Backup will be created at ~/.claude-backups/..."
+  Options: "Yes, delete" / "No, cancel"
+
+Step 3: Only if user confirms, run with --confirm
+  python3 scripts/cc-cleaner-fix.py DELETE-plugin-cache --confirm
+
+Step 4: Show results and backup location
+```

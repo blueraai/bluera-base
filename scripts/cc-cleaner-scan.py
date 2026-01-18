@@ -44,12 +44,24 @@ class Finding:
 
 
 @dataclass
+class FilePreview:
+    """Preview of a file that would be affected by an action."""
+    path: str
+    size: int
+    size_human: str
+    age_days: int = 0
+
+
+@dataclass
 class RemediationAction:
     id: str
     title: str
     safety: str  # safe, caution, destructive
     affects: List[str]
-    preview: List[str]
+    fix_command: str  # Command to run with cc-cleaner-fix.py
+    file_preview: List[FilePreview] = field(default_factory=list)
+    total_size: int = 0
+    total_size_human: str = ""
     notes: str = ""
 
 
@@ -249,7 +261,7 @@ class ClaudeCodeScanner:
             risk=risk,
             evidence=evidence,
             why_it_matters="Large .claude.json causes slow startup and poor performance",
-            recommended_actions=["RESET_CLAUDE_JSON"],
+            recommended_actions=["DELETE-auth-config"],
             references=["#5024", "#5653", "#1449", "#6394"],
         )
 
@@ -278,7 +290,7 @@ class ClaudeCodeScanner:
                 Evidence("file_count", count),
             ],
             why_it_matters="Plugin cache can cause inverted performance (slower with cache than without)",
-            recommended_actions=["CLEAR_PLUGIN_CACHE"],
+            recommended_actions=["DELETE-plugin-cache"],
             references=["#15090"],
         )
 
@@ -319,7 +331,7 @@ class ClaudeCodeScanner:
                 Evidence("log_file", str(debug_latest)),
             ],
             why_it_matters="Startup blocks on failing/slow network fetch, adding 10-12s delay",
-            recommended_actions=["DISABLE_NONESSENTIAL_TRAFFIC"],
+            recommended_actions=["disable-nonessential"],
             references=["#11442"],
         )
 
@@ -384,7 +396,7 @@ class ClaudeCodeScanner:
                 Evidence("file_count", count),
             ],
             why_it_matters="Large session files may contribute to extension OOM or performance degradation",
-            recommended_actions=["SET_CLEANUP_PERIOD", "PRUNE_SESSIONS"],
+            recommended_actions=["set-cleanup-period", "DELETE-old-sessions"],
             references=["#8722"],
         )
 
@@ -410,93 +422,195 @@ class ClaudeCodeScanner:
             references=[],
         )
 
-    def generate_actions(self, findings: List[Finding]) -> List[RemediationAction]:
-        """Generate action list from findings."""
+    def _get_file_age_days(self, path: Path) -> int:
+        """Get file age in days."""
+        if not path.exists():
+            return 0
+        mtime = path.stat().st_mtime
+        age_seconds = datetime.now().timestamp() - mtime
+        return int(age_seconds / 86400)
+
+    def _collect_plugin_cache_files(self) -> List[FilePreview]:
+        """Collect plugin cache files for preview."""
+        cache_dir = self.claude_dir / "plugins" / "cache"
+        if not cache_dir.exists():
+            return []
+
+        previews = []
+        try:
+            for marketplace in cache_dir.iterdir():
+                if marketplace.is_dir():
+                    for plugin in marketplace.iterdir():
+                        if plugin.is_dir():
+                            size = get_dir_size(plugin)
+                            previews.append(FilePreview(
+                                path=str(plugin),
+                                size=size,
+                                size_human=format_size(size),
+                                age_days=self._get_file_age_days(plugin),
+                            ))
+        except (PermissionError, OSError):
+            pass
+        return sorted(previews, key=lambda p: p.size, reverse=True)
+
+    def _collect_old_sessions(self, days: int = 30) -> List[FilePreview]:
+        """Collect session files older than N days."""
+        projects_dir = self.claude_dir / "projects"
+        if not projects_dir.exists():
+            return []
+
+        previews = []
+        try:
+            for session_file in projects_dir.rglob("*.jsonl"):
+                age = self._get_file_age_days(session_file)
+                if age > days:
+                    size = session_file.stat().st_size
+                    previews.append(FilePreview(
+                        path=str(session_file),
+                        size=size,
+                        size_human=format_size(size),
+                        age_days=age,
+                    ))
+        except (PermissionError, OSError):
+            pass
+        return sorted(previews, key=lambda p: p.age_days, reverse=True)
+
+    def _collect_old_debug_logs(self, days: int = 14) -> List[FilePreview]:
+        """Collect debug log files older than N days."""
+        debug_dir = self.claude_dir / "debug"
+        if not debug_dir.exists():
+            return []
+
+        previews = []
+        try:
+            for log_file in debug_dir.rglob("*"):
+                if log_file.is_file():
+                    age = self._get_file_age_days(log_file)
+                    if age > days:
+                        size = log_file.stat().st_size
+                        previews.append(FilePreview(
+                            path=str(log_file),
+                            size=size,
+                            size_human=format_size(size),
+                            age_days=age,
+                        ))
+        except (PermissionError, OSError):
+            pass
+        return sorted(previews, key=lambda p: p.age_days, reverse=True)
+
+    def generate_actions(self, findings: List[Finding], metrics: MetricsInfo) -> List[RemediationAction]:
+        """Generate action list from findings with file previews."""
         action_ids = set()
         for finding in findings:
             action_ids.update(finding.recommended_actions)
 
         actions = []
 
-        if "RESET_CLAUDE_JSON" in action_ids:
+        if "DELETE-auth-config" in action_ids:
+            size = metrics["sizes"].get("claude_json", 0)
+            previews = []
+            if self.claude_json.exists():
+                previews.append(FilePreview(
+                    path=str(self.claude_json),
+                    size=size,
+                    size_human=format_size(size),
+                    age_days=self._get_file_age_days(self.claude_json),
+                ))
             actions.append(RemediationAction(
-                id="RESET_CLAUDE_JSON",
-                title="Backup & reset ~/.claude.json",
+                id="DELETE-auth-config",
+                title="Backup & disable ~/.claude.json (requires re-login)",
                 safety="destructive",
                 affects=["preferences", "auth", "history"],
-                preview=["cp -p ~/.claude.json ~/.claude.json.bak.TS",
-                        "mv ~/.claude.json ~/.claude.json.disabled.TS"],
-                notes="Requires re-authentication after reset",
+                fix_command="DELETE-auth-config",
+                file_preview=previews,
+                total_size=size,
+                total_size_human=format_size(size),
+                notes="Requires re-authentication after reset. Backup created in ~/.claude-backups/",
             ))
 
-        if "CLEAR_PLUGIN_CACHE" in action_ids:
+        if "DELETE-plugin-cache" in action_ids:
+            previews = self._collect_plugin_cache_files()
+            total = sum(p.size for p in previews)
             actions.append(RemediationAction(
-                id="CLEAR_PLUGIN_CACHE",
-                title="Clear plugin cache",
-                safety="safe",
+                id="DELETE-plugin-cache",
+                title=f"Delete plugin cache ({len(previews)} plugins)",
+                safety="caution",
                 affects=["plugin_cache"],
-                preview=["rm -rf ~/.claude/plugins/cache/*"],
-                notes="Cache regenerates on next startup",
+                fix_command="DELETE-plugin-cache",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Plugins will be re-downloaded on next use. Running plugins may break!",
             ))
 
-        if "DISABLE_NONESSENTIAL_TRAFFIC" in action_ids:
+        if "disable-nonessential" in action_ids:
             actions.append(RemediationAction(
-                id="DISABLE_NONESSENTIAL_TRAFFIC",
+                id="disable-nonessential",
                 title="Disable non-essential network traffic",
                 safety="caution",
                 affects=["telemetry", "bug_reporting", "notices"],
-                preview=["Edit ~/.claude/settings.json: env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1"],
+                fix_command="disable-nonessential",
                 notes="May affect telemetry and bug reporting",
             ))
 
-        if "SET_CLEANUP_PERIOD" in action_ids:
+        if "set-cleanup-period" in action_ids:
             actions.append(RemediationAction(
-                id="SET_CLEANUP_PERIOD",
+                id="set-cleanup-period",
                 title="Set session cleanup period (auto-delete old sessions)",
                 safety="safe",
                 affects=["old_sessions"],
-                preview=["Edit ~/.claude/settings.json: cleanupPeriodDays=14"],
+                fix_command="set-cleanup-period --days 14",
                 notes="Sessions inactive longer than N days deleted at startup",
             ))
 
-        if "PRUNE_SESSIONS" in action_ids:
+        if "DELETE-old-sessions" in action_ids:
+            previews = self._collect_old_sessions(30)
+            total = sum(p.size for p in previews)
             actions.append(RemediationAction(
-                id="PRUNE_SESSIONS",
-                title="Prune old session files (>30 days)",
+                id="DELETE-old-sessions",
+                title=f"Delete old session files ({len(previews)} files >30 days)",
                 safety="destructive",
                 affects=["session_data"],
-                preview=["tar backup + find ~/.claude/projects -mtime +30 -delete"],
-                notes="Creates backup before pruning",
+                fix_command="DELETE-old-sessions --days 30",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Creates backup in ~/.claude-backups/ before deletion",
             ))
 
-        if "PRUNE_DEBUG_LOGS" in action_ids:
+        if "DELETE-debug-logs" in action_ids:
+            previews = self._collect_old_debug_logs(14)
+            total = sum(p.size for p in previews)
             actions.append(RemediationAction(
-                id="PRUNE_DEBUG_LOGS",
-                title="Delete old debug logs (>14 days)",
+                id="DELETE-debug-logs",
+                title=f"Delete old debug logs ({len(previews)} files >14 days)",
                 safety="safe",
                 affects=["debug_logs"],
-                preview=["find ~/.claude/debug -mtime +14 -delete"],
-                notes="Debug logs are not critical",
+                fix_command="DELETE-debug-logs --days 14",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Debug logs are not critical for normal operation",
             ))
 
         if "SHOW_WSL_WORKAROUNDS" in action_ids:
             actions.append(RemediationAction(
                 id="SHOW_WSL_WORKAROUNDS",
                 title="Show WSL2 workarounds",
-                safety="safe",
+                safety="info",
                 affects=[],
-                preview=["Display known workarounds for WSL2 performance issues"],
-                notes="Informational only - no automatic fix",
+                fix_command="",
+                notes="Informational only - see https://github.com/anthropics/claude-code/issues/14352",
             ))
 
         if "SUGGEST_TRIM_MEMORY" in action_ids:
             actions.append(RemediationAction(
                 id="SUGGEST_TRIM_MEMORY",
                 title="Suggest trimming memory files",
-                safety="safe",
+                safety="info",
                 affects=[],
-                preview=["Review ~/.claude/CLAUDE.md size and content"],
-                notes="Informational - user decides what to trim",
+                fix_command="",
+                notes="Informational - review ~/.claude/CLAUDE.md size and content",
             ))
 
         return actions
@@ -528,8 +642,8 @@ class ClaudeCodeScanner:
         risk_order = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
         findings.sort(key=lambda f: risk_order.get(f.risk, 5))
 
-        # Generate actions
-        actions = self.generate_actions(findings)
+        # Generate actions with file previews
+        actions = self.generate_actions(findings, metrics)
 
         self._log(f"Scan complete: {len(findings)} findings, {len(actions)} actions")
 

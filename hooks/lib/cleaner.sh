@@ -99,7 +99,195 @@ cleaner_format_size() {
     fi
 }
 
-# Create timestamped backup with preserved permissions
+# =============================================================================
+# CENTRALIZED BACKUP SYSTEM
+# All backups go to ~/.claude-backups/TIMESTAMP/
+# =============================================================================
+
+CLEANER_BACKUP_ROOT="$HOME/.claude-backups"
+
+# Get the backup root directory
+cleaner_backup_root() {
+    echo "$CLEANER_BACKUP_ROOT"
+}
+
+# Create a new backup directory with timestamp, return its path
+cleaner_backup_dir() {
+    local timestamp
+    timestamp=$(date +%Y-%m-%dT%H-%M-%S)
+    local backup_dir="$CLEANER_BACKUP_ROOT/$timestamp"
+
+    mkdir -p "$backup_dir"
+
+    # Update 'latest' symlink
+    rm -f "$CLEANER_BACKUP_ROOT/latest"
+    ln -sf "$timestamp" "$CLEANER_BACKUP_ROOT/latest"
+
+    echo "$backup_dir"
+}
+
+# Create manifest.json in backup directory
+# Usage: cleaner_create_manifest <backup_dir> <action> <description>
+cleaner_create_manifest() {
+    local backup_dir="$1"
+    local action="$2"
+    local description="${3:-}"
+
+    cat > "$backup_dir/manifest.json" <<EOF
+{
+  "created": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "action": "$action",
+  "description": "$description",
+  "hostname": "$(hostname)",
+  "user": "$(whoami)",
+  "files": []
+}
+EOF
+}
+
+# Add file entry to manifest
+# Usage: cleaner_manifest_add_file <backup_dir> <original_path> <backup_name> <size>
+cleaner_manifest_add_file() {
+    local backup_dir="$1"
+    local original_path="$2"
+    local backup_name="$3"
+    local size="$4"
+    local manifest="$backup_dir/manifest.json"
+
+    # Use jq if available, otherwise basic append
+    if command -v jq &>/dev/null; then
+        local tmp
+        tmp=$(mktemp)
+        jq --arg path "$original_path" --arg name "$backup_name" --arg size "$size" \
+           '.files += [{"original": $path, "backup": $name, "size": ($size | tonumber)}]' \
+           "$manifest" > "$tmp" && mv "$tmp" "$manifest"
+    fi
+}
+
+# Backup a single file to the backup directory
+# Usage: cleaner_backup_file <backup_dir> <source_path> [backup_name]
+cleaner_backup_file() {
+    local backup_dir="$1"
+    local source_path="$2"
+    local backup_name="${3:-$(basename "$source_path")}"
+
+    if [[ ! -e "$source_path" ]]; then
+        return 1
+    fi
+
+    local size
+    size=$(cleaner_file_size "$source_path")
+
+    cp -p "$source_path" "$backup_dir/$backup_name"
+    cleaner_manifest_add_file "$backup_dir" "$source_path" "$backup_name" "$size"
+
+    echo "$backup_dir/$backup_name"
+}
+
+# Backup a directory as tarball
+# Usage: cleaner_backup_dir_tar <backup_dir> <source_dir> <tarball_name>
+cleaner_backup_dir_tar() {
+    local backup_dir="$1"
+    local source_dir="$2"
+    local tarball_name="$3"
+
+    if [[ ! -d "$source_dir" ]]; then
+        return 1
+    fi
+
+    local size
+    size=$(cleaner_dir_size "$source_dir")
+
+    tar -czf "$backup_dir/$tarball_name" -C "$(dirname "$source_dir")" "$(basename "$source_dir")" 2>/dev/null
+    cleaner_manifest_add_file "$backup_dir" "$source_dir" "$tarball_name" "$size"
+
+    echo "$backup_dir/$tarball_name"
+}
+
+# List all available backups
+cleaner_list_backups() {
+    local backup_root
+    backup_root=$(cleaner_backup_root)
+
+    if [[ ! -d "$backup_root" ]]; then
+        echo "No backups found."
+        return
+    fi
+
+    echo "Available backups in $backup_root:"
+    echo ""
+
+    for dir in "$backup_root"/20*; do
+        if [[ -d "$dir" && -f "$dir/manifest.json" ]]; then
+            local timestamp
+            timestamp=$(basename "$dir")
+            local action=""
+            local description=""
+
+            if command -v jq &>/dev/null; then
+                action=$(jq -r '.action // "unknown"' "$dir/manifest.json" 2>/dev/null)
+                description=$(jq -r '.description // ""' "$dir/manifest.json" 2>/dev/null)
+            fi
+
+            local size
+            size=$(cleaner_dir_size "$dir")
+
+            echo "  $timestamp - $action ($(cleaner_format_size "$size"))"
+            if [[ -n "$description" ]]; then
+                echo "    $description"
+            fi
+        fi
+    done
+}
+
+# Restore from a backup
+# Usage: cleaner_restore_backup <timestamp>
+cleaner_restore_backup() {
+    local timestamp="$1"
+    local backup_root
+    backup_root=$(cleaner_backup_root)
+    local backup_dir="$backup_root/$timestamp"
+
+    if [[ ! -d "$backup_dir" ]]; then
+        echo "ERROR: Backup not found: $backup_dir"
+        return 1
+    fi
+
+    if [[ ! -f "$backup_dir/manifest.json" ]]; then
+        echo "ERROR: No manifest found in backup"
+        return 1
+    fi
+
+    echo "Restoring from $backup_dir..."
+
+    # Read manifest and restore files
+    if command -v jq &>/dev/null; then
+        local files
+        files=$(jq -r '.files[] | "\(.original)|\(.backup)"' "$backup_dir/manifest.json" 2>/dev/null)
+
+        while IFS='|' read -r original backup; do
+            if [[ -n "$original" && -n "$backup" ]]; then
+                local backup_path="$backup_dir/$backup"
+
+                if [[ "$backup" == *.tgz || "$backup" == *.tar.gz ]]; then
+                    # Extract tarball to parent of original
+                    echo "  Restoring directory: $original"
+                    tar -xzf "$backup_path" -C "$(dirname "$original")" 2>/dev/null
+                elif [[ -f "$backup_path" ]]; then
+                    echo "  Restoring file: $original"
+                    cp -p "$backup_path" "$original"
+                fi
+            fi
+        done <<< "$files"
+    else
+        echo "ERROR: jq required for restore"
+        return 1
+    fi
+
+    echo "Restore complete."
+}
+
+# Legacy backup function (for compatibility)
 cleaner_backup() {
     local path="$1"
     local timestamp
