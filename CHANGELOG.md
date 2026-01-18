@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.14.1](https://github.com/blueraai/bluera-base/compare/v0.14.0...v0.14.1) (2026-01-18)
+
+### Features
+
+* **clean:** harden safety with preview mode and centralized backups ([5dce3fb](https://github.com/blueraai/bluera-base/commit/5dce3fb3bf67eb6aa192e9346c28090ce5b20c57))
+* **notify:** add project name to notifications and icon support ([eef953a](https://github.com/blueraai/bluera-base/commit/eef953a0fe6543cc9df6b10aeeee259e7ecbbaa6))
+
+### Bug Fixes
+
+* **notify:** use claude.png icon filename ([3e7342b](https://github.com/blueraai/bluera-base/commit/3e7342bf04bba1a64183bdaa116cca28c8851f84))
+
 ## [0.14.0](https://github.com/blueraai/bluera-base/compare/v0.13.0...v0.14.0) (2026-01-18)
 
 ### Features
