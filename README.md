@@ -117,8 +117,6 @@ claude --plugin-dir /path/to/bluera-base
 | `/bluera-base:milhouse-loop` | Start iterative development loop with configurable completion criteria |
 | `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
 | `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
-| `/bluera-base:clean-scan` | Scan ~/.claude for issues without making changes |
-| `/bluera-base:clean-fix` | Apply a specific cleanup action non-interactively |
 | `/bluera-base:install-rules` | Install bluera-base rule templates to `.claude/rules/` |
 | `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
 | `/bluera-base:readme` | Maintain README.md files with GitHub advanced formatting |
