@@ -7,6 +7,16 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 Comprehensive test of all Bluera Base plugin functionality (hooks + slash commands).
 
+## ⚠️ EXCLUDED COMMANDS
+
+The following commands are **NOT tested** by this suite:
+
+| Command | Reason |
+|---------|--------|
+| `/clean` | **DANGEROUS** - Modifies `~/.claude` which is Claude Code's own brain. Can wipe plugin caches, break running sessions, and corrupt config. DO NOT RUN AUTOMATICALLY. |
+
+**DO NOT ADD `/clean` TO THIS TEST SUITE.** Test it manually, in isolation, with explicit user consent.
+
 ## Context
 
 !`echo "Hooks: $(ls hooks/*.sh 2>/dev/null | wc -l) files"`

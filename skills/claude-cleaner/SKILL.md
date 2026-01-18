@@ -7,6 +7,33 @@ description: Diagnose slow Claude Code startup and guide cleanup. Use /bluera-ba
 
 Diagnose and fix slow Claude Code startup caused by accumulated configuration files.
 
+## ⛔ DANGER ZONE - READ THIS FIRST
+
+**This command modifies `~/.claude` - Claude Code's own brain.**
+
+### Why This Is Dangerous
+
+| Risk | Consequence |
+|------|-------------|
+| **Kills running plugins** | Clearing cache invalidates all cached plugins MID-SESSION. Hooks stop working immediately. |
+| **Global scope** | Changes affect EVERY project, not just the current one |
+| **Can corrupt config** | Bad writes to settings.json or .claude.json can break Claude entirely |
+| **No undo** | Some actions are irreversible without restoring from backup |
+
+### EXCLUDED FROM TEST-PLUGIN
+
+**DO NOT** test this command via `/test-plugin`. It is explicitly excluded because:
+
+- Running it automatically could destroy the session running the tests
+- There's no safe way to test "delete 30GB of files" in CI
+
+### Mandatory Safety Protocol
+
+1. **NEVER** run `--confirm` without explicit user approval via AskUserQuestion
+2. **ALWAYS** run `scan` or dry-run first to preview changes
+3. **ALWAYS** show the user what will be deleted/modified before doing it
+4. **ALWAYS** report backup location and rollback instructions after destructive actions
+
 ## When to Use
 
 - Claude Code takes a long time to start

@@ -6,6 +6,15 @@ allowed-tools: Bash(python3:*), Bash(du:*), Bash(stat:*), Read, AskUserQuestion
 
 # Clean
 
+> ## ⛔ DANGER ZONE
+>
+> **This command modifies `~/.claude` - Claude Code's own configuration directory.**
+>
+> - **NOT TESTABLE** - Excluded from `/test-plugin` because it's too dangerous
+> - **CAN BREAK CLAUDE** - Clearing plugin cache kills running plugins mid-session
+> - **AFFECTS ALL PROJECTS** - Changes are global, not project-scoped
+> - **REQUIRE USER CONSENT** - NEVER run `--confirm` without explicit AskUserQuestion approval
+
 Diagnose and fix slow Claude Code startup.
 
 ## Context
