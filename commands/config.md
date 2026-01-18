@@ -71,10 +71,187 @@ Run /bluera-base:config init to create shared config.
 
 ### Init
 
-1. Check if config already exists
+Interactive initialization that explains each feature and lets user configure during setup.
+
+**Steps:**
+
+1. Check if config already exists (offer to reconfigure if so)
 2. Create `.bluera/bluera-base/` directory structure
-3. Write default `config.json`
-4. Update `.gitignore` with required patterns:
+3. Walk through each feature section with AskUserQuestion
+4. Build `config.json` from user choices
+5. Update `.gitignore` with required patterns
+6. Report final configuration
+
+**Interactive Flow:**
+
+Display each section header, explain the feature, then use AskUserQuestion.
+
+---
+
+#### 1. Auto-Learn (Command Pattern Learning)
+
+```text
+## Auto-Learn
+
+Tracks frequently used commands and suggests adding them to CLAUDE.md.
+
+Technical details:
+- Observes command patterns across sessions via PostToolUse hook
+- Stores patterns in .bluera/bluera-base/state/session-signals.json
+- Threshold: number of occurrences before acting (default: 3)
+- Modes:
+  - "suggest" - shows recommendations, you decide
+  - "auto" - applies updates automatically
+```
+
+Use AskUserQuestion:
+
+- Header: "Auto-Learn"
+- Question: "Enable command pattern learning?"
+- Options:
+  1. **No (default)** - Don't track command patterns
+  2. **Yes - suggest mode** - Track and suggest CLAUDE.md updates
+  3. **Yes - auto mode** - Track and auto-apply CLAUDE.md updates
+
+---
+
+#### 2. Milhouse (Iterative Development Loop)
+
+```text
+## Milhouse
+
+Controls behavior of /milhouse-loop for iterative development tasks.
+
+Technical details:
+- defaultMaxIterations: 0 = unlimited, or set limit to prevent runaway loops
+- defaultStuckLimit: iterations without progress before asking if stuck (default: 3)
+- defaultGates: commands that must pass after each iteration
+  - Example: ["bun test", "bun run lint"]
+  - Empty = no gates
+```
+
+Use AskUserQuestion:
+
+- Header: "Milhouse"
+- Question: "Configure milhouse loop settings?"
+- Options:
+  1. **Use defaults** - Unlimited iterations, stuck limit 3, no gates
+  2. **Set max iterations** - Follow up to ask for number
+  3. **Configure gates** - Follow up to ask for gate commands
+
+If user selects "Set max iterations", ask:
+
+- Header: "Max Iterations"
+- Question: "Maximum iterations before stopping? (0 = unlimited)"
+- Options: 5, 10, 20, Unlimited (0)
+
+If user selects "Configure gates", ask for gate commands as comma-separated list.
+
+---
+
+#### 3. Notifications
+
+```text
+## Notifications
+
+Desktop notifications when Claude Code needs your input.
+
+Technical details:
+- Uses osascript on macOS, notify-send on Linux
+- Triggered by Notification hook when Claude prompts for input
+- Helps when multitasking in other windows
+```
+
+Use AskUserQuestion:
+
+- Header: "Notifications"
+- Question: "Enable desktop notifications?"
+- Options:
+  1. **Yes (default)** - Notify when Claude needs input
+  2. **No** - Silent operation
+
+---
+
+#### 4. Auto-Commit
+
+```text
+## Auto-Commit
+
+Automatically commit uncommitted changes when session ends.
+
+Technical details:
+- Uses /bluera-base:commit skill for atomic, well-formatted commits
+- Triggered by Stop hook
+- Optional: also push to remote after commit
+- Configurable remote (default: "origin")
+```
+
+Use AskUserQuestion:
+
+- Header: "Auto-Commit"
+- Question: "Enable auto-commit on session stop?"
+- Options:
+  1. **No (default)** - Manual commits only
+  2. **Yes - commit only** - Commit but don't push
+  3. **Yes - commit and push** - Commit and push to origin
+
+---
+
+#### 5. DRY Check (Duplicate Code Detection)
+
+```text
+## DRY Check
+
+Detects copy-paste / duplicate code using jscpd.
+
+Technical details:
+- threshold: max allowed duplicate percentage (default: 5%)
+- minTokens: minimum tokens to consider duplicate (default: 70)
+- minLines: minimum lines to consider duplicate (default: 5)
+- onStop: auto-scan when session ends (default: false)
+- Manual scan always available via /dry command
+```
+
+Use AskUserQuestion:
+
+- Header: "DRY Check"
+- Question: "Enable duplicate code detection?"
+- Options:
+  1. **No (default)** - Disabled
+  2. **Yes - manual only** - Use /dry command when needed
+  3. **Yes - auto-scan on stop** - Scan for duplicates when session ends
+
+---
+
+#### 6. Strict Typing
+
+```text
+## Strict Typing
+
+Block unsafe type patterns in TypeScript and Python.
+
+Technical details:
+- TypeScript: blocks `any` type, `as` casts (except `as const`), @ts-ignore without explanation
+- Python: blocks `Any` type, `# type: ignore` without error code, `cast()`
+- Enforced by post-edit-check.sh hook on every file edit
+- Escape hatch: `// ok:` or `# ok:` comment on specific lines
+```
+
+Use AskUserQuestion:
+
+- Header: "Strict Typing"
+- Question: "Enable strict typing enforcement?"
+- Options:
+  1. **No (default)** - Allow any/as casts
+  2. **Yes** - Block any, as casts, type: ignore
+
+---
+
+**After all questions:**
+
+1. Build config object from user responses
+2. Write to `.bluera/bluera-base/config.json`
+3. Update `.gitignore`:
 
    ```gitignore
    .bluera/
@@ -82,7 +259,23 @@ Run /bluera-base:config init to create shared config.
    !.bluera/bluera-base/config.json
    ```
 
-5. Report created files
+4. Display final configuration summary:
+
+```text
+Configuration saved to .bluera/bluera-base/config.json
+
+Enabled features:
+  ✓ notifications
+  ✓ strict-typing
+
+Disabled features:
+  ✗ auto-learn
+  ✗ auto-commit
+  ✗ dry-check
+
+Run /bluera-base:config show to see full settings.
+Run /bluera-base:config enable|disable <feature> to change later.
+```
 
 ### Set
 
