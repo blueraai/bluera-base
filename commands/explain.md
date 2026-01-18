@@ -131,7 +131,7 @@ Features are opt-in capabilities you can enable or disable. Each feature has a c
 
 ### Desktop Notifications
 
-**What it does:** Sends a desktop notification when Claude Code needs your input (permission prompts, questions, idle timeouts).
+**What it does:** Sends a desktop notification when Claude Code needs your input (permission prompts, questions, idle timeouts). Notifications include the **project name** so you know which project needs attention.
 
 **Why you'd want it:** When you're multitasking in other windows, you won't miss Claude asking for permission or waiting on your response.
 
@@ -142,7 +142,28 @@ Features are opt-in capabilities you can enable or disable. Each feature has a c
 /bluera-base:config disable notifications  # Disable
 ```
 
-**What you'll see:** Native notifications on macOS (via osascript), Linux (via notify-send), or Windows WSL.
+**What you'll see:** Notifications like `"bluera-base - Permission Required"` with the project name in the title.
+
+**Platform support:**
+
+| Platform | Tool | Icon Support |
+|----------|------|--------------|
+| macOS | osascript (default) | No |
+| macOS | terminal-notifier | Yes |
+| Linux | notify-send | Yes |
+| Windows | PowerShell toast | No |
+
+**For icons on macOS**, install terminal-notifier:
+
+```bash
+brew install terminal-notifier
+```
+
+**To avoid duplicate notifications**, disable Claude Code's native notification and use ours:
+
+```bash
+claude config set notifications.enabled false
+```
 
 **Default:** Enabled
 
