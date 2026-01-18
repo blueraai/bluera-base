@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.14.2](https://github.com/blueraai/bluera-base/compare/v0.14.1...v0.14.2) (2026-01-18)
+
+### Features
+
+* **statusline:** add timestamped backup before overwriting ([8a83977](https://github.com/blueraai/bluera-base/commit/8a839779d87839fd78dfdc067530e1c545371365))
+
 ## [0.14.1](https://github.com/blueraai/bluera-base/compare/v0.14.0...v0.14.1) (2026-01-18)
 
 ### Features
