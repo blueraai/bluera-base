@@ -798,7 +798,16 @@ After generating the statusline script, you MUST complete these steps:
    CLAUDE_CONFIG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
    ```
 
-2. **Write the script** to the config directory:
+2. **Backup existing statusline** (if present):
+
+   ```bash
+   if [ -f "$CLAUDE_CONFIG/statusline.sh" ]; then
+       BACKUP_TS=$(date +%Y%m%d-%H%M%S)
+       cp "$CLAUDE_CONFIG/statusline.sh" "$CLAUDE_CONFIG/statusline.sh.bluera-base-backup-$BACKUP_TS"
+   fi
+   ```
+
+3. **Write the script** to the config directory:
 
    ```bash
    cat > "$CLAUDE_CONFIG/statusline.sh" << 'STATUSLINE_EOF'
@@ -806,13 +815,13 @@ After generating the statusline script, you MUST complete these steps:
    STATUSLINE_EOF
    ```
 
-3. **Make executable**:
+4. **Make executable**:
 
    ```bash
    chmod +x "$CLAUDE_CONFIG/statusline.sh"
    ```
 
-4. **Verify** the file exists and is executable:
+5. **Verify** the file exists and is executable:
 
    ```bash
    ls -la "$CLAUDE_CONFIG/statusline.sh"
