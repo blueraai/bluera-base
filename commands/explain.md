@@ -1,20 +1,20 @@
 ---
 description: Explain all bluera-base plugin functionality in human-readable format
 allowed-tools: Read
-argument-hint: [overview|commands|skills|hooks|config|philosophy]
+argument-hint: [overview|features|commands|behaviors|config|philosophy]
 ---
 
 # bluera-base Explained
 
-Technical documentation of bluera-base plugin internals.
+User guide for the bluera-base plugin.
 
 ## Subcommands
 
 - `/bluera-base:explain` or `/bluera-base:explain all` - Show everything
-- `/bluera-base:explain overview` - Plugin structure and architecture
-- `/bluera-base:explain commands` - Command system internals
-- `/bluera-base:explain skills` - Skill loading mechanism
-- `/bluera-base:explain hooks` - Hook events and execution
+- `/bluera-base:explain overview` - What is bluera-base?
+- `/bluera-base:explain features` - Configurable features
+- `/bluera-base:explain commands` - Available commands
+- `/bluera-base:explain behaviors` - Automatic behaviors
 - `/bluera-base:explain config` - Configuration system
 - `/bluera-base:explain philosophy` - Design principles
 
@@ -26,483 +26,431 @@ Technical documentation of bluera-base plugin internals.
 
 ### Show All (default)
 
-Present all sections: Overview, How It Works, Commands, Skills, Hooks, Configuration, and Philosophy.
+Present all sections in order.
 
 ### Overview
 
 Present only the Overview section.
 
+### Features
+
+Present only the Features section.
+
 ### Commands
 
-Present only the Commands Explained section.
+Present only the Commands section.
 
-### Skills
+### Behaviors
 
-Present only the Skills Explained section.
-
-### Hooks
-
-Present only the Hooks Explained section.
+Present only the Automatic Behaviors section.
 
 ### Config
 
-Present only the Configuration Explained section.
+Present only the Configuration section.
 
 ### Philosophy
 
-Present only the Philosophy Explained section.
+Present only the Philosophy section.
 
 ---
 
 ## Overview
 
-### Plugin Structure
+### What is Bluera Base?
 
-```text
-.claude-plugin/
-├── plugin.json          # Manifest: name, version, description
-commands/                # Slash commands (*.md files)
-skills/                  # Skill directories (*/SKILL.md)
-hooks/
-├── hooks.json           # Hook registration
-├── *.sh                 # Hook scripts
-└── lib/                 # Shared bash libraries
-templates/               # Rule and config templates
-includes/                # @includeable content (CLAUDE-BASE.md)
-```
+Bluera Base is a **conventions plugin** for Claude Code. It provides shared development workflows, quality gates, and patterns that you can use across all your projects. Instead of copying hooks and skills between repositories, install Bluera Base once and every project gets the same standards.
 
-### Manifest (`plugin.json`)
+### What It Does
 
-```json
-{
-  "name": "bluera-base",
-  "version": "0.10.0",
-  "description": "Shared development conventions...",
-  "author": { "name": "Bluera" },
-  "repository": "https://github.com/blueraai/bluera-base"
-}
-```
+**Enforces quality patterns:**
 
-### Environment Variables
+- Blocks anti-patterns like `any` types, fallback code, and commented-out code
+- Requires atomic commits with conventional format
+- Prevents manual versioning (use the release workflow instead)
 
-| Variable | Description |
-|----------|-------------|
-| `CLAUDE_PLUGIN_ROOT` | Absolute path to plugin directory |
-| `CLAUDE_PROJECT_DIR` | User's project directory |
+**Provides development workflows:**
+
+- Atomic commit creation with README/CLAUDE.md awareness
+- Multi-agent code review
+- Iterative development loops (milhouse)
+- Automated release cutting with CI monitoring
+
+**Automates repetitive tasks:**
+
+- Desktop notifications when Claude needs input
+- Auto-commit on session end
+- Duplicate code detection
+- Lint and typecheck validation after edits
+
+### Supported Languages
+
+Bluera Base works with 13 languages:
+
+JavaScript/TypeScript, Python, Rust, Go, Java, Kotlin, Ruby, PHP, C#/.NET, Swift, Elixir, C/C++, Scala
 
 ---
 
-## How It Works
+## Quick Start
 
-### Session Lifecycle
-
-```text
-SessionStart
-├── session-setup.sh      # Create .bluera/bluera-base/state/, check jq
-└── session-start-inject.sh  # Inject saved context
-
-PreToolUse (Bash)
-├── block-manual-release.sh  # Block npm version, git tag
-└── observe-learning.sh      # Track commands (if auto-learn)
-
-PostToolUse (Write|Edit)
-└── post-edit-check.sh       # Scan for anti-patterns
-
-Notification
-└── notify.sh                # Desktop notifications
-
-PreCompact
-└── pre-compact.sh           # Preserve state before compaction
-
-Stop
-├── milhouse-stop.sh         # Continue loop if active
-├── session-end-learn.sh     # Process observations
-├── dry-scan.sh              # DRY scan (if enabled)
-└── auto-commit.sh           # Commit changes (if enabled)
-```
-
-### Hook Execution Flow
-
-1. Claude Code emits event (e.g., `PreToolUse`)
-2. `hooks.json` matches event type and tool matcher
-3. Script receives JSON on stdin: `{"tool_input": {...}}`
-4. Script exits: `0` = allow, `2` = block with message
-5. Stdout/stderr shown to Claude as hook feedback
-
-### State Directory
-
-```text
-.bluera/bluera-base/
-├── config.json           # Team config (committed)
-├── config.local.json     # Personal overrides (gitignored)
-├── TODO.txt              # Project tasks (committed)
-└── state/                # Runtime state (gitignored)
-    ├── milhouse-loop.md  # Active loop: iteration, prompt
-    ├── session-signals.json  # Learning observations
-    ├── dry-report.md     # Last DRY scan results
-    └── jscpd-report.json # Raw jscpd output
-```
-
----
-
-## Commands Explained
-
-### Command File Structure
-
-Commands are markdown files in `commands/` with YAML frontmatter:
-
-```yaml
----
-description: Short description for command list
-allowed-tools: Read, Write, Bash(git:*, npm:*)
-argument-hint: [subcommand] [--flag]
-hide-from-slash-command-tool: true  # Optional: hide from /commands
----
-```
-
-### Tool Scoping
-
-`allowed-tools` restricts what Claude can use during command execution:
-
-```yaml
-# Allow specific tools
-allowed-tools: Read, Write, Edit, Glob, Grep
-
-# Scope Bash to specific commands
-allowed-tools: Bash(git:*, gh:*, npm:*)
-
-# Scope to specific script
-allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/hooks/script.sh:*)
-```
-
-### Command Categories
-
-**Setup**: `config`, `install-rules`, `harden-repo`
-**Development**: `commit`, `milhouse-loop`, `cancel-milhouse`, `todo`
-**Quality**: `code-review`, `dry`, `audit-plugin`, `analyze-config`
-**Documentation**: `claude-md`, `readme`
-**Release**: `release`
-**Git**: `worktree`, `statusline`
-**Meta**: `help`, `explain`, `test-plugin`
-
-### Command Execution
-
-1. User types `/bluera-base:command`
-2. Claude Code loads `commands/command.md`
-3. Frontmatter parsed: tools scoped, description shown
-4. Markdown body injected into Claude's context
-5. Claude follows the Algorithm section instructions
-
----
-
-## Skills Explained
-
-### Skill File Structure
-
-Skills live in `skills/<name>/SKILL.md` with frontmatter:
-
-```yaml
----
-name: skill-name
-description: What this skill provides
-version: 1.0.0
-user-invocable: false  # true = can be invoked directly
----
-```
-
-### Skill Loading
-
-Skills are loaded via `@skill-name` reference or automatically by commands:
-
-```markdown
-See @bluera-base/skills/atomic-commits/SKILL.md for workflow details.
-```
-
-Claude Code resolves the path and injects SKILL.md content.
-
-### Available Skills
-
-| Skill | Path | User-Invocable |
-|-------|------|----------------|
-| `atomic-commits` | `skills/atomic-commits/SKILL.md` | No |
-| `code-review-repo` | `skills/code-review-repo/SKILL.md` | No |
-| `release` | `skills/release/SKILL.md` | No |
-| `milhouse` | `skills/milhouse/SKILL.md` | No |
-| `claude-md-maintainer` | `skills/claude-md-maintainer/SKILL.md` | No |
-| `readme-maintainer` | `skills/readme-maintainer/SKILL.md` | No |
-| `repo-hardening` | `skills/repo-hardening/SKILL.md` | No |
-| `large-file-refactor` | `skills/large-file-refactor/SKILL.md` | **Yes** |
-| `dry-refactor` | `skills/dry-refactor/SKILL.md` | No |
-| `statusline` | `skills/statusline/SKILL.md` | No |
-
----
-
-## Hooks Explained
-
-### Hook Registration (`hooks.json`)
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          { "command": "${CLAUDE_PLUGIN_ROOT}/hooks/block-manual-release.sh", "timeout": 5000 }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          { "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-edit-check.sh", "timeout": 60000 }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": ".*",
-        "hooks": [
-          { "command": "${CLAUDE_PLUGIN_ROOT}/hooks/auto-commit.sh", "timeout": 30000 }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Event Types
-
-| Event | When | Stdin JSON |
-|-------|------|------------|
-| `SessionStart` | Session begins | `{}` |
-| `PreToolUse` | Before tool execution | `{"tool_input": {...}}` |
-| `PostToolUse` | After tool execution | `{"tool_input": {...}, "tool_output": {...}}` |
-| `Stop` | Session ends | `{"transcript_path": "..."}` |
-| `PreCompact` | Before context compaction | `{}` |
-| `Notification` | Permission/idle prompt | `{"type": "permission_prompt"}` |
-
-### Exit Codes
-
-| Code | Meaning |
-|------|---------|
-| `0` | Success / Allow |
-| `2` | Block with message (stdout shown to Claude) |
-| Other | Error (logged but doesn't block) |
-
-### Hook Scripts
-
-| Script | Event | Matcher | Purpose |
-|--------|-------|---------|---------|
-| `session-setup.sh` | SessionStart | `.*` | Init state dir, check jq |
-| `session-start-inject.sh` | SessionStart | `.*` | Inject context |
-| `pre-compact.sh` | PreCompact | `.*` | Preserve state |
-| `block-manual-release.sh` | PreToolUse | `Bash` | Block `npm version`, `git tag` |
-| `observe-learning.sh` | PreToolUse | `Bash` | Track commands |
-| `post-edit-check.sh` | PostToolUse | `Write\|Edit` | Detect anti-patterns |
-| `notify.sh` | Notification | `permission_prompt\|...` | Desktop notifications |
-| `milhouse-stop.sh` | Stop | `.*` | Continue loop |
-| `session-end-learn.sh` | Stop | `.*` | Process learnings |
-| `dry-scan.sh` | Stop | `.*` | DRY scan |
-| `auto-commit.sh` | Stop | `.*` | Auto-commit |
-
-### Shared Libraries (`hooks/lib/`)
+### Install
 
 ```bash
-source "${PLUGIN_PATH}/hooks/lib/config.sh"  # load_config, get_config
-source "${PLUGIN_PATH}/hooks/lib/state.sh"   # get_state, set_state
-source "${PLUGIN_PATH}/hooks/lib/signals.sh" # emit_signal, get_signals
+# Add the Bluera marketplace (one-time)
+/plugin marketplace add blueraai/bluera-marketplace
+
+# Install the plugin
+/plugin install bluera-base@bluera
+```
+
+### Configure
+
+```bash
+# Interactive setup - walks through each feature
+/bluera-base:config init
+
+# Or enable features individually
+/bluera-base:config enable notifications
+/bluera-base:config enable strict-typing
+```
+
+### Explore
+
+```bash
+# See all commands
+/bluera-base:help
+
+# See this documentation
+/bluera-base:explain
 ```
 
 ---
 
-## Configuration Explained
+## Features
 
-### Config Loading Order
+Features are opt-in capabilities you can enable or disable. Each feature has a clear purpose and observable behavior.
 
-```text
-defaults (hardcoded)
-    ↓ merge
-config.json (team, committed)
-    ↓ merge
-config.local.json (personal, gitignored)
-    ↓
-final config
+### Desktop Notifications
+
+**What it does:** Sends a desktop notification when Claude Code needs your input (permission prompts, questions, idle timeouts).
+
+**Why you'd want it:** When you're multitasking in other windows, you won't miss Claude asking for permission or waiting on your response.
+
+**How to use:**
+
+```bash
+/bluera-base:config enable notifications   # Enable
+/bluera-base:config disable notifications  # Disable
 ```
 
-### Config Schema
+**What you'll see:** Native notifications on macOS (via osascript), Linux (via notify-send), or Windows WSL.
 
-```json
-{
-  "version": 1,
-  "autoLearn": {
-    "enabled": false,
-    "mode": "suggest",      // "suggest" | "auto"
-    "threshold": 3,         // occurrences before suggesting
-    "target": "local"       // "local" | "project"
-  },
-  "milhouse": {
-    "defaultMaxIterations": 0,  // 0 = unlimited
-    "defaultStuckLimit": 3,
-    "defaultGates": []
-  },
-  "notifications": {
-    "enabled": true
-  },
-  "autoCommit": {
-    "enabled": false,
-    "onStop": true,
-    "push": false,
-    "remote": "origin"
-  },
-  "dryCheck": {
-    "enabled": false,
-    "onStop": false,
-    "threshold": 5,      // min tokens to report
-    "minTokens": 70,
-    "minLines": 5
-  },
-  "strictTyping": {
-    "enabled": false
-  }
-}
+**Default:** Enabled
+
+---
+
+### Auto-Learn
+
+**What it does:** Tracks commands you run frequently and suggests adding them to CLAUDE.md so Claude remembers them in future sessions.
+
+**Why you'd want it:** If you always run `bun test` after edits, or `git status` before commits, Claude can learn this and do it automatically.
+
+**How to use:**
+
+```bash
+/bluera-base:config enable auto-learn      # Enable tracking
+/bluera-base:config set .autoLearn.mode suggest  # Suggest updates (default)
+/bluera-base:config set .autoLearn.mode auto     # Auto-apply updates
 ```
 
-### Feature Flags
+**What you'll see:** At session end, suggestions for CLAUDE.md updates based on patterns observed. In auto mode, updates are applied directly.
 
-| Feature | Config Path | Default | Effect |
-|---------|-------------|---------|--------|
-| `notifications` | `.notifications.enabled` | `true` | Desktop notifications |
-| `auto-learn` | `.autoLearn.enabled` | `false` | Track command patterns |
-| `auto-commit` | `.autoCommit.enabled` | `false` | Commit on session stop |
-| `auto-push` | `.autoCommit.push` | `false` | Push after auto-commit |
-| `dry-check` | `.dryCheck.enabled` | `false` | Enable DRY detection |
-| `dry-auto` | `.dryCheck.onStop` | `false` | Scan on session stop |
-| `strict-typing` | `.strictTyping.enabled` | `false` | Block `any`/`as`/`ignore` |
+**Default:** Disabled
+
+---
+
+### Auto-Commit
+
+**What it does:** Automatically commits uncommitted changes when your Claude session ends, using the atomic commit workflow.
+
+**Why you'd want it:** Never lose work because you forgot to commit before ending a session. Changes are committed with proper conventional commit messages.
+
+**How to use:**
+
+```bash
+/bluera-base:config enable auto-commit     # Commit on session end
+/bluera-base:config enable auto-push       # Also push after commit
+```
+
+**What you'll see:** When you end a session with uncommitted changes, they're automatically committed (and optionally pushed).
+
+**Default:** Disabled
+
+---
+
+### DRY Check
+
+**What it does:** Detects duplicate/copy-paste code in your codebase using jscpd.
+
+**Why you'd want it:** Catch copy-paste code before it becomes a maintenance burden. See exactly which files have duplicated logic.
+
+**How to use:**
+
+```bash
+/bluera-base:config enable dry-check       # Enable the feature
+/bluera-base:dry scan                      # Manual scan
+/bluera-base:config enable dry-auto        # Auto-scan on session end
+```
+
+**What you'll see:** A report showing duplicate code blocks, their locations, and suggestions for refactoring.
+
+**Default:** Disabled
+
+---
+
+### Strict Typing
+
+**What it does:** Blocks unsafe type patterns when you edit files:
+
+- **TypeScript:** `any` type, `as` casts (except `as const`), `@ts-ignore` without explanation
+- **Python:** `Any` type, `# type: ignore` without error code, `cast()`
+
+**Why you'd want it:** Catch type safety issues at edit time, not at runtime. Forces explicit typing decisions.
+
+**How to use:**
+
+```bash
+/bluera-base:config enable strict-typing
+```
+
+**What you'll see:** When you edit a file with forbidden patterns, Claude is notified and asked to fix them.
+
+**Escape hatch:** Add `// ok:` (TypeScript) or `# ok:` (Python) comment on specific lines when truly unavoidable.
+
+**Default:** Disabled
+
+---
+
+### Milhouse Loop
+
+**What it does:** Runs iterative development loops where Claude continues working through a prompt file, iteration after iteration, until a completion condition is met.
+
+**Why you'd want it:** For tasks that require multiple passes (refactoring, test-driven development, migrations), milhouse keeps working without you re-prompting each time.
+
+**How to use:**
+
+```bash
+/bluera-base:milhouse-loop prompt.md --promise "all tests pass" --gate "bun test"
+/bluera-base:cancel-milhouse  # Stop an active loop
+```
+
+**What you'll see:** Claude works through iterations, running gate commands between each. Stops when the promise is fulfilled or max iterations reached.
+
+**Configuration:**
+
+```bash
+/bluera-base:config set .milhouse.defaultMaxIterations 10  # Limit iterations
+/bluera-base:config set .milhouse.defaultStuckLimit 3      # Ask if stuck after 3 no-progress iterations
+```
+
+**Default:** Unlimited iterations, stuck limit 3
+
+---
+
+## Commands
+
+Commands are organized by category. All commands are prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`).
+
+### Getting Started
+
+| Command | Purpose |
+|---------|---------|
+| `/init` | Initialize a new project with bluera-base conventions |
+| `/config` | Manage plugin settings (show, init, enable, disable, set, reset) |
+| `/help` | Show available commands and features |
+| `/explain` | This documentation |
+
+### Development
+
+| Command | Purpose |
+|---------|---------|
+| `/commit` | Create atomic commits with README/CLAUDE.md awareness |
+| `/milhouse-loop` | Start an iterative development loop |
+| `/cancel-milhouse` | Stop an active milhouse loop |
+| `/todo` | Manage project TODO tasks |
+
+### Quality
+
+| Command | Purpose |
+|---------|---------|
+| `/code-review` | Multi-agent codebase review with confidence scoring |
+| `/dry` | Detect duplicate code and suggest DRY refactors |
+| `/clean` | Diagnose slow Claude Code startup and guide cleanup |
+
+### Documentation
+
+| Command | Purpose |
+|---------|---------|
+| `/claude-md` | Audit and maintain CLAUDE.md files |
+| `/readme` | Maintain README.md with GitHub advanced formatting |
+
+### Project Setup
+
+| Command | Purpose |
+|---------|---------|
+| `/harden-repo` | Set up linters, formatters, git hooks (13 languages) |
+| `/install-rules` | Install rule templates to `.claude/rules/` |
+
+### Release
+
+| Command | Purpose |
+|---------|---------|
+| `/release` | Cut a release with conventional commits and CI monitoring |
+
+### Git
+
+| Command | Purpose |
+|---------|---------|
+| `/worktree` | Manage Git worktrees for parallel development |
+| `/statusline` | Configure terminal status line display |
+
+### Meta
+
+| Command | Purpose |
+|---------|---------|
+| `/analyze-config` | Scan `.claude/**` for overlap with bluera-base |
+| `/audit-plugin` | Audit a plugin against best practices |
+| `/test-plugin` | Run plugin validation test suite |
+
+---
+
+## Automatic Behaviors
+
+These behaviors happen automatically without you invoking a command. They run in the background based on your actions.
+
+### Anti-Pattern Detection
+
+**When:** Every time you edit a file (Write or Edit tool)
+
+**What happens:** The plugin scans your changes for forbidden patterns:
+
+- `any` type, `as` casts (when strict-typing enabled)
+- Fallback code, graceful degradation patterns
+- Backward compatibility shims
+- Commented-out code
+
+**What you'll see:** If a pattern is detected, Claude is notified and typically fixes it before continuing.
+
+---
+
+### Release Protection
+
+**When:** You try to run `npm version`, `git tag`, or similar versioning commands
+
+**What happens:** The command is blocked with a message to use `/bluera-base:release` instead.
+
+**Why:** Manual versioning bypasses the release workflow, which handles CHANGELOG generation, CI monitoring, and proper tag creation.
+
+---
+
+### Auto-Validation
+
+**When:** You edit JavaScript, TypeScript, Python, Rust, or Go files
+
+**What happens:** Lint and typecheck commands run automatically to catch issues early.
+
+**What you'll see:** If lint/typecheck fails, Claude is notified and can fix the issues.
+
+---
+
+### Context Preservation
+
+**When:** Claude's context is about to be compacted (long conversations)
+
+**What happens:** Important state is preserved so milhouse loops and other features continue working after compaction.
+
+**What you'll see:** Nothing - this happens transparently. Your milhouse loops and feature states survive compactions.
+
+---
+
+## Configuration
+
+### Config Files
+
+Configuration is stored in `.bluera/bluera-base/` in your project:
+
+| File | Purpose | Git Status |
+|------|---------|------------|
+| `config.json` | Team settings (shared conventions) | Committed |
+| `config.local.json` | Personal overrides | Gitignored |
+
+Settings merge in order: defaults → `config.json` → `config.local.json`
+
+### Feature Toggles
+
+| Feature | What It Does | Default |
+|---------|--------------|---------|
+| `notifications` | Desktop notifications when Claude needs input | ON |
+| `auto-learn` | Track command patterns, suggest CLAUDE.md updates | OFF |
+| `auto-commit` | Commit uncommitted changes on session stop | OFF |
+| `auto-push` | Push to remote after auto-commit | OFF |
+| `dry-check` | Enable duplicate code detection | OFF |
+| `dry-auto` | Auto-scan for duplicates on session stop | OFF |
+| `strict-typing` | Block any/as casts, type: ignore | OFF |
 
 ### Config Commands
 
 ```bash
-/bluera-base:config init      # Create config.json with defaults
-/bluera-base:config show      # Display current config
-/bluera-base:config status    # Debug: show load order, merged result
-/bluera-base:config enable <feature>   # Set feature.enabled = true
-/bluera-base:config disable <feature>  # Set feature.enabled = false
-/bluera-base:config set <path> <value> # Set arbitrary JSON path
-/bluera-base:config reset     # Delete config files
+# Show current configuration
+/bluera-base:config show
+
+# Interactive setup
+/bluera-base:config init
+
+# Enable/disable features
+/bluera-base:config enable strict-typing
+/bluera-base:config disable notifications
+
+# Set specific values
+/bluera-base:config set .milhouse.defaultMaxIterations 10
+/bluera-base:config set .autoLearn.mode auto
+
+# Reset to defaults
+/bluera-base:config reset          # Remove personal overrides
+/bluera-base:config reset --all    # Remove all config
 ```
 
 ---
 
-## Philosophy Explained
+## Philosophy
+
+Bluera Base is opinionated. Here's why.
 
 ### Fail Fast
 
-Exit code 2 blocks operations. Errors throw immediately. No silent failures.
+**Principle:** Errors should be visible immediately, not hidden.
 
-```bash
-# Hook blocking pattern
-if [[ "$cmd" =~ npm\ version ]]; then
-  echo "Use /bluera-base:release instead"
-  exit 2  # Block
-fi
-exit 0  # Allow
-```
+When something goes wrong, you should know about it right away. Silent failures lead to bugs discovered much later when they're harder to fix. Bluera Base blocks problematic patterns at edit time rather than letting them slip through.
 
 ### No Fallbacks
 
-post-edit-check.sh scans staged changes for forbidden patterns:
+**Principle:** Code works as designed or fails visibly.
 
-```bash
-FORBIDDEN_PATTERNS="fallback|graceful.?degrad|backward.?compat|legacy.?support"
-if git diff --cached | grep -qiE "$FORBIDDEN_PATTERNS"; then
-  echo "Anti-pattern detected"
-  exit 2
-fi
-```
-
-### Strict Typing
-
-When `strict-typing` enabled, post-edit-check.sh also scans for:
-
-```bash
-# TypeScript
-": any" | "as " | "@ts-ignore" | "@ts-nocheck"
-
-# Python
-"Any" | "cast(" | "# type: ignore"
-```
+Fallback code, graceful degradation, and "just in case" defaults often hide bugs. If your code expects a value to exist, it should fail if it doesn't - not silently use a default that may or may not be correct. This makes bugs obvious instead of subtle.
 
 ### Atomic Commits
 
-`/bluera-base:commit` groups changes by logical unit, uses conventional format:
+**Principle:** Each commit is one logical change.
 
-```text
-type(scope): description
-
-- feat: new feature (minor bump)
-- fix: bug fix (patch bump)
-- feat!: breaking change (major bump)
-```
+A commit should do one thing. "Fix login bug" is good. "Fix login bug and update README and refactor utils" is three commits. Atomic commits make git history useful for understanding what changed and why, and make reverts safe.
 
 ### Clean Code
 
-No commented code, no deprecated references, no unused exports. If it's in the codebase, it runs.
+**Principle:** If it's in the codebase, it runs.
 
----
+No commented-out code "for reference." No deprecated functions kept "just in case." No unused exports. Dead code is noise that makes the codebase harder to understand. If you need old code, that's what git history is for.
 
-## Internals
+### Strict Typing
 
-### Milhouse Loop State
+**Principle:** Types are documentation that the compiler checks.
 
-`.bluera/bluera-base/state/milhouse-loop.md`:
-
-```yaml
----
-iteration: 3
-max_iterations: 10
-stuck_count: 0
-stuck_limit: 3
-completion_promise: "All tests pass"
-gate_command: "npm test"
----
-
-Original prompt content here...
-```
-
-`milhouse-stop.sh` reads this on Stop, increments iteration, and outputs the prompt to continue.
-
-### Learning Signals
-
-`.bluera/bluera-base/state/session-signals.json`:
-
-```json
-{
-  "commands": {
-    "npm test": { "count": 5, "contexts": ["after edit", "before commit"] },
-    "git status": { "count": 12, "contexts": ["checking state"] }
-  },
-  "patterns": []
-}
-```
-
-`session-end-learn.sh` processes this to suggest CLAUDE.md updates.
-
-### DRY Report
-
-`.bluera/bluera-base/state/dry-report.md`:
-
-```markdown
-## DRY Scan Results
-
-**Duplicates found**: 3
-**Total duplicate lines**: 45
-
-### Top Duplicates
-
-1. `src/utils.ts:10-25` ↔ `src/helpers.ts:5-20` (15 lines)
-...
-```
-
-Generated by `dry-scan.sh` using jscpd JSON output.
+`any` and `as` casts defeat the purpose of TypeScript. They tell the compiler "trust me" when you should be telling it what to expect. Strict typing catches bugs at write time instead of runtime, and makes refactoring safe.
