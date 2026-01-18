@@ -37,7 +37,7 @@ flowchart LR
         E[Includes]
     end
 
-    E -->|@include| A
+    E -->|include| A
     C -->|validate| B
     D -->|guide| B
 
