@@ -90,36 +90,67 @@ See `references/languages.md` for fallback commands when detection doesn't apply
 
 ## CI Monitoring
 
-After push, **verify ALL workflows triggered and succeeded**.
+After push, **wait for ALL workflows to complete before declaring success**.
 
-### Monitor All Workflows
+### Wait for All Workflows (REQUIRED)
+
+Poll until every workflow has completed. Do NOT declare "Release Complete" while any workflow is still running.
 
 ```bash
 COMMIT_SHA=$(git rev-parse HEAD)
+TIMEOUT=300  # 5 minutes max
 
-# Silent wait for completion
-while gh run list --commit "$COMMIT_SHA" --json status -q '[.[] | select(.status == "completed")] | length < (. | length)' | grep -q true; do sleep 10; done
+echo "Waiting for all workflows to complete..."
+START=$(date +%s)
+while true; do
+  # Get workflow statuses
+  STATUSES=$(gh run list --commit "$COMMIT_SHA" --json name,status,conclusion 2>/dev/null)
 
-# Show failures only (empty = all passed)
-gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | select(.conclusion == "success" | not) | "\(.name): \(.conclusion)"'
+  # Count total and completed
+  TOTAL=$(echo "$STATUSES" | jq 'length')
+  COMPLETED=$(echo "$STATUSES" | jq '[.[] | select(.status == "completed")] | length')
 
-# Verify workflow count: expected vs actual
-EXPECTED=$(ls .github/workflows/*.yml 2>/dev/null | wc -l | tr -d ' ')
-ACTUAL=$(gh run list --commit "$COMMIT_SHA" --json name -q 'length')
-[ "$EXPECTED" -ne "$ACTUAL" ] && echo "WARNING: Expected $EXPECTED workflows, got $ACTUAL"
+  # Check if all done
+  if [ "$COMPLETED" -eq "$TOTAL" ] && [ "$TOTAL" -gt 0 ]; then
+    echo "All $TOTAL workflows completed."
+    break
+  fi
+
+  # Check timeout
+  ELAPSED=$(($(date +%s) - START))
+  if [ "$ELAPSED" -gt "$TIMEOUT" ]; then
+    echo "TIMEOUT: Waited ${ELAPSED}s. $COMPLETED/$TOTAL workflows completed."
+    break
+  fi
+
+  echo "  $COMPLETED/$TOTAL complete... (${ELAPSED}s)"
+  sleep 10
+done
+
+# Show final results
+gh run list --commit "$COMMIT_SHA" --json name,conclusion -q '.[] | "\(.name): \(.conclusion)"'
 ```
 
-### Verify Release
+### Verify Success
+
+**Only declare "Release Complete" when:**
+
+1. ALL workflows show `status: completed` (none still running)
+2. ALL workflows show `conclusion: success`
+3. GitHub release exists with correct version
 
 ```bash
-gh release view "v$VERSION" --json tagName -q .tagName 2>/dev/null && echo "OK" || echo "NOT FOUND"
+# Check for any failures or incomplete
+FAILURES=$(gh run list --commit "$COMMIT_SHA" --json name,status,conclusion \
+  -q '.[] | select(.status != "completed" or .conclusion != "success") | "\(.name): \(.conclusion // .status)"')
+if [ -n "$FAILURES" ]; then
+  echo "RELEASE NOT COMPLETE:"
+  echo "$FAILURES"
+fi
+
+# Verify release exists
+gh release view "v$VERSION" --json tagName -q .tagName 2>/dev/null && echo "Release OK" || echo "WARNING: Release not found"
 ```
-
-**Release is NOT complete until:**
-
-- All workflows for this commit show `success`
-- Workflow count matches expected (none failed to trigger)
-- GitHub release exists with correct version
 
 ## Troubleshooting
 
