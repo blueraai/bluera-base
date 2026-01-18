@@ -159,11 +159,10 @@ Features are opt-in capabilities you can enable or disable. Each feature has a c
 brew install terminal-notifier
 ```
 
-**To avoid duplicate notifications**, disable Claude Code's native notification and use ours:
+**To avoid duplicate notifications** (if you see two per event):
 
-```bash
-claude config set notifications.enabled false
-```
+- **iTerm 2**: Preferences → Profiles → Terminal → Uncheck "Send Growl/Notification Center alerts"
+- **VS Code / other terminals**: Usually don't send native notifications, so you'll only see ours
 
 **Default:** Enabled
 
