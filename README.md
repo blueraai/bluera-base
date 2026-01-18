@@ -107,27 +107,31 @@ claude --plugin-dir /path/to/bluera-base
 
 ### Commands
 
-| Command | Purpose |
-|---------|---------|
-| `/bluera-base:init` | Initialize a project with bluera-base conventions |
-| `/bluera-base:commit` | Create atomic, well-organized commits with documentation checks |
-| `/bluera-base:code-review` | Run multi-agent codebase review |
-| `/bluera-base:release` | Cut a release with conventional commits auto-detection and CI monitoring |
-| `/bluera-base:config` | Manage bluera-base plugin configuration |
-| `/bluera-base:milhouse-loop` | Start iterative development loop with configurable completion criteria |
-| `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
-| `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
-| `/bluera-base:install-rules` | Install bluera-base rule templates to `.claude/rules/` |
-| `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
-| `/bluera-base:readme` | Maintain README.md files with GitHub advanced formatting |
-| `/bluera-base:test-plugin` | Run plugin validation test suite |
-| `/bluera-base:dry` | Detect duplicate code and suggest DRY refactors using jscpd |
-| `/bluera-base:harden-repo` | Set up linters, formatters, git hooks, and test coverage (13 languages) |
-| `/bluera-base:worktree` | Manage Git worktrees for parallel development workflows |
-| `/bluera-base:statusline` | Configure Claude Code's terminal status line display |
-| `/bluera-base:analyze-config` | Scan `.claude/**` for overlap with bluera-base |
-| `/bluera-base:audit-plugin` | Audit a plugin against best practices |
-| `/bluera-base:help` | Show bluera-base plugin features and usage |
+| Command | Arguments | Purpose |
+|---------|-----------|---------|
+| `/init` | `[--quick\|--full]` | Initialize project with bluera-base conventions |
+| `/commit` | | Create atomic commits with README/CLAUDE.md awareness |
+| `/code-review` | | Multi-agent codebase review |
+| `/release` | | Cut release with conventional commits and CI monitoring |
+| `/config` | `[show\|init\|set\|enable\|disable\|reset\|status] [key] [value]` | Manage plugin configuration |
+| `/milhouse-loop` | `<prompt-file> [--max-iterations N] [--promise TEXT] [--gate CMD]` | Start iterative development loop |
+| `/cancel-milhouse` | | Cancel active milhouse loop |
+| `/clean` | `[scan\|fix <action>] [--confirm] [--days N]` | Diagnose slow startup and guide cleanup |
+| `/install-rules` | | Install rule templates to `.claude/rules/` |
+| `/claude-md` | `<audit\|init\|learn> [options]` | Audit and maintain CLAUDE.md files |
+| `/readme` | `<beautify\|breakout> [instructions]` | Maintain README.md with GitHub formatting |
+| `/test-plugin` | | Run plugin validation test suite |
+| `/dry` | `[scan\|report\|config\|init] [--threshold N] [--path <dir>]` | Detect duplicate code, suggest DRY refactors |
+| `/harden-repo` | `[--language <lang>] [--skip-hooks] [--coverage <threshold>]` | Set up linters, formatters, git hooks (13 langs) |
+| `/worktree` | `[list\|add\|remove\|prune\|status] [branch] [path]` | Manage Git worktrees |
+| `/statusline` | `[show\|preset\|custom\|reset]` | Configure terminal status line |
+| `/analyze-config` | `[--cleanup]` | Scan `.claude/**` for bluera-base overlap |
+| `/audit-plugin` | `[path/to/plugin] [--fix]` | Audit plugin against best practices |
+| `/help` | `[commands\|skills\|hooks\|config\|all]` | Show plugin features and usage |
+| `/explain` | `[overview\|commands\|skills\|hooks\|config\|philosophy]` | Explain plugin functionality |
+| `/todo` | | Manage project TODO tasks |
+
+*All commands prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`)*
 
 ### Skills
 
