@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.15.0](https://github.com/blueraai/bluera-base/compare/v0.14.2...v0.15.0) (2026-01-18)
+
+### Features
+
+* **auto-learn:** implement auto mode and target configuration ([12a1953](https://github.com/blueraai/bluera-base/commit/12a19530edf1a660a8a4909c3e512f4994f4f572))
+
 ## [0.14.2](https://github.com/blueraai/bluera-base/compare/v0.14.1...v0.14.2) (2026-01-18)
 
 ### Features
