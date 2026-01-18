@@ -11,6 +11,7 @@ cd "${CLAUDE_PROJECT_DIR:-.}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
 source "$SCRIPT_DIR/lib/signals.sh"
+source "$SCRIPT_DIR/lib/autolearn.sh"
 
 # Check if auto-learn is enabled (opt-in)
 if ! bluera_config_enabled ".autoLearn.enabled"; then
@@ -86,16 +87,35 @@ done < <(echo "$SIGNALS" | jq -c --argjson threshold "$THRESHOLD" '.commands | t
 # Dedupe suggestions
 SUGGESTIONS=$(echo -e "$SUGGESTIONS" | sort -u | grep -v '^$' || true)
 
-# If we have suggestions, output them
+# If we have suggestions, handle based on mode
 if [[ -n "$SUGGESTIONS" ]]; then
-  # Format as systemMessage for user visibility
-  MSG="[bluera-base] Session patterns detected. Consider adding to CLAUDE.md:${SUGGESTIONS}
+  if [[ "$AUTO_LEARN_MODE" == "auto" ]]; then
+    # Auto mode: write learnings directly to target file
+    applied_count=0
+    while IFS= read -r suggestion; do
+      [[ -z "$suggestion" ]] && continue
+      # Strip leading "- " from suggestion
+      suggestion="${suggestion#- }"
+      if bluera_autolearn_write "$suggestion"; then
+        ((applied_count++)) || true
+      fi
+    done <<< "$SUGGESTIONS"
 
-Run \`/claude-md learn \"<learning>\"\` to add any of these."
+    if [[ $applied_count -gt 0 ]]; then
+      target_file=$(bluera_autolearn_target_file)
+      jq -n --arg msg "[bluera-base] Applied $applied_count learning(s) to $target_file" \
+        '{"systemMessage": $msg}'
+    fi
+  else
+    # Suggest mode: show suggestions and command to run
+    MSG="[bluera-base] Session patterns detected. Consider adding to CLAUDE.md:${SUGGESTIONS}
 
-  jq -n --arg msg "$MSG" '{
-    "systemMessage": $msg
-  }'
+Run \`/bluera-base:claude-md learn \"<learning>\"\` to add any of these."
+
+    jq -n --arg msg "$MSG" '{
+      "systemMessage": $msg
+    }'
+  fi
 fi
 
 # Clean up signal file after synthesis

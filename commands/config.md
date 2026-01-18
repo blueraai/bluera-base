@@ -49,6 +49,7 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 Settings (change with: /bluera-base:config set <key> <value>)
   .autoLearn.mode = "suggest"     # suggest | auto
   .autoLearn.threshold = 3        # occurrences before acting
+  .autoLearn.target = "local"     # local | shared
   .milhouse.defaultMaxIterations = 0
   .milhouse.defaultStuckLimit = 3
   .milhouse.defaultGates = []
@@ -96,12 +97,15 @@ Display each section header, explain the feature, then use AskUserQuestion.
 Tracks frequently used commands and suggests adding them to CLAUDE.md.
 
 Technical details:
-- Observes command patterns across sessions via PostToolUse hook
+- Observes command patterns during sessions via PreToolUse hook
 - Stores patterns in .bluera/bluera-base/state/session-signals.json
 - Threshold: number of occurrences before acting (default: 3)
 - Modes:
-  - "suggest" - shows recommendations, you decide
-  - "auto" - applies updates automatically
+  - "suggest" - shows recommendations at session end, you decide
+  - "auto" - writes learnings directly to target file
+- Targets:
+  - "local" (default) - writes to CLAUDE.local.md (private, gitignored)
+  - "shared" - writes to CLAUDE.md (committed, team-shared)
 ```
 
 Use AskUserQuestion:
