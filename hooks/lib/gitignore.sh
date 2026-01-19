@@ -57,7 +57,7 @@ gitignore_missing_patterns() {
 
 # Ensure all required patterns exist in gitignore
 # Usage: gitignore_ensure_patterns
-# Returns: 0 if patterns were added, 1 if all patterns already exist
+# Returns: 0 on success (patterns added or already exist), 1 on error
 gitignore_ensure_patterns() {
   local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
   local missing
@@ -65,7 +65,7 @@ gitignore_ensure_patterns() {
   missing=$(gitignore_missing_patterns)
 
   if [[ -z "$missing" ]]; then
-    return 1  # Nothing to add
+    return 0  # All patterns already exist - success
   fi
 
   # Create gitignore if it doesn't exist
