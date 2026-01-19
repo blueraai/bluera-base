@@ -25,6 +25,16 @@ The file must explicitly state it is Claude's **memory**, not user documentation
 - Prefer bullet lists over prose
 - No duplication from ancestor files
 
+**IMPORTANT: CLAUDE.md is NOT an enforcement boundary.**
+
+Instructions can be ignored, especially after `/compact`. For critical constraints:
+
+1. Keep them at the **TOP** of the file
+2. Keep them **SHORT** and explicit
+3. Use hooks for deterministic enforcement
+
+**See:** `docs/reliability.md`
+
 **Anti-patterns to detect:**
 
 | Pattern | Why It's Bad |

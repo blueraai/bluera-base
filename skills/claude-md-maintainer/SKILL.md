@@ -265,6 +265,10 @@ Commands with ≥threshold occurrences trigger learning suggestions.
 
 - **Directory detection**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/docs/directory-heuristics.md`
 
+- **Reliability guidance**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/docs/reliability.md`
+
+- **Scope decision guide**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-md-maintainer/docs/scope-guide.md`
+
 ## Key Rules
 
 1. **Never duplicate** - Module CLAUDE.md should not repeat root rules

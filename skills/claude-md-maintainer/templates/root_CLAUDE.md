@@ -47,3 +47,13 @@ NEVER:
 ## Directory map
 
 - `path/` — purpose
+
+## Critical gotchas
+
+Common mistakes Claude makes here and the correct approach:
+
+- ...
+
+---
+
+**Note:** CLAUDE.md is guidance, not enforcement. For hard constraints, use hooks.
