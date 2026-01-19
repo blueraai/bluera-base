@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.16.0](https://github.com/blueraai/bluera-base/compare/v0.15.0...v0.16.0) (2026-01-19)
+
+### Features
+
+* **claude-md:** add reliability and scope documentation ([dd8110b](https://github.com/blueraai/bluera-base/commit/dd8110b5892e98a46cd587729d3e6597b6eb6394))
+* **claude-md:** add verbosity audit and WHAT/WHY/HOW structure ([ef06446](https://github.com/blueraai/bluera-base/commit/ef06446865e2ca42f4c72eeaf1057599adcc3a4f))
+
 ## [0.15.0](https://github.com/blueraai/bluera-base/compare/v0.14.2...v0.15.0) (2026-01-18)
 
 ### Features
