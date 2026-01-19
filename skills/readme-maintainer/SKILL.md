@@ -261,7 +261,18 @@ For READMEs with 5+ sections, add a collapsible ToC:
 - Skip badges for metrics that don't matter
 - Skip diagrams that don't clarify
 - Skip collapsibles for short content
-- Skip emojis unless they add meaning
+- Don't add emojis to plain READMEs unless requested
+
+### Never Remove, Only Reorganize
+
+**CRITICAL: Breakout and beautify operations must preserve ALL existing content and formatting.**
+
+- Moving content to a new file ≠ deleting it
+- Restructuring ≠ stripping
+- Condensing or summarizing ≠ preserving
+- If something exists, assume the author put it there intentionally
+
+The goal is to reorganize and enhance, never to reduce. If you're about to delete or condense anything, stop and reconsider.
 
 ### Preserve Author Intent
 
