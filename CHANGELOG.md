@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.16.1](https://github.com/blueraai/bluera-base/compare/v0.16.0...v0.16.1) (2026-01-19)
+
+### Bug Fixes
+
+* **hooks:** return 0 when gitignore patterns already exist ([cab9556](https://github.com/blueraai/bluera-base/commit/cab955662b76a27c98ecd66264eb3039d42ca2f4))
+
 ## [0.16.0](https://github.com/blueraai/bluera-base/compare/v0.15.0...v0.16.0) (2026-01-19)
 
 ### Features
