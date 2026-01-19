@@ -20,16 +20,23 @@ The file must explicitly state it is Claude's **memory**, not user documentation
 
 ## 2. Be Lean
 
+- **Hard limit**: < 300 lines (system prompt already uses ~50 instruction slots)
+- **Target**: < 60 lines for root, < 30 lines for modules
 - Prefer bullet lists over prose
-- No long paragraphs explaining obvious things
-- No duplication of content from ancestor CLAUDE.md files
-- Target: < 100 lines for root, < 50 lines for modules
+- No duplication from ancestor files
 
-**What to trim:**
+**Anti-patterns to detect:**
 
-- Verbose explanations of standard tools
-- Full command output examples
-- Lists of every file in a directory
+| Pattern | Why It's Bad |
+|---------|--------------|
+| Linter duplication | "Use consistent indentation" - linters do this |
+| Verbose tool explanations | "npm is the node package manager..." - obvious |
+| Full command output | `npm test` output examples - waste context |
+| File/directory lists | Enumerating all files - Claude can explore |
+| Vague instructions | "Write clean code" - not actionable |
+| Auto-generated prose | Multi-paragraph explanations of simple concepts |
+
+**See**: `docs/verbose-patterns.md` for detection regex patterns
 
 ## 3. Be Actionable
 
@@ -61,3 +68,15 @@ Normalize sections in this order:
 5. Conventions (only those relevant to scope)
 6. Directory map (short)
 7. Guardrails (ALWAYS/NEVER)
+
+## 6. Use Separate Files for Details
+
+Move detailed guidance to `agent_docs/` directory:
+
+- `agent_docs/architecture.md` - System design details
+- `agent_docs/testing.md` - Test conventions and patterns
+- `agent_docs/conventions.md` - Code style details
+
+Reference in CLAUDE.md: "See agent_docs/ for detailed guidance"
+
+This keeps CLAUDE.md lean while preserving detailed documentation Claude can read on-demand.

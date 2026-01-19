@@ -25,9 +25,16 @@ Audit and maintain `CLAUDE.md` files across any repository. Ensures they functio
 
 2. **Validate** each against invariants (see `docs/invariants.md`)
 
-3. **Identify** module roots (see `docs/directory-heuristics.md`)
+3. **Audit verbosity**:
+   - Count total lines (warn if > 300, suggest if > 60)
+   - Detect verbose patterns (see `docs/verbose-patterns.md`)
+   - Flag linter-duplicating instructions
+   - Identify content that should move to agent_docs/
+   - Report actionable findings with line numbers
 
-4. **Output** proposed changes:
+4. **Identify** module roots (see `docs/directory-heuristics.md`)
+
+5. **Output** proposed changes:
    - Files to update (with change summary)
    - Files to create
    - Ambiguous cases requiring human decision
@@ -273,4 +280,21 @@ Report these sections:
 - Files to create
 - Files to update (with diff summary)
 - Rules files to create/update
+- Verbosity report (if issues detected)
 - Follow-ups (ambiguous items)
+
+### Verbosity Report
+
+When line count exceeds targets or verbose patterns detected, include:
+
+**Line Count:**
+
+- CLAUDE.md: 142 lines (target: < 60, hard limit: < 300)
+
+**Verbose Patterns Detected:**
+
+| Lines | Issue | Suggestion |
+|-------|-------|------------|
+| 45-60 | Tool explanation (npm) | Remove - Claude knows npm |
+| 80-95 | Command output example | Remove or move to agent_docs/ |
+| 110-125 | File enumeration | Summarize as "src/ - application code" |

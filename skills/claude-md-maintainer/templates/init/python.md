@@ -1,17 +1,32 @@
-## Package Manager
+## What
+
+Python project using {{FRAMEWORK}}. {{PURPOSE}}
+
+---
+
+## Why
+
+{{PROJECT_PURPOSE}}
+
+---
+
+## How
+
+### Package Manager
 
 **Use `{{PM}}`**
 
----
+### Commands
 
-## Scripts
+<!-- prettier-ignore -->
+{{SCRIPTS_TABLE}}
 
-{{SCRIPTS}}
-
----
-
-## Virtual Environment
+### Virtual Environment
 
 Activate before running: `source .venv/bin/activate`
+
+### Detailed Guidance
+
+See `agent_docs/` for architecture and conventions (create if needed).
 
 ---
