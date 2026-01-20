@@ -1,7 +1,8 @@
 ---
 paths:
   - "dist/**"
-  - "plugin.json"
+  - ".claude-plugin/**"
+  - ".claude-plugin/plugin.json"
 ---
 
 # Claude Code Plugin Distribution
