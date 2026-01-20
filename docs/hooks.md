@@ -8,7 +8,7 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 |------|-------|---------|
 | `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
-| `pre-compact.sh` | PreCompact | Preserve state before context compaction |
+| `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
 | `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
@@ -62,7 +62,11 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 - Runs `cargo clippy` for linting (errors only)
 - Runs `cargo check` for compile errors
 
-### All Languages
+### Supported Languages
+
+TypeScript, JavaScript, Python, Rust, Go
+
+### All Source Files
 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc.
@@ -122,7 +126,27 @@ Injects critical context and invariants into every session via `additionalContex
 
 ## pre-compact.sh
 
-Runs before context compaction (`/compact`) to preserve important state that might be lost during summarization.
+Validates `.claude/critical-invariants.md` size before compaction and reminds that invariants will be re-injected after. Warns if the file is too large (>20 lines or >1500 chars) which would reduce compaction effectiveness.
+
+### Critical Invariants Feature
+
+The critical invariants feature helps maintain important rules across compaction:
+
+1. Create `.claude/critical-invariants.md` with your must-follow rules (5-15 lines recommended)
+2. The `session-start-inject.sh` hook injects these into every session
+3. The `pre-compact.sh` hook validates size and confirms re-injection will occur
+4. After compaction, invariants are automatically re-injected to prevent drift
+
+Example invariants file:
+
+```markdown
+# Critical Invariants
+
+- Run tests before commit
+- Use conventional commit format
+- Never use --no-verify on git commits
+- Check README.md/CLAUDE.md when changing public APIs
+```
 
 ---
 

@@ -145,11 +145,8 @@ case "$FILE_PATH" in
     if [ -f "package.json" ]; then
       RUNNER=$(detect_runner)
 
-      # Auto-fix
-      "$RUNNER" eslint --fix --quiet "$FILE_PATH" 2>/dev/null || true
-
-      # Check for remaining errors
-      LINT_OUT=$("$RUNNER" eslint --quiet "$FILE_PATH" 2>&1 || true)
+      # Invoke project's lint script (no auto-fix - let user control)
+      LINT_OUT=$("$RUNNER" run lint --quiet 2>&1 || true)
       if [ -n "$LINT_OUT" ]; then
         echo "$LINT_OUT" >&2
         exit 2
@@ -165,8 +162,8 @@ exit 0
 
 1. **Tool filtering**: Only run for specific tools (Write/Edit)
 2. **Path filtering**: Skip generated/vendor directories
-3. **Auto-fix first**: Try to fix issues automatically
-4. **Report remaining**: Block only if issues remain
+3. **Use project scripts**: Invoke the project's own lint/typecheck scripts
+4. **Report errors**: Block if lint errors remain
 5. **Rate limiting**: For expensive checks (type checking), use timestamps to avoid running on every edit
 
 ---

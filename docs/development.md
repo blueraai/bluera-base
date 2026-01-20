@@ -9,7 +9,7 @@ git clone https://github.com/blueraai/bluera-base.git
 cd bluera-base
 ```
 
-No build step required - this plugin is pure markdown and shell scripts.
+No build step required - this plugin is pure markdown, shell scripts, and Python utilities.
 
 ## Dogfooding (Testing Your Development Version)
 
@@ -118,7 +118,10 @@ bluera-base/
 │   ├── claude/
 │   │   └── rules/                # Rule templates for /bluera-base:install-rules
 │   ├── repo-hardening/           # Templates for /bluera-base:harden-repo
+│   ├── bluera-base-config.json   # Default config template
 │   ├── CLAUDE.md.template
+│   ├── critical-invariants.md    # Template for compaction-resilient rules
+│   ├── jscpd.json.template       # Duplicate detection config
 │   ├── settings.local.json.example
 │   └── subdirectory-CLAUDE.md.template
 ├── docs/

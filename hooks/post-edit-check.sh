@@ -42,7 +42,7 @@ esac
 # === Detection Functions ===
 
 detect_js_runner() {
-  if [ -f "bun.lockb" ]; then echo "bun"
+  if [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then echo "bun"
   elif [ -f "yarn.lock" ]; then echo "yarn"
   elif [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
   else echo "npm"

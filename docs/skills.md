@@ -107,8 +107,23 @@ flowchart LR
 ### Usage
 
 ```bash
+# File-based prompt
 /bluera-base:milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
+
+# Inline prompt
+/bluera-base:milhouse-loop --inline "Build the feature" --max-iterations 10
 ```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--inline "prompt"` | Use inline prompt instead of file |
+| `--max-iterations N` | Maximum iterations (default: unlimited) |
+| `--promise "text"` | Completion promise (default: "TASK COMPLETE") |
+| `--gate "cmd"` | Command that must pass before exit (repeatable) |
+| `--stuck-limit N` | Stop after N identical failures (default: 3, 0=off) |
+| `--init-harness` | Create plan.md and activity.md for context hygiene |
 
 ### Exit Conditions
 

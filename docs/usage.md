@@ -87,8 +87,7 @@ cp /path/to/bluera-base/templates/settings.local.json.example .claude/settings.l
 This provides:
 
 - Pre-approved commands for multiple package managers and linters
-- PostToolUse hook for automatic validation after edits
-- Notification hook for permission prompts (macOS/Linux)
+- Example hook structure (the actual hooks are provided by the bluera-base plugin itself via `hooks/hooks.json`)
 
 ### Permission Patterns
 
