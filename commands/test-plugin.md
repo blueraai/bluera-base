@@ -1,4 +1,5 @@
 ---
+context: fork
 description: Run comprehensive plugin validation test suite
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ---
