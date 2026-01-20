@@ -247,7 +247,7 @@ sudo apt-get install jq
 # Download from https://stedolan.github.io/jq/download/
 ```
 
-**Note**: On macOS with Homebrew, this plugin auto-installs jq if missing. This behavior is silent and only applies to macOS+Homebrew environments.
+**Note**: On macOS with Homebrew, this plugin auto-installs jq if missing. The install command runs silently, but status messages are printed to confirm success or failure.
 
 ### Permission Denied on Hook Scripts
 

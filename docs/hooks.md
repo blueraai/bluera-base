@@ -56,12 +56,12 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 - Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
 - Runs project lint script: `$runner run lint --quiet`
 - Runs project typecheck: `typecheck`, `type-check`, or `tsc` scripts
-- Falls back to `tsc --noEmit` if tsconfig.json exists with no script AND `node_modules/.bin/tsc` is installed
+- Falls back to `tsc --noEmit` only if NO package.json exists but tsconfig.json and `node_modules/.bin/tsc` are present
 
 ### Python
 
 - Runs `poetry run lint` or `ruff check` (read-only, no auto-fix)
-- Type-checks with `mypy` if configured
+- Type-checks with `mypy` if available and project uses type checking
 
 ### Rust
 
@@ -121,11 +121,13 @@ When enabled, blocks session stop and prompts you to run `/bluera-base:commit` i
 
 ## notify.sh
 
-Sends cross-platform notifications for long-running operations:
+Sends cross-platform desktop notifications when Claude Code needs your attention:
 
-- **macOS**: Uses `osascript` for native notifications
-- **Linux**: Uses `notify-send`
-- **Windows**: Uses PowerShell toast notifications
+- **Permission prompts** - Tool approval requests
+- **Idle prompts** - Waiting for user input
+- **Elicitation dialogs** - Input requested
+
+Platforms: macOS (`osascript`), Linux (`notify-send`), Windows (PowerShell toast)
 
 ---
 
@@ -179,7 +181,7 @@ Consolidates patterns observed during the session into learnings.
 
 ## dry-scan.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable dry-scan`.
+**Opt-in feature.** Enable with `/bluera-base:config enable dry-check`. For auto-scan on session stop, also enable `dry-auto`.
 
 Scans for code duplication at session end using `jscpd`. Reports duplicates that could be refactored.
 
