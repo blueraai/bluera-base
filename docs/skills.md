@@ -74,12 +74,15 @@ flowchart LR
 | `feat:` | minor (0.x.0) | New features |
 | `feat!:` / `BREAKING CHANGE:` | major (x.0.0) | Breaking changes |
 
-### Language-Specific Tools
+### Version Tool Detection Order
 
-- **JS/TS:** `npm version`
-- **Python:** `poetry version`, `hatch version`, or `bump2version`
-- **Rust:** `cargo release`
-- **Go:** git tags
+1. **Makefile:** `make release:patch`, `make version:patch`, or `make release BUMP=patch`
+2. **JS/TS scripts:** `bun/pnpm/yarn/npm run version:patch` or `release:patch`
+3. **Python Poetry:** `poetry version patch`
+4. **Python Hatch:** `hatch version patch`
+5. **Rust:** `cargo release patch` (if cargo-release installed)
+6. **Go:** git tag-based versioning
+7. **JS/TS fallback:** `npm version patch`
 
 The `block-manual-release.sh` hook prevents bypassing this workflow by blocking direct version/release commands.
 
@@ -205,5 +208,5 @@ See [Supported Languages](../README.md#supported-languages) for the full matrix.
 
 Configures Claude Code's terminal status line with:
 
-- Preset configurations (minimal, verbose, developer)
+- Preset configurations (minimal, informative, developer, system, bluera)
 - Custom format strings

@@ -6,7 +6,7 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
+| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, update .gitignore, export BLUERA_* env vars |
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
@@ -15,7 +15,7 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end |
-| `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop if uncommitted changes exist (opt-in) |
+| `auto-commit.sh` | Stop | Blocks session stop and prompts to run `/bluera-base:commit` if uncommitted changes exist (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 ## Hook Flow
@@ -25,19 +25,25 @@ flowchart LR
     A[Start] --> B[Setup]
     B --> C{Tool?}
     C -->|Bash| D{Release?}
-    C -->|Edit| E[Lint]
+    C -->|Edit| E[Checks]
     D -->|No| F[Allow]
     D -->|Yes| G[Block]
-    E --> H{Pass?}
-    H -->|No| G
-    H -->|Yes| F
-    F --> I[Continue]
+    E --> H{Blocking?}
+    H -->|Anti-pattern/Strict| I{Pass?}
+    H -->|Lint/Type| J[Advisory]
+    I -->|No| G
+    I -->|Yes| F
+    J --> F
+    F --> K[Continue]
 
     style A fill:#6366f1,color:#fff
     style G fill:#dc2626,color:#fff
     style F fill:#16a34a,color:#fff
-    style I fill:#16a34a,color:#fff
+    style K fill:#16a34a,color:#fff
+    style J fill:#f59e0b,color:#fff
 ```
+
+> **Note:** Lint and typecheck failures are advisory (non-blocking). Anti-pattern detection and strict typing checks (when enabled) block the operation.
 
 ---
 
@@ -64,7 +70,7 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 
 ### Supported Languages
 
-TypeScript, JavaScript, Python, Rust, Go
+TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pattern detection only)
 
 ### All Source Files
 
@@ -104,7 +110,7 @@ Intercepts the Stop event to continue iterative development loops. When a milhou
 /bluera-base:config enable auto-commit
 ```
 
-When enabled, triggers `/bluera-base:commit` on session stop if there are uncommitted changes.
+When enabled, blocks session stop and prompts you to run `/bluera-base:commit` if there are uncommitted changes.
 
 ---
 

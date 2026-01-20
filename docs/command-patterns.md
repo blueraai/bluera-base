@@ -6,6 +6,8 @@ Pattern guide for creating slash commands in bluera-base plugins.
 
 Commands should be **thin** (~20-30 lines) with details in the SKILL.md.
 
+> **Exception:** Some commands use `context: fork` and are intentionally self-contained (100+ lines). These include `config`, `init`, and `analyze-config` which run in isolated contexts and need all instructions inline. When using `context: fork`, the command cannot reference external SKILL.md files.
+
 ### Command Structure
 
 ```yaml

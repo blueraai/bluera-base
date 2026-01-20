@@ -125,8 +125,17 @@ bluera-base/
 │   ├── settings.local.json.example
 │   └── subdirectory-CLAUDE.md.template
 ├── docs/
-│   ├── usage.md                  # @includes, skills, settings
-│   ├── customization.md          # Triggers, hooks, rules, constraints
-│   └── development.md            # This file
+│   ├── advanced-patterns.md              # Advanced usage patterns
+│   ├── bluera-base-claude-md-maintainer-spec.md  # CLAUDE.md maintainer spec
+│   ├── bluera-base-plugin-audit-spec.md  # Plugin audit spec
+│   ├── claude-code-best-practices.md     # Best practices guide
+│   ├── command-patterns.md               # Command design patterns
+│   ├── customization.md                  # Triggers, hooks, rules, constraints
+│   ├── development.md                    # This file
+│   ├── hook-examples.md                  # Hook implementation examples
+│   ├── hooks.md                          # Hook reference
+│   ├── skills.md                         # Skill reference
+│   ├── troubleshooting.md                # Troubleshooting guide
+│   └── usage.md                          # @includes, skills, settings
 └── README.md
 ```
