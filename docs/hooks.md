@@ -56,7 +56,7 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 - Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
 - Runs project lint script: `$runner run lint --quiet`
 - Runs project typecheck: `typecheck`, `type-check`, or `tsc` scripts
-- Falls back to `tsc --noEmit` if tsconfig.json exists with no script
+- Falls back to `tsc --noEmit` if tsconfig.json exists with no script AND `node_modules/.bin/tsc` is installed
 
 ### Python
 
@@ -77,9 +77,10 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc.
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
-  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`; allows `@ts-ignore` with 10+ char explanation
-  - Python: blocks `Any`, `cast()`; allows `type: ignore` with error code (e.g., `[code]`)
+  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`
+  - Python: blocks `Any`, `cast()`
   - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses on specific lines
+  - **Note:** `@ts-ignore` and `type: ignore` enforcement is currently non-functional due to regex incompatibility
 
 Exit code 2 blocks the operation and shows the error to Claude.
 
@@ -87,11 +88,14 @@ Exit code 2 blocks the operation and shows the error to Claude.
 
 ## block-manual-release.sh
 
-Prevents bypassing the release workflow by blocking direct version/release commands like:
+Prevents bypassing the release workflow by blocking direct version/release commands:
 
-- `npm version`
-- `poetry version`
-- `cargo release`
+- **npm/yarn/pnpm/bun:** `npm version`, `yarn version`, `pnpm version`, `bun version`
+- **Python:** `poetry version`, `bump2version`, `hatch version`
+- **Rust:** `cargo release`
+- **Git-based:** `git tag v*`, `gh release create`
+
+**Not blocked:** Makefile-based releases (`make release`, `make version`) are not detected.
 
 Use `/bluera-base:release` instead for standardized releases.
 
@@ -159,17 +163,23 @@ Example invariants file:
 
 ## observe-learning.sh
 
-Observes Bash commands during the session to identify patterns for auto-learning. Part of the auto-learn feature.
+**Opt-in feature.** Enable with `/bluera-base:config enable auto-learn`.
+
+Observes Bash commands during the session to identify patterns for auto-learning.
 
 ---
 
 ## session-end-learn.sh
 
-Consolidates patterns observed during the session into learnings. Part of the auto-learn feature.
+**Opt-in feature.** Enable with `/bluera-base:config enable auto-learn`.
+
+Consolidates patterns observed during the session into learnings.
 
 ---
 
 ## dry-scan.sh
+
+**Opt-in feature.** Enable with `/bluera-base:config enable dry-scan`.
 
 Scans for code duplication at session end using `jscpd`. Reports duplicates that could be refactored.
 

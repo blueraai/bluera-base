@@ -23,13 +23,12 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 
 ## code-review-repo
 
-Launches 5 parallel agents to independently review your codebase:
+Launches 4 parallel agents to independently review your codebase:
 
 1. **CLAUDE.md compliance** - Check code follows all CLAUDE.md guidelines
 2. **Bug scan** - Look for obvious bugs, error handling issues
-3. **Git history context** - Use blame/history to identify patterns
-4. **PR comments** - Check closed PRs for applicable feedback
-5. **Code comment compliance** - Ensure TODO/FIXME notes are addressed
+3. **Git history context** - Use blame/history to identify patterns (local git only)
+4. **Code comment compliance** - Ensure TODO/FIXME notes are addressed
 
 Each issue gets a confidence score (0-100). Only issues scoring >= 80 are reported.
 
