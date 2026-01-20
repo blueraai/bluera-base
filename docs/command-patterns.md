@@ -1,6 +1,6 @@
-# Commands
+# Command Patterns
 
-Pattern guide for slash commands in bluera-base.
+Pattern guide for creating slash commands in bluera-base plugins.
 
 ## Thin Command / Heavy SKILL Pattern
 

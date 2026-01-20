@@ -1,5 +1,5 @@
 # Commands
 
-@bluera-base/commands/CLAUDE.md
+@bluera-base/docs/command-patterns.md
 
-See the main commands directory for the thin command / heavy SKILL pattern guide.
+Thin command / heavy SKILL pattern guide for creating slash commands.
