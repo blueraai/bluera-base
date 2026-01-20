@@ -4,7 +4,7 @@
 
 ## Using @includes in your CLAUDE.md
 
-Create a `CLAUDE.md` in your project root:
+Create a `CLAUDE.md` in your project root. Here's a **template** - customize the scripts section for your project:
 
 ```markdown
 @bluera-base/includes/CLAUDE-BASE.md

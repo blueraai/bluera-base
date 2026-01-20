@@ -76,7 +76,7 @@ flowchart LR
 
 ### Version Tool Detection Order
 
-1. **Makefile:** `make release:patch`, `make version:patch`, or `make release BUMP=patch`
+1. **Makefile:** `make release:patch`, `make version:patch`, or `make release BUMP=patch` (requires targets named `release:patch:` or `release:` with BUMP variable)
 2. **JS/TS scripts:** `bun/pnpm/yarn/npm run version:patch` or `release:patch`
 3. **Python Poetry:** `poetry version patch`
 4. **Python Hatch:** `hatch version patch`
@@ -85,6 +85,8 @@ flowchart LR
 7. **JS/TS fallback:** `npm version patch`
 
 The `block-manual-release.sh` hook prevents bypassing this workflow by blocking direct version/release commands.
+
+**Hook bypass:** Version commands require `__SKILL__=release` prefix (e.g., `__SKILL__=release bun run version:patch`). The `/bluera-base:release` command handles this automatically.
 
 ---
 
