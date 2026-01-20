@@ -135,7 +135,7 @@ detect_runner() {
   if [ -f "bun.lockb" ]; then echo "bun"
   elif [ -f "yarn.lock" ]; then echo "yarn"
   elif [ -f "pnpm-lock.yaml" ]; then echo "pnpm"
-  else echo "npx"
+  else echo "npm"
   fi
 }
 

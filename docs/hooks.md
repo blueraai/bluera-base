@@ -99,6 +99,8 @@ Prevents bypassing the release workflow by blocking direct version/release comma
 
 Use `/bluera-base:release` instead for standardized releases.
 
+Also blocks `git commit --no-verify` to enforce pre-commit hooks (CLAUDE-BASE.md rule).
+
 ---
 
 ## milhouse-stop.sh

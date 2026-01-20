@@ -28,7 +28,7 @@ Launches 5 parallel agents to independently review your codebase:
 1. **CLAUDE.md compliance** - Check code follows all CLAUDE.md guidelines
 2. **Bug scan** - Look for obvious bugs, error handling issues
 3. **Git history context** - Use blame/history to identify patterns
-4. **Previous PR comments** - Check closed PRs for applicable feedback
+4. **Previous PR comments** - Check closed PRs for applicable feedback (requires gh CLI)
 5. **Code comment compliance** - Ensure TODO/FIXME notes are addressed
 
 Each issue gets a confidence score (0-100). Only issues scoring >= 80 are reported.

@@ -6,7 +6,7 @@ Pattern guide for creating slash commands in bluera-base plugins.
 
 Commands should be **thin** (~20-30 lines) with details in the SKILL.md.
 
-> **Exception:** Some commands are intentionally self-contained (100+ lines) due to their complexity or need for isolated context. These include `code-review`, `test-plugin`, `config`, `explain`, `help`, `init`, `worktree`, `audit-plugin`, `analyze-config`, `todo`, and `clean`. Many use `context: fork` for isolation. The thin command pattern is aspirational for new commands; existing heavy commands may be refactored over time.
+> **Exception:** Some commands are intentionally self-contained (100+ lines) due to their complexity or need for isolated context. These include `code-review`, `test-plugin`, `config`, `explain`, `help`, `init`, `worktree`, `audit-plugin`, `analyze-config`, `todo`, and `clean`. Some use `context: fork` for isolation. The thin command pattern is aspirational for new commands; existing heavy commands may be refactored over time.
 
 ### Command Structure
 

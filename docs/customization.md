@@ -27,7 +27,7 @@ Add project-specific hooks in your `.claude/settings.local.json`:
         "matcher": "Bash",
         "hooks": [{
           "type": "command",
-          "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/my-custom-hook.sh\""
+          "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.sh"
         }]
       }
     ]

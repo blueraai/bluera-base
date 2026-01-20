@@ -204,7 +204,7 @@ Track hashes of failure output. If the same failure repeats N times, stop:
 ```bash
 FAILURE_HASH=$(echo "$GATE_FAILURE_OUTPUT" | md5 -q)
 
-# Count consecutive identical hashes
+# Count repeated identical hashes
 HASH_COUNT=$(echo "$FAILURE_HASHES" | grep -o "\"$FAILURE_HASH\"" | wc -l)
 
 if [[ "$HASH_COUNT" -ge "$STUCK_LIMIT" ]]; then
@@ -286,7 +286,7 @@ After compaction, Claude may "forget" CLAUDE.md guidance until explicitly re-rea
 **1. SessionStart Context Injection**
 
 ```bash
-# hooks/session-setup.sh
+# hooks/session-start-inject.sh
 CRITICAL_INVARIANTS=$(cat << 'EOF'
 Critical project rules:
 - Always run tests before commit
