@@ -26,5 +26,8 @@
     "threshold": 5,
     "minTokens": 70,
     "minLines": 5
+  },
+  "strictTyping": {
+    "enabled": false
   }
 }

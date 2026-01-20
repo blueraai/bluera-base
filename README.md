@@ -96,10 +96,15 @@ claude --plugin-dir /path/to/bluera-base
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
+| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, export env vars |
+| `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
+| `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
+| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
+| `session-end-learn.sh` | Stop | Consolidate learnings at session end |
+| `dry-scan.sh` | Stop | Scan for code duplication at session end |
 | `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
@@ -147,6 +152,8 @@ claude --plugin-dir /path/to/bluera-base
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets and barista integration |
+| `auto-learn` | Auto-learning pattern detection and consolidation |
+| `claude-cleaner` | Diagnose slow startup and guide cleanup |
 
 → [Full skills documentation](docs/skills.md)
 

@@ -77,8 +77,9 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc.
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
-  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-ignore`, `@ts-nocheck`
-  - Python: blocks `Any`, `type: ignore` without error code, `cast()`
+  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`; allows `@ts-ignore` with 10+ char explanation
+  - Python: blocks `Any`, `cast()`; allows `type: ignore` with error code (e.g., `[code]`)
+  - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses on specific lines
 
 Exit code 2 blocks the operation and shows the error to Claude.
 

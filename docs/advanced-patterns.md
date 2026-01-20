@@ -286,7 +286,7 @@ After compaction, Claude may "forget" CLAUDE.md guidance until explicitly re-rea
 **1. SessionStart Context Injection**
 
 ```bash
-# hooks/session-start.sh
+# hooks/session-setup.sh
 CRITICAL_INVARIANTS=$(cat << 'EOF'
 Critical project rules:
 - Always run tests before commit
