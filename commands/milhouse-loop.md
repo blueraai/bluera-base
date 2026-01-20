@@ -1,7 +1,7 @@
 ---
 description: "Start iterative development loop (milhouse)"
 argument-hint: "<prompt-file> [--max-iterations N] [--promise TEXT] [--gate CMD] [--stuck-limit N] [--init-harness]"
-allowed-tools: ["Bash(${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-setup.sh:*)"]
+allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-setup.sh:*)
 hide-from-slash-command-tool: "true"
 ---
 

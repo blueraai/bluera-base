@@ -6,16 +6,18 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 
 | Skill | Purpose |
 |-------|---------|
-| `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `auto-learn` | Automatic learning from session patterns |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
-| `release` | Release workflow with multi-language version bumping |
-| `milhouse` | Iterative development loop documentation |
+| `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
-| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `code-review-repo` | Multi-agent codebase review with confidence scoring |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
+| `milhouse` | Iterative development loop documentation |
+| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `release` | Release workflow with multi-language version bumping |
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
-| `statusline` | Status line configuration with presets and barista integration |
+| `statusline` | Status line configuration with presets |
 
 ---
 
@@ -190,4 +192,3 @@ Configures Claude Code's terminal status line with:
 
 - Preset configurations (minimal, verbose, developer)
 - Custom format strings
-- Barista integration for advanced displays

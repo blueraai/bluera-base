@@ -1,6 +1,8 @@
 # bluera-base plugin audit + upgrade spec
 
-_Date: 2026-01-15_  
+> **⚠️ HISTORICAL DOCUMENT**: This spec was written during early development (v0.1.0 → v0.2.0). Many recommendations have been implemented or superseded. Refer to current source files and [docs/](.) for accurate information.
+
+_Date: 2026-01-15_
 _Target plugin version: 0.2.0 (from 0.1.0)_
 
 This document is a **work spec** for improving the `bluera-base` Claude Code plugin based on the audited files:

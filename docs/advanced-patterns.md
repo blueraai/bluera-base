@@ -76,6 +76,8 @@ description: Show state bus status
 - Latest diff: !`jq -r '.pointers.latest_diff // "(none)"' "$MY_STATE_FILE"`
 ```
 
+> **Note**: The `!`` prefix in command markdown files is intentional—it executes shell commands within the command context. This differs from general markdown where this pattern should be avoided.
+
 ---
 
 ## Loop Patterns (Milhouse/Ralph Wiggum)

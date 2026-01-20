@@ -68,7 +68,7 @@ STATE_DIR="${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/state"
 **Solution**: Remove corrupted state and restart:
 
 ```bash
-rm -rf .bluera/bluera-base/state/milhouse-loop.md
+rm -rf .bluera/bluera-base/state/bluera-base:milhouse-loop.md
 ```
 
 ### Atomic State Writes
@@ -174,7 +174,13 @@ STATE_DIR="${BLUERA_STATE_DIR:-${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/stat
        "PreToolUse": [
          {
            "matcher": "Bash",
-           "command": "${CLAUDE_PLUGIN_ROOT}/hooks/my-hook.sh"
+           "hooks": [
+             {
+               "type": "command",
+               "command": "${CLAUDE_PLUGIN_ROOT}/hooks/my-hook.sh",
+               "timeout": 5
+             }
+           ]
          }
        ]
      }
@@ -343,7 +349,7 @@ ls ~/.claude/plugins/cache/
 
 ```bash
 # View milhouse state
-cat .bluera/bluera-base/state/milhouse-loop.md
+cat .bluera/bluera-base/state/bluera-base:milhouse-loop.md
 
 # View config
 cat .bluera/bluera-base/config.json

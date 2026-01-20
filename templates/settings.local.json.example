@@ -41,5 +41,31 @@
       "Bash(git push --force *)",
       "Bash(rm -rf /)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "# Post-edit validation (provided by bluera-base plugin hooks)",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "# Desktop notifications (provided by bluera-base plugin hooks)",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   }
 }

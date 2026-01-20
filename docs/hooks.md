@@ -7,9 +7,14 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 | Hook | Event | Purpose |
 |------|-------|---------|
 | `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions |
+| `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
+| `pre-compact.sh` | PreCompact | Preserve state before context compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
+| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
+| `session-end-learn.sh` | Stop | Consolidate learnings at session end |
+| `dry-scan.sh` | Stop | Scan for code duplication at session end |
 | `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop if uncommitted changes exist (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
@@ -43,30 +48,27 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 ### JavaScript/TypeScript
 
 - Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
-- Runs ESLint with `--fix` on modified files
-- Type-checks with `tsc --noEmit` if tsconfig.json exists
+- Runs project lint script: `$runner run lint --quiet`
+- Runs project typecheck: `typecheck`, `type-check`, or `tsc` scripts
+- Falls back to `tsc --noEmit` if tsconfig.json exists with no script
 
 ### Python
 
-- Runs `ruff check --fix` (preferred) or `flake8`
-- Type-checks with `mypy` if pyproject.toml/mypy.ini exists
+- Runs `poetry run lint` or `ruff check` (read-only, no auto-fix)
+- Type-checks with `mypy` if configured
 
 ### Rust
 
-- Auto-formats with `cargo fmt`
-- Runs `cargo clippy` for linting
+- Runs `cargo clippy` for linting (errors only)
 - Runs `cargo check` for compile errors
-
-### Go
-
-- Runs `golangci-lint` (preferred) or `go vet`
 
 ### All Languages
 
-- Anti-pattern detection: blocks `fallback`, `deprecated`, `backward compatibility`, `legacy`
-- Strict typing (opt-in via `/bluera-base:config enable strict-typing`):
+- **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
+- **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc.
+- **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-ignore`, `@ts-nocheck`
-  - Python: blocks `Any`, `type: ignore` without code, `cast()`
+  - Python: blocks `Any`, `type: ignore` without error code, `cast()`
 
 Exit code 2 blocks the operation and shows the error to Claude.
 
@@ -109,6 +111,36 @@ Sends cross-platform notifications for long-running operations:
 - **macOS**: Uses `osascript` for native notifications
 - **Linux**: Uses `notify-send`
 - **Windows**: Uses PowerShell toast notifications
+
+---
+
+## session-start-inject.sh
+
+Injects critical context and invariants into every session via `additionalContext` in the hook output.
+
+---
+
+## pre-compact.sh
+
+Runs before context compaction (`/compact`) to preserve important state that might be lost during summarization.
+
+---
+
+## observe-learning.sh
+
+Observes Bash commands during the session to identify patterns for auto-learning. Part of the auto-learn feature.
+
+---
+
+## session-end-learn.sh
+
+Consolidates patterns observed during the session into learnings. Part of the auto-learn feature.
+
+---
+
+## dry-scan.sh
+
+Scans for code duplication at session end using `jscpd`. Reports duplicates that could be refactored.
 
 ---
 

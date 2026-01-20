@@ -1,5 +1,7 @@
 # Spec: CLAUDE.md Maintainer (slash command + Skill) for bluera-base
 
+> **⚠️ HISTORICAL DOCUMENT**: This spec was written during early development. The `/bluera-base:claude-md` command and `claude-md-maintainer` skill have been implemented. Refer to `commands/claude-md.md` and `skills/claude-md-maintainer/` for current behavior.
+
 Target repo: bluera-base Claude Code plugin (<https://github.com/blueraai/bluera-base>)
 
 ## Goal

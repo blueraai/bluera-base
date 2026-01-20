@@ -42,37 +42,55 @@ Changes take effect on Claude Code restart (no reinstall needed).
 bluera-base/
 ├── .claude-plugin/
 │   └── plugin.json               # Plugin manifest
+├── assets/
+│   └── claude.png                # Plugin icon/assets
 ├── commands/
 │   ├── analyze-config.md         # /bluera-base:analyze-config command
 │   ├── audit-plugin.md           # /bluera-base:audit-plugin command
 │   ├── cancel-milhouse.md        # /bluera-base:cancel-milhouse command
 │   ├── claude-md.md              # /bluera-base:claude-md command
+│   ├── clean.md                  # /bluera-base:clean command
 │   ├── code-review.md            # /bluera-base:code-review command
 │   ├── commit.md                 # /bluera-base:commit command
 │   ├── config.md                 # /bluera-base:config command
 │   ├── dry.md                    # /bluera-base:dry command
+│   ├── explain.md                # /bluera-base:explain command
 │   ├── harden-repo.md            # /bluera-base:harden-repo command
 │   ├── help.md                   # /bluera-base:help command
+│   ├── init.md                   # /bluera-base:init command
 │   ├── install-rules.md          # /bluera-base:install-rules command
 │   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
 │   ├── readme.md                 # /bluera-base:readme command
 │   ├── release.md                # /bluera-base:release command
 │   ├── statusline.md             # /bluera-base:statusline command
 │   ├── test-plugin.md            # /bluera-base:test-plugin command
+│   ├── todo.md                   # /bluera-base:todo command
 │   └── worktree.md               # /bluera-base:worktree command
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
+│   ├── lib/                      # Shared hook libraries
+│   ├── auto-commit.sh            # Stop hook for auto-commit
 │   ├── block-manual-release.sh   # Enforces /bluera-base:release workflow
+│   ├── dry-scan.sh               # Stop hook for duplication scan
 │   ├── milhouse-setup.sh         # Initializes milhouse loop state
 │   ├── milhouse-stop.sh          # Stop hook for milhouse iterations
 │   ├── notify.sh                 # Cross-platform notifications
+│   ├── observe-learning.sh       # PreToolUse hook for auto-learn
 │   ├── post-edit-check.sh        # Multi-language validation hook
-│   └── session-setup.sh          # SessionStart dependency check
+│   ├── pre-compact.sh            # PreCompact hook for state preservation
+│   ├── session-end-learn.sh      # Stop hook for learning consolidation
+│   ├── session-setup.sh          # SessionStart dependency check
+│   └── session-start-inject.sh   # SessionStart context injection
+├── scripts/
+│   ├── cc-cleaner-fix.py         # Claude Code cleaner fix script
+│   └── cc-cleaner-scan.py        # Claude Code cleaner scan script
 ├── skills/
-│   ├── architectural-constraints/
-│   │   └── SKILL.md.template     # Template for constraint skills
+│   ├── auto-learn/
+│   │   └── SKILL.md              # Automatic learning from sessions
 │   ├── atomic-commits/
 │   │   └── SKILL.md              # Commit guidelines
+│   ├── claude-cleaner/
+│   │   └── SKILL.md              # Diagnose slow startup
 │   ├── claude-md-maintainer/
 │   │   ├── SKILL.md              # CLAUDE.md validation skill
 │   │   ├── docs/                 # Invariants and heuristics
