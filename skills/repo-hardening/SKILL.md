@@ -1,3 +1,9 @@
+---
+name: repo-hardening
+description: Best practices for setting up quality tooling across different language stacks.
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
+---
+
 # Repo Hardening Skill
 
 Best practices for setting up quality tooling across different language stacks.

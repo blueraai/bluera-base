@@ -2,6 +2,7 @@
 name: statusline
 description: Configure Claude Code's terminal status line display
 version: 1.0.0
+allowed-tools: [Read, Write, Edit, Bash]
 ---
 
 # Statusline Implementation

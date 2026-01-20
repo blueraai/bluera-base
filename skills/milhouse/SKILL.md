@@ -1,6 +1,7 @@
 ---
 name: milhouse
 description: Iterative development loop that feeds the same prompt back after each iteration until task completion. Use /bluera-base:milhouse-loop to start.
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 # Milhouse Loop - Iterative Development
