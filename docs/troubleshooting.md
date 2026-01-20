@@ -241,6 +241,8 @@ sudo apt-get install jq
 # Download from https://stedolan.github.io/jq/download/
 ```
 
+**Note**: On macOS with Homebrew, this plugin auto-installs jq if missing. This behavior is silent and only applies to macOS+Homebrew environments.
+
 ### Permission Denied on Hook Scripts
 
 ```bash
@@ -419,6 +421,60 @@ When configuring Claude as an MCP server, use the full path:
   }
 }
 ```
+
+---
+
+## Known Upstream Issues
+
+These are known issues in Claude Code itself, not this plugin. They may affect your experience.
+
+### SessionStart Hook Shows "error" Status
+
+**GitHub issue**: [#19346](https://github.com/anthropics/claude-code/issues/19346)
+
+**Symptom**: SessionStart hooks display as "error" in the UI even when they succeed.
+
+**Reality**: This is cosmetic. Check hook output to verify actual success/failure.
+
+### CLAUDE_ENV_FILE Inconsistency
+
+**GitHub issue**: [#19357](https://github.com/anthropics/claude-code/issues/19357)
+
+**Symptom**: `CLAUDE_ENV_FILE` may be empty or missing in certain contexts.
+
+**Workaround**: Always implement fallbacks (see Environment Variable Issues section above).
+
+### Plugin Marketplace Cache
+
+**GitHub issue**: [#16866](https://github.com/anthropics/claude-code/issues/16866)
+
+**Symptom**: Plugin updates don't appear after version bump.
+
+**Solution**: Run `/plugin marketplace update <marketplace>` or clear `~/.claude/plugins/cache`.
+
+### First-Launch Race Condition
+
+**GitHub issue**: [#19275](https://github.com/anthropics/claude-code/issues/19275)
+
+**Symptom**: Plugins may not fully initialize on first launch after install.
+
+**Workaround**: Restart Claude Code session after installing new plugins.
+
+### Compaction May Lose Settings
+
+**GitHub issue**: [#19062](https://github.com/anthropics/claude-code/issues/19062)
+
+**Symptom**: Claude may forget CLAUDE.md guidance after `/compact`.
+
+**Workaround**: See Compaction Issues section above.
+
+### Windows Plugin UX
+
+**GitHub issue**: [#9426](https://github.com/anthropics/claude-code/issues/9426)
+
+**Symptom**: Various plugin-related UX issues on Windows.
+
+**Status**: Improvements ongoing. Consider WSL for more consistent behavior.
 
 ---
 
