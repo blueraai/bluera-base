@@ -21,6 +21,36 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 
 ---
 
+## auto-learn
+
+Automatically detects recurring command patterns during sessions and suggests learnings for CLAUDE.md.
+
+### How It Works
+
+1. **Observe**: Tracks Bash commands during the session (PreToolUse hook)
+2. **Synthesize**: At session end, analyzes patterns (Stop hook)
+3. **Apply/Suggest**: Writes to CLAUDE.md or shows suggestions based on mode
+
+### Configuration
+
+```bash
+# Enable (opt-in, disabled by default)
+/bluera-base:config enable auto-learn
+
+# Set mode: suggest (default) or auto
+/bluera-base:config set .autoLearn.mode auto
+```
+
+| Option | Values | Default | Description |
+|--------|--------|---------|-------------|
+| Mode | `suggest`/`auto` | `suggest` | Show suggestions vs auto-write |
+| Threshold | number | `3` | Occurrences before acting |
+| Target | `local`/`shared` | `local` | CLAUDE.local.md vs CLAUDE.md |
+
+See `skills/auto-learn/SKILL.md` for full documentation.
+
+---
+
 ## code-review-repo
 
 Launches 5 parallel agents to independently review your codebase:

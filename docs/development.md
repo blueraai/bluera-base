@@ -69,6 +69,7 @@ bluera-base/
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
 │   ├── lib/                      # Shared hook libraries
+│   │   └── tests/                # Shell script tests
 │   ├── auto-commit.sh            # Stop hook for auto-commit
 │   ├── block-manual-release.sh   # Enforces /bluera-base:release workflow
 │   ├── dry-scan.sh               # Stop hook for duplication scan
@@ -85,6 +86,8 @@ bluera-base/
 │   ├── cc-cleaner-fix.py         # Claude Code cleaner fix script
 │   └── cc-cleaner-scan.py        # Claude Code cleaner scan script
 ├── skills/
+│   ├── architectural-constraints/
+│   │   └── SKILL.md.template     # Template for project-specific constraints
 │   ├── auto-learn/
 │   │   └── SKILL.md              # Automatic learning from sessions
 │   ├── atomic-commits/

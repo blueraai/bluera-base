@@ -79,7 +79,7 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`
   - Python: blocks `Any`, `cast()`
-  - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses on specific lines
+  - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses `any`/`as`/`Any`/`cast()` only
   - **Note:** `@ts-ignore` and `type: ignore` enforcement is currently non-functional due to regex incompatibility
 
 Exit code 2 blocks the operation and shows the error to Claude.

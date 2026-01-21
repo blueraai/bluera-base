@@ -24,7 +24,7 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 |---------|-------------|-------------|---------|
 | `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits | OFF |
 | `auto-commit` | `.autoCommit.enabled` | Prompt to commit on session stop | OFF |
-| `auto-push` | `.autoCommit.push` | Push to remote after auto-commit | OFF |
+| `auto-push` | `.autoCommit.push` | Add push instruction to commit prompt | OFF |
 | `notifications` | `.notifications.enabled` | Desktop notifications on prompts | ON |
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate detection | OFF |
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on stop | OFF |
@@ -74,7 +74,7 @@ Runtime state in `.bluera/bluera-base/state/`:
 
 | File | Purpose |
 |------|---------|
-| `milhouse-loop.md` | Active milhouse loop state |
+| `bluera-base:milhouse-loop.md` | Active milhouse loop state |
 | `session-signals.json` | Learning observation data |
 | `dry-report.md` | Last DRY scan report |
 | `jscpd-report.json` | Raw jscpd output |
