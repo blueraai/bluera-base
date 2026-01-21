@@ -209,7 +209,7 @@ Default coverage threshold: **80%** (user-configurable)
 
 | Lockfile | Runner Used |
 |----------|-------------|
-| `bun.lockb` | `bun` |
+| `bun.lockb` or `bun.lock` | `bun` |
 | `yarn.lock` | `yarn` |
 | `pnpm-lock.yaml` | `pnpm` |
 | (none or `package-lock.json`) | `npm` |

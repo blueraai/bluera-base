@@ -54,7 +54,7 @@ Show only the Configuration section.
 /bluera-base:commit
 
 # Start iterative development loop
-/bluera-base:milhouse-loop "implement feature X"
+/bluera-base:milhouse-loop --inline "implement feature X"
 
 # Review code for issues
 /bluera-base:code-review
@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (17 total)
+## Commands (21 total)
 
 ### Development & Iteration
 
@@ -76,6 +76,7 @@ Show only the Configuration section.
 | `/bluera-base:release` | Cut releases with conventional commits auto-detection |
 | `/bluera-base:milhouse-loop` | Start iterative development loop |
 | `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
+| `/bluera-base:todo` | Manage project TODO tasks (show, add, complete) |
 
 ### Project Setup
 
@@ -83,6 +84,7 @@ Show only the Configuration section.
 |---------|-------------|
 | `/bluera-base:config` | Manage plugin configuration |
 | `/bluera-base:harden-repo` | Set up git hooks, linters, formatters |
+| `/bluera-base:init` | Initialize a project with bluera-base conventions |
 | `/bluera-base:install-rules` | Install rule templates to `.claude/rules/` |
 
 ### Documentation
@@ -98,6 +100,7 @@ Show only the Configuration section.
 |---------|-------------|
 | `/bluera-base:analyze-config` | Analyze repo's `.claude/**` for overlap |
 | `/bluera-base:audit-plugin` | Audit a Claude Code plugin against best practices |
+| `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
 
 ### Git & Workflows
@@ -112,29 +115,33 @@ Show only the Configuration section.
 
 | Command | Description |
 |---------|-------------|
+| `/bluera-base:explain` | Explain all bluera-base plugin functionality |
 | `/bluera-base:help` | Show this help (you are here) |
 
 ---
 
-## Skills (9 total)
+## Skills (12 total)
 
 Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
 
 | Skill | Description |
 |-------|-------------|
 | `@atomic-commits` | Atomic commit creation with grouping rules |
-| `@code-review-repo` | Multi-agent code review patterns |
-| `@release` | Release workflow with CI monitoring |
-| `@milhouse` | Iterative development loop guidance |
+| `@auto-learn` | Automatic learning from session patterns |
+| `@claude-cleaner` | Diagnose slow startup and guide cleanup |
 | `@claude-md-maintainer` | CLAUDE.md structure and validation |
-| `@readme-maintainer` | README.md formatting and structure |
-| `@repo-hardening` | Security and quality tool setup |
-| `@large-file-refactor` | Breaking apart files that exceed token limits |
+| `@code-review-repo` | Multi-agent code review patterns |
 | `@dry-refactor` | DRY refactoring patterns by language |
+| `@large-file-refactor` | Breaking apart files that exceed token limits |
+| `@milhouse` | Iterative development loop guidance |
+| `@readme-maintainer` | README.md formatting and structure |
+| `@release` | Release workflow with CI monitoring |
+| `@repo-hardening` | Security and quality tool setup |
+| `@statusline` | Status line configuration with presets |
 
 ---
 
-## Hooks (10 total)
+## Hooks (11 total)
 
 Hooks run automatically on specific events. No action required.
 
@@ -153,7 +160,7 @@ Hooks run automatically on specific events. No action required.
 |------|-------|-------------|
 | `block-manual-release.sh` | PreToolUse:Bash | Block manual version bumps (use /bluera-base:release) |
 | `post-edit-check.sh` | PostToolUse:Write\|Edit | Validate file changes |
-| `observe-learning.sh` | PostToolUse:Bash | Track commands for learning |
+| `observe-learning.sh` | PreToolUse:Bash | Track commands for learning |
 
 ### Notifications
 
@@ -165,6 +172,7 @@ Hooks run automatically on specific events. No action required.
 
 | Hook | Event | Description |
 |------|-------|-------------|
+| `auto-commit.sh` | Stop | Prompt to commit if uncommitted changes (opt-in) |
 | `milhouse-stop.sh` | Stop | Continue milhouse loop if active |
 | `dry-scan.sh` | Stop | Run DRY scan if enabled |
 

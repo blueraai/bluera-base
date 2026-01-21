@@ -15,4 +15,4 @@ These rules MUST be followed in every response. They are re-injected after /comp
 - Skip error handling in new code
 
 ---
-*Keep this file under 15 lines. It's injected into every session.*
+*Keep this file under 20 lines. It's injected into every session.*

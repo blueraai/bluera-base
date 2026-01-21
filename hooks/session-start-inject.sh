@@ -15,6 +15,12 @@ if [[ ! -f "$INVARIANTS_FILE" ]]; then
   exit 0
 fi
 
+# Check jq availability
+if ! command -v jq &>/dev/null; then
+  echo "[bluera-base] Warning: jq not available, skipping context injection" >&2
+  exit 0
+fi
+
 # Read invariants content
 CONTENT=$(cat "$INVARIANTS_FILE")
 

@@ -139,8 +139,11 @@ bluera_autolearn_write() {
 
     # Insert learning before END marker using sed
     # Note: Using | as delimiter since learning text won't contain it
-    sed -i '' "s|$BLUERA_LEARN_END|- $learning\\
-$BLUERA_LEARN_END|" "$target_file"
+    # Use temp file for portability (works on both BSD and GNU sed)
+    local tmp_file
+    tmp_file=$(mktemp)
+    sed "s|$BLUERA_LEARN_END|- $learning\\
+$BLUERA_LEARN_END|" "$target_file" > "$tmp_file" && mv "$tmp_file" "$target_file"
 
     return 0
 }

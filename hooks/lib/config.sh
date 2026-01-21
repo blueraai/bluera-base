@@ -97,12 +97,19 @@ bluera_load_config() {
 }
 
 # Get a config value by JSON path
-# Usage: value=$(bluera_get_config ".autoLearn.enabled")
+# Usage: value=$(bluera_get_config ".autoLearn.enabled" "default_value")
 bluera_get_config() {
   local path="$1"
+  local default="${2:-}"
   local config
   config=$(bluera_load_config)
-  echo "$config" | jq -r "$path // empty"
+  local value
+  value=$(echo "$config" | jq -r "$path // empty")
+  if [[ -z "$value" ]] && [[ -n "$default" ]]; then
+    echo "$default"
+  else
+    echo "$value"
+  fi
 }
 
 # Check if a config value is true
