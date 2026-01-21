@@ -69,7 +69,7 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 }
 ```
 
-> **Note:** `milhouse.*` defaults are currently hard-coded in the hook; config values are planned but unused. The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook. The `autoCommit.remote` field is defined but currently unused.
+> **Note:** `milhouse.*` defaults are currently hard-coded in the hook; config values are planned but unused. The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook. The `autoCommit.remote` and `notifications.enabled` fields are defined but currently unused.
 
 ## State Files
 

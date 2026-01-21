@@ -73,7 +73,14 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 
 TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pattern detection only)
 
-### All Source Files
+### Makefile
+
+- Runs `make lint` if Makefile has a `lint:` target
+- Runs `make typecheck` if Makefile has a `typecheck:` target
+
+### Source File Checks
+
+Applies to: `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.py`, `.pyi`, `.rs`, `.go`
 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Only checks added lines in tracked files; untracked files skip this check)
@@ -91,7 +98,7 @@ Exit code 2 blocks the operation and shows the error to Claude.
 
 Prevents bypassing the release workflow by blocking direct version/release commands:
 
-- **npm/yarn/pnpm/bun:** `npm version`, `yarn version`, `pnpm version`, `bun version`
+- **npm/yarn/pnpm/bun:** `npm version`, `npm run release`, and equivalent yarn/pnpm/bun commands
 - **Python:** `poetry version`, `bump2version`, `hatch version`
 - **Rust:** `cargo release`
 - **Git-based:** `git tag v[0-9]...`, `gh release create`
