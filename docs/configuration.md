@@ -9,6 +9,7 @@ Bluera Base uses a hierarchical configuration system supporting both shared (tea
 | `.bluera/bluera-base/config.json` | Shared team config | Committed |
 | `.bluera/bluera-base/config.local.json` | Personal overrides | Ignored |
 | `.bluera/bluera-base/state/` | Runtime state (loops, signals) | Ignored |
+| `.bluera/bluera-knowledge/` | Bluera Knowledge plugin data | Ignored |
 
 ## Config Priority
 
@@ -68,7 +69,7 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 }
 ```
 
-> **Note:** `milhouse.*` defaults are currently hard-coded in the hook; config values are planned but unused. The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook.
+> **Note:** `milhouse.*` defaults are currently hard-coded in the hook; config values are planned but unused. The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook. The `autoCommit.remote` field is defined but currently unused.
 
 ## State Files
 

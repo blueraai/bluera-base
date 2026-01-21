@@ -49,7 +49,7 @@ flowchart LR
 
 ## post-edit-check.sh
 
-On every Write/Edit operation, the hook auto-detects your project type and runs appropriate checks.
+On every Write/Edit operation, the hook auto-detects your project type and runs appropriate checks. Lint and typecheck run at most once per 30 seconds to avoid slowing down frequent edits.
 
 ### JavaScript/TypeScript
 
@@ -79,7 +79,7 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`
   - Python: blocks `Any`, `cast()`
-  - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses `any`/`as`/`Any`/`cast()` only
+  - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses strict typing AND lint suppression checks on that line
   - **Note:** `@ts-ignore` and `type: ignore` enforcement is currently non-functional due to regex incompatibility
 
 Exit code 2 blocks the operation and shows the error to Claude.
@@ -129,7 +129,7 @@ Sends cross-platform desktop notifications when Claude Code needs your attention
 - **Idle prompts** - Waiting for user input
 - **Elicitation dialogs** - Input requested
 
-Platforms: macOS (`osascript`), Linux (`notify-send`), Windows (PowerShell toast)
+Platforms: macOS (`terminal-notifier` or `osascript`), Linux (`notify-send` or `kdialog`), Windows (PowerShell toast)
 
 ---
 
