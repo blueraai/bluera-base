@@ -51,6 +51,23 @@ See `skills/auto-learn/SKILL.md` for full documentation.
 
 ---
 
+## claude-cleaner
+
+Diagnoses slow Claude Code startup by scanning for excessive files in `.claude/` directories.
+
+### Usage
+
+```bash
+/bluera-base:clean scan              # Scan for issues
+/bluera-base:clean fix <action>      # Fix specific issue
+/bluera-base:clean backups list      # List available backups
+/bluera-base:clean backups restore   # Restore from backup
+```
+
+See `skills/claude-cleaner/SKILL.md` for full documentation.
+
+---
+
 ## code-review-repo
 
 Launches 5 parallel agents to independently review your codebase:

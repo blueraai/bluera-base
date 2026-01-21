@@ -6,7 +6,7 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, update .gitignore, export BLUERA_* env vars |
+| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, update .gitignore, export BLUERA_STATE_DIR/BLUERA_CONFIG/BLUERA_PROJECT_DIR env vars |
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
@@ -93,7 +93,7 @@ Prevents bypassing the release workflow by blocking direct version/release comma
 - **npm/yarn/pnpm/bun:** `npm version`, `yarn version`, `pnpm version`, `bun version`
 - **Python:** `poetry version`, `bump2version`, `hatch version`
 - **Rust:** `cargo release`
-- **Git-based:** `git tag v*`, `gh release create`
+- **Git-based:** `git tag v[0-9]...`, `gh release create`
 
 **Not blocked:** Makefile-based releases (`make release`, `make version`) are not detected.
 
@@ -148,9 +148,9 @@ Validates `.claude/critical-invariants.md` size before compaction and reminds th
 The critical invariants feature helps maintain important rules across compaction:
 
 1. Create `.claude/critical-invariants.md` with your must-follow rules (5-15 lines recommended)
-2. The `session-start-inject.sh` hook injects these into every session
+2. The `session-start-inject.sh` hook injects these into every session via `additionalContext`
 3. The `pre-compact.sh` hook validates size and confirms re-injection will occur
-4. After compaction, invariants are automatically re-injected to prevent drift
+4. After compaction, invariants are re-injected when the session resumes (via SessionStart `additionalContext`)
 
 Example invariants file:
 

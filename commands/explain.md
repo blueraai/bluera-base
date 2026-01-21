@@ -190,18 +190,18 @@ brew install terminal-notifier
 
 ### Auto-Commit
 
-**What it does:** Automatically commits uncommitted changes when your Claude session ends, using the atomic commit workflow.
+**What it does:** Prompts you to commit uncommitted changes when your Claude session ends, using the atomic commit workflow.
 
-**Why you'd want it:** Never lose work because you forgot to commit before ending a session. Changes are committed with proper conventional commit messages.
+**Why you'd want it:** Never lose work because you forgot to commit before ending a session. You can then commit changes with proper conventional commit messages.
 
 **How to use:**
 
 ```bash
-/bluera-base:config enable auto-commit     # Commit on session end
-/bluera-base:config enable auto-push       # Also push after commit
+/bluera-base:config enable auto-commit     # Prompt on session end
+/bluera-base:config enable auto-push       # Add push instruction to prompt
 ```
 
-**What you'll see:** When you end a session with uncommitted changes, they're automatically committed (and optionally pushed).
+**What you'll see:** When you end a session with uncommitted changes, you're prompted to run `/bluera-base:commit` (and optionally push).
 
 **Default:** Disabled
 

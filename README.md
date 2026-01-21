@@ -105,7 +105,7 @@ claude --plugin-dir /path/to/bluera-base
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end |
-| `auto-commit.sh` | Stop | Triggers `/bluera-base:commit` on session stop (opt-in) |
+| `auto-commit.sh` | Stop | Prompts to run `/bluera-base:commit` on session stop (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 → [Full hooks documentation](docs/hooks.md)
@@ -119,9 +119,9 @@ claude --plugin-dir /path/to/bluera-base
 | `/code-review` | | Multi-agent codebase review |
 | `/release` | | Cut release with conventional commits and CI monitoring |
 | `/config` | `[show\|init\|set\|enable\|disable\|reset\|status] [key] [value]` | Manage plugin configuration |
-| `/milhouse-loop` | `<prompt-file> [--max-iterations N] [--promise TEXT] [--gate CMD]` | Start iterative development loop |
+| `/milhouse-loop` | `<prompt-file> [--inline TEXT] [--max-iterations N] [--promise TEXT] [--gate CMD] [--stuck-limit N] [--init-harness]` | Start iterative development loop |
 | `/cancel-milhouse` | | Cancel active milhouse loop |
-| `/clean` | `[scan\|fix <action>] [--confirm] [--days N]` | Diagnose slow startup and guide cleanup |
+| `/clean` | `[scan\|fix <action>\|backups <list\|restore>] [--confirm] [--days N]` | Diagnose slow startup and guide cleanup |
 | `/install-rules` | | Install rule templates to `.claude/rules/` |
 | `/claude-md` | `<audit\|init\|learn> [options]` | Audit and maintain CLAUDE.md files |
 | `/readme` | `<beautify\|breakout> [instructions]` | Maintain README.md with GitHub formatting |
@@ -151,7 +151,7 @@ claude --plugin-dir /path/to/bluera-base
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
-| `statusline` | Status line configuration with presets and barista integration |
+| `statusline` | Status line configuration with presets |
 | `auto-learn` | Auto-learning pattern detection and consolidation |
 | `claude-cleaner` | Diagnose slow startup and guide cleanup |
 
@@ -176,9 +176,8 @@ The hook automatically detects and validates:
 | Language | Detection | Linter | Type Checker |
 |----------|-----------|--------|--------------|
 | **JavaScript/TypeScript** | `package.json` | ESLint | tsc |
-| **Python** | `pyproject.toml`, `requirements.txt`, `setup.py` | ruff / flake8 | mypy |
+| **Python** | `pyproject.toml` | ruff | mypy |
 | **Rust** | `Cargo.toml` | cargo clippy | cargo check |
-| **Go** | `go.mod` | golangci-lint / go vet | - |
 
 ### Repo Hardening
 
@@ -213,7 +212,7 @@ Default coverage threshold: **80%** (user-configurable)
 | `bun.lockb` | `bun` |
 | `yarn.lock` | `yarn` |
 | `pnpm-lock.yaml` | `pnpm` |
-| (none or `package-lock.json`) | `npx` |
+| (none or `package-lock.json`) | `npm` |
 
 ---
 

@@ -101,6 +101,8 @@ Run validation after file edits.
 
 **Purpose**: Auto-lint and type-check after Write/Edit operations.
 
+> **Note:** This is a simplified example. The actual bluera-base `post-edit-check.sh` treats lint/typecheck as advisory (non-blocking) and includes rate limiting to avoid running on every edit.
+
 ```bash
 #!/bin/bash
 # hooks/post-edit-check.sh

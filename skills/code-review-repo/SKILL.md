@@ -2,7 +2,7 @@
 name: code-review-repo
 description: Review local codebase for bugs and CLAUDE.md compliance using multi-agent analysis
 version: 1.0.0
-allowed-tools: [Read, Glob, Grep, Task, Bash(git:*)]
+allowed-tools: [Read, Glob, Grep, Task, Bash(git:*), Bash(gh:*)]
 ---
 
 # Local Code Review

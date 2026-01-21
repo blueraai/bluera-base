@@ -181,13 +181,12 @@ Use AskUserQuestion:
 ```text
 ## Auto-Commit
 
-Automatically commit uncommitted changes when session ends.
+Prompt to commit uncommitted changes when session ends.
 
 Technical details:
-- Uses /bluera-base:commit skill for atomic, well-formatted commits
-- Triggered by Stop hook
-- Optional: also push to remote after commit
-- Configurable remote (default: "origin")
+- Stop hook blocks exit and prompts you to run /bluera-base:commit
+- Uses atomic commit skill for well-formatted commits
+- Optional: add push instruction to the prompt
 ```
 
 Use AskUserQuestion:

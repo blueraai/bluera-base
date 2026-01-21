@@ -68,6 +68,8 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 }
 ```
 
+> **Note:** `milhouse.*` defaults are currently hard-coded in the hook; config values are planned but unused. The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook.
+
 ## State Files
 
 Runtime state in `.bluera/bluera-base/state/`:
@@ -75,9 +77,12 @@ Runtime state in `.bluera/bluera-base/state/`:
 | File | Purpose |
 |------|---------|
 | `bluera-base:milhouse-loop.md` | Active milhouse loop state |
+| `milhouse-plan.md` | Plan file when `--init-harness` used |
+| `milhouse-activity.md` | Activity log when `--init-harness` used |
 | `session-signals.json` | Learning observation data |
 | `dry-report.md` | Last DRY scan report |
 | `jscpd-report.json` | Raw jscpd output |
+| `auto-commit-attempted` | Flag to prevent stop-hook loops |
 
 ## See Also
 

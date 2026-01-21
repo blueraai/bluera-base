@@ -1,7 +1,7 @@
 ---
 context: fork
 description: Review codebase for bugs and CLAUDE.md compliance using multi-agent analysis
-allowed-tools: Read, Glob, Grep, Task, Bash(find:*), Bash(git:*), Bash(ls:*)
+allowed-tools: Read, Glob, Grep, Task, Bash(find:*), Bash(git:*), Bash(gh:*), Bash(ls:*)
 ---
 
 # Code Review
