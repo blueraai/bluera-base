@@ -62,6 +62,7 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 
 - Runs `poetry run lint` or `ruff check` (read-only, no auto-fix)
 - Type-checks with `mypy` if available and project uses type checking
+- Note: Only mypy execution is supported; pyright configuration is detected but not executed
 
 ### Rust
 
@@ -75,7 +76,7 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 ### All Source Files
 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
-- **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc.
+- **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Only checks added lines in tracked files; untracked files skip this check)
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`
   - Python: blocks `Any`, `cast()`

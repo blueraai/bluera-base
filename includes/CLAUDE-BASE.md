@@ -25,6 +25,8 @@ This file is YOUR (Claude's) project memory. It is NOT user documentation. It is
 
 ## Distribution Requirements (for Claude Code plugins)
 
+> **Note:** This section only applies to plugins with build steps. Pure markdown/shell plugins (like bluera-base itself) have no dist/ directory and require no build.
+
 **`dist/` MUST be committed to git** - This is intentional, not an oversight:
 
 - **Claude Code plugins are copied to a cache during installation** - no build step runs

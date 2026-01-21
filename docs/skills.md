@@ -6,6 +6,7 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 
 | Skill | Purpose |
 |-------|---------|
+| `architectural-constraints` | Template for project-specific constraints (copy to your project) |
 | `auto-learn` | Automatic learning from session patterns |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |

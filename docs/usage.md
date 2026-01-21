@@ -33,6 +33,7 @@ The `@bluera-base/includes/CLAUDE-BASE.md` pulls in:
 
 - Header explaining CLAUDE.md vs README.md
 - Hierarchical CLAUDE.md explanation
+- Distribution Requirements (for plugins with build steps)
 - ALWAYS/NEVER conventions
 
 ## Overriding Skills
