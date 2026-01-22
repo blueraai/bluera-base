@@ -6,7 +6,6 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 
 | Skill | Purpose |
 |-------|---------|
-| `architectural-constraints` | Template for project-specific constraints (copy to your project) |
 | `auto-learn` | Automatic learning from session patterns |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |
@@ -260,3 +259,15 @@ Configures Claude Code's terminal status line with:
 
 - Preset configurations (minimal, informative, developer, system, bluera)
 - Custom format strings
+
+---
+
+## Templates
+
+Templates are not active skills - they're meant to be copied to your project and customized.
+
+| Template | Purpose |
+|----------|---------|
+| `architectural-constraints` | Template for project-specific constraints (copy to your project) |
+
+See `skills/architectural-constraints/SKILL.md.template` for the template content.

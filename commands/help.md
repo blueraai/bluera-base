@@ -224,6 +224,9 @@ Manage settings with `/bluera-base:config`. Config stored in `.bluera/bluera-bas
     "threshold": 5,
     "minTokens": 70,
     "minLines": 5
+  },
+  "strictTyping": {
+    "enabled": false
   }
 }
 ```
@@ -256,4 +259,4 @@ bluera-base works with any language Claude Code supports. Language-specific feat
 - `/bluera-base:help <topic>` - Specific topic help
 - `@skill-name` - Reference skill documentation
 - `/bluera-base:config status` - Debug configuration issues
-- GitHub: <https://github.com/anthropics/bluera-base>
+- GitHub: <https://github.com/blueraai/bluera-base>
