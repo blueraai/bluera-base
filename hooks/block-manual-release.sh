@@ -22,8 +22,8 @@ fi
 
 # Block --no-verify on git commit (CLAUDE-BASE.md rule: absolute zero exceptions)
 # This is a hard block regardless of /release skill prefix
-if echo "$COMMAND" | grep -qE '\bgit\s+commit\b.*--no-verify'; then
-  echo "Blocked: git commit --no-verify is forbidden. Fix pre-commit failures; do not bypass." >&2
+if echo "$COMMAND" | grep -qE '\bgit\s+commit\b.*(--no-verify|-n\b)'; then
+  echo "Blocked: git commit --no-verify/-n is forbidden. Fix pre-commit failures; do not bypass." >&2
   exit 2
 fi
 
@@ -39,7 +39,7 @@ PY_PATTERNS='(poetry|hatch) version|bump2version'
 RUST_PATTERNS='cargo release'
 
 # Go/Generic: direct git tag creation for versions
-GIT_PATTERNS='git tag v[0-9]|gh release create'
+GIT_PATTERNS='git tag .*v[0-9]|gh release create'
 
 if echo "$COMMAND" | grep -qE "($JS_PATTERNS)|($PY_PATTERNS)|($RUST_PATTERNS)|($GIT_PATTERNS)"; then
   echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2

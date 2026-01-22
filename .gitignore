@@ -8,15 +8,14 @@ node_modules/
 # Personal notes (not committed)
 *.local.md
 
-# Bluera plugins - config and state
-# Shared config files ARE committed for team sharing
-.bluera/
+# Bluera plugins - shared config committed, local/state ignored
+.bluera/*
 !.bluera/bluera-base/
-!.bluera/bluera-base/config.json
 !.bluera/bluera-knowledge/
-!.bluera/bluera-knowledge/stores.config.json
-
-# Bluera plugins
+.bluera/bluera-base/*
+.bluera/bluera-knowledge/*
+!.bluera/bluera-base/config.json
 !.bluera/bluera-base/TODO.txt
+!.bluera/bluera-knowledge/stores.config.json
 __pycache__
 .DS_Store

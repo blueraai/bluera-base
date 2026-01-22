@@ -5,12 +5,14 @@
 # Required patterns for bluera-base
 # Order matters: ignore .bluera/, then allow specific subdirs and files
 BLUERA_GITIGNORE_PATTERNS=(
-  "# Bluera plugins"
-  ".bluera/"
+  "# Bluera plugins - shared config committed, local/state ignored"
+  ".bluera/*"
   "!.bluera/bluera-base/"
+  "!.bluera/bluera-knowledge/"
+  ".bluera/bluera-base/*"
+  ".bluera/bluera-knowledge/*"
   "!.bluera/bluera-base/config.json"
   "!.bluera/bluera-base/TODO.txt"
-  "!.bluera/bluera-knowledge/"
   "!.bluera/bluera-knowledge/stores.config.json"
 )
 
