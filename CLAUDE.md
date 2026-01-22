@@ -6,7 +6,7 @@
 
 **Use `bun`** - All scripts: `bun run <script>`
 
-No build step required - this plugin is pure markdown and shell scripts.
+No build step required - this plugin uses markdown, shell scripts, and Python utilities.
 
 ---
 
@@ -36,7 +36,7 @@ Push to main triggers:
 
 ```text
 .claude-plugin/plugin.json  - Manifest (version synced via .versionrc.json)
-commands/*.md               - Slash commands (8 total)
+commands/*.md               - Slash commands (21 total)
 skills/*/SKILL.md           - Skill documentation
 hooks/hooks.json            - Hook registration
 hooks/*.sh                  - Hook scripts

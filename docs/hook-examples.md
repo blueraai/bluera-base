@@ -193,7 +193,7 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
 fi
 
 # Check for active loop state file
-STATE_FILE=".bluera/bluera-base/state/bluera-base:milhouse-loop.md"
+STATE_FILE=".bluera/bluera-base/state/milhouse-loop.md"
 if [[ ! -f "$STATE_FILE" ]]; then
   exit 0  # No active loop
 fi

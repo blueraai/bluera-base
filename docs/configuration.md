@@ -77,7 +77,7 @@ Runtime state in `.bluera/bluera-base/state/`:
 
 | File | Purpose |
 |------|---------|
-| `bluera-base:milhouse-loop.md` | Active milhouse loop state |
+| `milhouse-loop.md` | Active milhouse loop state |
 | `milhouse-plan.md` | Plan file when `--init-harness` used |
 | `milhouse-activity.md` | Activity log when `--init-harness` used |
 | `session-signals.json` | Learning observation data |

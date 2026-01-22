@@ -37,6 +37,20 @@ esac
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}"
 ICON="$PLUGIN_ROOT/assets/claude.png"
 
+# Escape quotes for shell embedding (prevents injection and broken notifications)
+escape_for_applescript() {
+    local str="$1"
+    str="${str//\\/\\\\}"      # escape backslashes first
+    str="${str//\"/\\\"}"      # escape double quotes
+    echo "$str"
+}
+
+escape_for_powershell() {
+    local str="$1"
+    str="${str//\'/\'\'}"      # escape single quotes by doubling
+    echo "$str"
+}
+
 # Platform-specific notification
 case "$OSTYPE" in
     darwin*)
@@ -45,7 +59,9 @@ case "$OSTYPE" in
             terminal-notifier -title "$TITLE" -message "$MESSAGE" -appIcon "$ICON" -sound Glass 2>/dev/null || true
         else
             # Fallback to osascript (no custom icon support)
-            osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\" sound name \"Glass\"" 2>/dev/null || true
+            ESCAPED_TITLE=$(escape_for_applescript "$TITLE")
+            ESCAPED_MESSAGE=$(escape_for_applescript "$MESSAGE")
+            osascript -e "display notification \"$ESCAPED_MESSAGE\" with title \"$ESCAPED_TITLE\" sound name \"Glass\"" 2>/dev/null || true
         fi
         ;;
     linux-gnu*|linux*)
@@ -62,7 +78,9 @@ case "$OSTYPE" in
         ;;
     msys*|cygwin*|mingw*)
         # Windows (Git Bash, Cygwin, etc.) - use PowerShell toast notification
-        powershell.exe -Command "[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > \$null; \$xml = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent(0); \$xml.GetElementsByTagName('text')[0].AppendChild(\$xml.CreateTextNode('$TITLE')) > \$null; \$xml.GetElementsByTagName('text')[1].AppendChild(\$xml.CreateTextNode('$MESSAGE')) > \$null; [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Claude Code').Show(\$xml)" 2>/dev/null || true
+        ESCAPED_TITLE=$(escape_for_powershell "$TITLE")
+        ESCAPED_MESSAGE=$(escape_for_powershell "$MESSAGE")
+        powershell.exe -Command "[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > \$null; \$xml = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent(0); \$xml.GetElementsByTagName('text')[0].AppendChild(\$xml.CreateTextNode('$ESCAPED_TITLE')) > \$null; \$xml.GetElementsByTagName('text')[1].AppendChild(\$xml.CreateTextNode('$ESCAPED_MESSAGE')) > \$null; [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('Claude Code').Show(\$xml)" 2>/dev/null || true
         ;;
     *)
         # Fallback: just beep

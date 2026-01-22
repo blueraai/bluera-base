@@ -24,7 +24,7 @@ fi
 # Read invariants content
 CONTENT=$(cat "$INVARIANTS_FILE")
 
-# Validate size (max 15 lines / ~1000 chars to avoid context bloat)
+# Validate size (max 20 lines to avoid context bloat)
 LINE_COUNT=$(echo "$CONTENT" | wc -l | tr -d ' ')
 if [[ "$LINE_COUNT" -gt 20 ]]; then
   echo "[bluera-base] Warning: critical-invariants.md exceeds 20 lines ($LINE_COUNT). Consider trimming." >&2

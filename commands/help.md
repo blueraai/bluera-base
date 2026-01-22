@@ -149,7 +149,7 @@ Hooks run automatically on specific events. No action required.
 
 | Hook | Event | Description |
 |------|-------|-------------|
-| `session-setup.sh` | SessionStart | Initialize state directory, verify tools |
+| `session-setup.sh` | SessionStart | Check jq, fix hook permissions, update .gitignore |
 | `session-start-inject.sh` | SessionStart | Inject context into session |
 | `pre-compact.sh` | PreCompact | Preserve state before context compaction |
 | `session-end-learn.sh` | Stop | Process learning observations |

@@ -49,10 +49,10 @@ GATES:
 
 MONITORING:
   # View current iteration:
-  grep '^iteration:' .bluera/bluera-base/state/bluera-base:milhouse-loop.md
+  grep '^iteration:' .bluera/bluera-base/state/milhouse-loop.md
 
   # View full state:
-  head -10 .bluera/bluera-base/state/bluera-base:milhouse-loop.md
+  head -10 .bluera/bluera-base/state/milhouse-loop.md
 EOF
       exit 0
       ;;
@@ -132,7 +132,7 @@ fi
 # Create state file
 bluera_ensure_config_dir
 STATE_DIR="$(bluera_state_dir)"
-STATE_FILE="$STATE_DIR/bluera-base:milhouse-loop.md"
+STATE_FILE="$STATE_DIR/milhouse-loop.md"
 
 # Build gates YAML array
 GATES_YAML=""

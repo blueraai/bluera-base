@@ -21,7 +21,7 @@ source "$SCRIPT_DIR/lib/config.sh"
 source "$SCRIPT_DIR/lib/state.sh"
 
 # Check if milhouse-loop is active
-STATE_FILE="$(bluera_state_dir)/bluera-base:milhouse-loop.md"
+STATE_FILE="$(bluera_state_dir)/milhouse-loop.md"
 
 if [[ ! -f "$STATE_FILE" ]]; then
   # No active loop - allow exit

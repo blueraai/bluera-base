@@ -178,6 +178,8 @@ The hook automatically detects and validates:
 | **JavaScript/TypeScript** | `package.json` | ESLint | tsc |
 | **Python** | `pyproject.toml` | ruff | mypy |
 | **Rust** | `Cargo.toml` | cargo clippy | cargo check |
+| **Go** | `go.mod` | — | — |
+| **Makefile** | `Makefile` | make lint | make typecheck |
 
 ### Repo Hardening
 
