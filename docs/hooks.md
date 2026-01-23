@@ -85,10 +85,9 @@ Applies to: `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.py`, `.pyi`, `.rs`, 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Only checks added lines in tracked files; untracked files skip this check)
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
-  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`
-  - Python: blocks `Any`, `cast()`
+  - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`, `@ts-ignore` without 10+ char explanation
+  - Python: blocks `Any`, `cast()`, `type: ignore` without error code `[code]`
   - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses strict typing AND lint suppression checks on that line
-  - **Note:** `@ts-ignore` and `type: ignore` enforcement is currently non-functional due to regex incompatibility
 
 Exit code 2 blocks the operation and shows the error to Claude.
 
@@ -149,7 +148,7 @@ Injects critical context and invariants into every session via `additionalContex
 
 ## pre-compact.sh
 
-Validates `.claude/critical-invariants.md` size before compaction and reminds that invariants will be re-injected after. Warns if the file is too large (>20 lines or >1500 chars) which would reduce compaction effectiveness.
+Validates `.claude/critical-invariants.md` size before compaction and reminds that invariants will be re-injected after. Warns if the file is too large (>20 lines or >1500 chars); recommends keeping it under 1000 characters for optimal compaction effectiveness.
 
 ### Critical Invariants Feature
 

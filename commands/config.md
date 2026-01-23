@@ -38,7 +38,7 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 │ Feature      │ Status  │ Description                             │
 ├──────────────┼─────────┼─────────────────────────────────────────┤
 │ auto-learn   │ OFF     │ Track patterns, suggest CLAUDE.md edits │
-│ auto-commit  │ OFF     │ Commit uncommitted changes on stop      │
+│ auto-commit  │ OFF     │ Prompt to commit on stop                │
 │ auto-push    │ OFF     │ Push after auto-commit                  │
 │ notifications│ ON      │ Desktop notifications on prompts        │
 │ dry-check    │ OFF     │ Detect duplicate code                   │
@@ -310,7 +310,7 @@ Unknown feature: "autoLearn"
 
 Available features:
   auto-learn     Track patterns, suggest CLAUDE.md edits
-  auto-commit    Commit uncommitted changes on stop
+  auto-commit    Prompt to commit on stop
   auto-push      Push after auto-commit
   notifications  Desktop notifications on prompts
   dry-check      Detect duplicate code

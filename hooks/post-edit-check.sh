@@ -280,10 +280,11 @@ check_strict_typing_file() {
         return 2
       fi
 
-      # @ts-ignore without explanation
-      if echo "$CONTENT" | grep -E '@ts-ignore(?!\s+.{10,})' | grep -q .; then
-        echo "Strict typing violation ($file): @ts-ignore requires explanation" >&2
-        echo "$CONTENT" | grep -En '@ts-ignore' | head -5 >&2
+      # @ts-ignore without explanation (must have 10+ chars after it)
+      # Escape hatch: add "// ok:" on same line
+      if echo "$CONTENT" | grep '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore\s+.{10,}' | grep -q .; then
+        echo "Strict typing violation ($file): @ts-ignore requires 10+ char explanation" >&2
+        echo "$CONTENT" | grep -En '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore\s+.{10,}' | head -5 >&2
         return 2
       fi
 
@@ -305,10 +306,11 @@ check_strict_typing_file() {
     *.py|*.pyi)
       # Python strict typing violations
 
-      # type: ignore without code
-      if echo "$CONTENT" | grep -E '#\s*type:\s*ignore(?!\[)' | grep -q .; then
+      # type: ignore without error code [code]
+      # Escape hatch: add "# ok:" on same line
+      if echo "$CONTENT" | grep -E '#\s*type:\s*ignore' | grep -v '# ok:' | grep -v -E '#\s*type:\s*ignore\[' | grep -q .; then
         echo "Strict typing violation ($file): 'type: ignore' requires error code [code]" >&2
-        echo "$CONTENT" | grep -En '#\s*type:\s*ignore' | head -5 >&2
+        echo "$CONTENT" | grep -En '#\s*type:\s*ignore' | grep -v '# ok:' | grep -v -E '#\s*type:\s*ignore\[' | head -5 >&2
         return 2
       fi
 
