@@ -12,3 +12,10 @@ node_modules/
 .bluera/
 __pycache__
 .DS_Store
+
+# Bluera plugins
+!.bluera/bluera-base/
+!.bluera/bluera-base/config.json
+!.bluera/bluera-base/TODO.txt
+!.bluera/bluera-knowledge/
+!.bluera/bluera-knowledge/stores.config.json
