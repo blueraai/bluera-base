@@ -29,12 +29,14 @@ detect_runner() {
 
 # 1. Makefile with release/version targets (universal)
 if [ -f Makefile ]; then
-  if grep -q "^release:$BUMP_TYPE:" Makefile 2>/dev/null; then
-    echo "make release:$BUMP_TYPE"
+  # Check for hyphenated targets (common pattern: release-patch, release-minor, etc.)
+  if grep -q "^release-$BUMP_TYPE:" Makefile 2>/dev/null; then
+    echo "make release-$BUMP_TYPE"
     exit 0
-  elif grep -q "^version:$BUMP_TYPE:" Makefile 2>/dev/null; then
-    echo "make version:$BUMP_TYPE"
+  elif grep -q "^version-$BUMP_TYPE:" Makefile 2>/dev/null; then
+    echo "make version-$BUMP_TYPE"
     exit 0
+  # Check for release target with BUMP/VERSION variable
   elif grep -q "^release:" Makefile 2>/dev/null && grep -qE "BUMP|VERSION" Makefile 2>/dev/null; then
     echo "make release BUMP=$BUMP_TYPE"
     exit 0

@@ -52,9 +52,9 @@ detect_js_runner() {
 
 # Check if project has lint configured
 has_lint_script() {
-  if [ -f "package.json" ] && grep -Eq '"lint"\s*:' package.json 2>/dev/null; then
+  if [ -f "package.json" ] && grep -Eq '"lint"[[:space:]]*:' package.json 2>/dev/null; then
     return 0
-  elif [ -f "Makefile" ] && grep -Eq '^lint\s*:' Makefile 2>/dev/null; then
+  elif [ -f "Makefile" ] && grep -Eq '^lint[[:space:]]*:' Makefile 2>/dev/null; then
     return 0
   elif [ -f "pyproject.toml" ] && grep -Eq '\[tool\.(ruff|pylint)\]' pyproject.toml 2>/dev/null; then
     return 0
@@ -71,7 +71,7 @@ has_typecheck_script() {
     return 0
   elif [ -f "tsconfig.json" ]; then
     return 0
-  elif [ -f "Makefile" ] && grep -Eq '^(typecheck|type-check)\s*:' Makefile 2>/dev/null; then
+  elif [ -f "Makefile" ] && grep -Eq '^(typecheck|type-check)[[:space:]]*:' Makefile 2>/dev/null; then
     return 0
   elif [ -f "pyproject.toml" ] && grep -Eq '\[tool\.(mypy|pyright)\]' pyproject.toml 2>/dev/null; then
     return 0
@@ -162,7 +162,7 @@ check_anti_patterns_file() {
   # File must exist
   [ -f "$file" ] || return 0
 
-  local ANTI_RE='\b(fallback|deprecated|backward compatibility|legacy)\b'
+  local ANTI_RE='(^|[^a-zA-Z])(fallback|deprecated|backward compatibility|legacy)([^a-zA-Z]|$)'
 
   # Get content to check (added lines for tracked files, full file otherwise)
   local CONTENT=""
@@ -211,37 +211,37 @@ check_lint_suppression_file() {
   case "$file" in
     .markdownlint*)
       # Check for disabling markdown rules: "MD___": false
-      if echo "$ADDED" | grep -E '"MD[0-9]+"\s*:\s*false' | grep -v '// ok:' | grep -q .; then
+      if echo "$ADDED" | grep -E '"MD[0-9]+"[[:space:]]*:[[:space:]]*false' | grep -v '// ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling markdownlint rules" >&2
         echo "Fix the markdown issues instead of disabling rules." >&2
-        echo "$ADDED" | grep -E '"MD[0-9]+"\s*:\s*false' | head -5 >&2
+        echo "$ADDED" | grep -E '"MD[0-9]+"[[:space:]]*:[[:space:]]*false' | head -5 >&2
         return 2
       fi
       ;;
     .eslintrc*|eslint.config.*)
       # Check for disabling eslint rules: "off" or 0
-      if echo "$ADDED" | grep -E ':\s*("off"|0)\s*[,}]' | grep -v '// ok:' | grep -q .; then
+      if echo "$ADDED" | grep -E ':[[:space:]]*("off"|0)[[:space:]]*[,}]' | grep -v '// ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling ESLint rules" >&2
         echo "Fix the code issues instead of disabling rules." >&2
-        echo "$ADDED" | grep -E ':\s*("off"|0)' | head -5 >&2
+        echo "$ADDED" | grep -E ':[[:space:]]*("off"|0)' | head -5 >&2
         return 2
       fi
       ;;
     pyproject.toml|.ruff.toml|ruff.toml)
       # Check for ignore patterns in ruff config
-      if echo "$ADDED" | grep -E 'ignore\s*=' | grep -v '# ok:' | grep -q .; then
+      if echo "$ADDED" | grep -E 'ignore[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
         echo "Lint suppression detected ($file): adding ruff ignore patterns" >&2
         echo "Fix the Python issues instead of ignoring rules." >&2
-        echo "$ADDED" | grep -E 'ignore\s*=' | head -5 >&2
+        echo "$ADDED" | grep -E 'ignore[[:space:]]*=' | head -5 >&2
         return 2
       fi
       ;;
     .pylintrc)
       # Check for disable additions
-      if echo "$ADDED" | grep -E 'disable\s*=' | grep -v '# ok:' | grep -q .; then
+      if echo "$ADDED" | grep -E 'disable[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling pylint rules" >&2
         echo "Fix the Python issues instead of disabling rules." >&2
-        echo "$ADDED" | grep -E 'disable\s*=' | head -5 >&2
+        echo "$ADDED" | grep -E 'disable[[:space:]]*=' | head -5 >&2
         return 2
       fi
       ;;
@@ -272,24 +272,24 @@ check_strict_typing_file() {
       # TypeScript strict typing violations
 
       # 'any' type (but not 'company' or 'many' etc)
-      if echo "$CONTENT" | grep -E ':\s*any\b|<any>|as\s+any\b' | grep -v '// ok:' | grep -q .; then
+      if echo "$CONTENT" | grep -E ':[[:space:]]*any([^a-zA-Z]|$)|<any>|as[[:space:]]+any([^a-zA-Z]|$)' | grep -v '// ok:' | grep -q .; then
         echo "Strict typing violation ($file): 'any' type is forbidden" >&2
-        echo "$CONTENT" | grep -En ':\s*any\b|<any>|as\s+any\b' | grep -v '// ok:' | head -5 >&2
+        echo "$CONTENT" | grep -En ':[[:space:]]*any([^a-zA-Z]|$)|<any>|as[[:space:]]+any([^a-zA-Z]|$)' | grep -v '// ok:' | head -5 >&2
         return 2
       fi
 
       # Unsafe 'as' type casts (but allow 'as const')
-      if echo "$CONTENT" | grep -E '\bas\s+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | grep -q .; then
+      if echo "$CONTENT" | grep -E '(^|[^a-zA-Z])as[[:space:]]+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | grep -q .; then
         echo "Strict typing violation ($file): unsafe 'as' cast is forbidden (use type guards)" >&2
-        echo "$CONTENT" | grep -En '\bas\s+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | head -5 >&2
+        echo "$CONTENT" | grep -En '(^|[^a-zA-Z])as[[:space:]]+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | head -5 >&2
         return 2
       fi
 
       # @ts-ignore without explanation (must have 10+ chars after it)
       # Escape hatch: add "// ok:" on same line
-      if echo "$CONTENT" | grep '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore\s+.{10,}' | grep -q .; then
+      if echo "$CONTENT" | grep '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore[[:space:]]+.{10,}' | grep -q .; then
         echo "Strict typing violation ($file): @ts-ignore requires 10+ char explanation" >&2
-        echo "$CONTENT" | grep -En '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore\s+.{10,}' | head -5 >&2
+        echo "$CONTENT" | grep -En '@ts-ignore' | grep -v '// ok:' | grep -v -E '@ts-ignore[[:space:]]+.{10,}' | head -5 >&2
         return 2
       fi
 
@@ -313,23 +313,23 @@ check_strict_typing_file() {
 
       # type: ignore without error code [code]
       # Escape hatch: add "# ok:" on same line
-      if echo "$CONTENT" | grep -E '#\s*type:\s*ignore' | grep -v '# ok:' | grep -v -E '#\s*type:\s*ignore\[' | grep -q .; then
+      if echo "$CONTENT" | grep -E '#[[:space:]]*type:[[:space:]]*ignore' | grep -v '# ok:' | grep -v -E '#[[:space:]]*type:[[:space:]]*ignore\[' | grep -q .; then
         echo "Strict typing violation ($file): 'type: ignore' requires error code [code]" >&2
-        echo "$CONTENT" | grep -En '#\s*type:\s*ignore' | grep -v '# ok:' | grep -v -E '#\s*type:\s*ignore\[' | head -5 >&2
+        echo "$CONTENT" | grep -En '#[[:space:]]*type:[[:space:]]*ignore' | grep -v '# ok:' | grep -v -E '#[[:space:]]*type:[[:space:]]*ignore\[' | head -5 >&2
         return 2
       fi
 
       # Any type usage (from typing import Any, or : Any)
-      if echo "$CONTENT" | grep -E '\bAny\b' | grep -v '# ok:' | grep -q .; then
+      if echo "$CONTENT" | grep -E '(^|[^a-zA-Z])Any([^a-zA-Z]|$)' | grep -v '# ok:' | grep -q .; then
         echo "Strict typing violation ($file): 'Any' type is forbidden (use specific types or generics)" >&2
-        echo "$CONTENT" | grep -En '\bAny\b' | grep -v '# ok:' | head -5 >&2
+        echo "$CONTENT" | grep -En '(^|[^a-zA-Z])Any([^a-zA-Z]|$)' | grep -v '# ok:' | head -5 >&2
         return 2
       fi
 
       # cast() is usually a code smell
-      if echo "$CONTENT" | grep -E '\bcast\s*\(' | grep -v '# ok:' | grep -q .; then
+      if echo "$CONTENT" | grep -E '(^|[^a-zA-Z])cast[[:space:]]*\(' | grep -v '# ok:' | grep -q .; then
         echo "Strict typing violation ($file): cast() is forbidden (use type guards or fix types)" >&2
-        echo "$CONTENT" | grep -En '\bcast\s*\(' | head -5 >&2
+        echo "$CONTENT" | grep -En '(^|[^a-zA-Z])cast[[:space:]]*\(' | head -5 >&2
         return 2
       fi
       ;;

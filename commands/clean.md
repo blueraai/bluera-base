@@ -21,7 +21,7 @@ Diagnose and fix slow Claude Code startup.
 ## Context
 
 !`du -sh ~/.claude 2>/dev/null || echo "~/.claude not found"`
-!`stat -f%z ~/.claude.json 2>/dev/null | awk '{printf "%.1fKB", $1/1024}' || echo "no .claude.json"`
+!`(stat -f%z ~/.claude.json 2>/dev/null || stat -c%s ~/.claude.json 2>/dev/null) | awk '{printf "%.1fKB", $1/1024}' || echo "no .claude.json"`
 
 ## Workflow
 
@@ -59,14 +59,14 @@ See @bluera-base/skills/claude-cleaner/SKILL.md for complete workflow.
 User: /clean fix DELETE-plugin-cache
 
 Step 1: Run preview (no --confirm)
-  python3 scripts/cc-cleaner-fix.py DELETE-plugin-cache
+  python3 "${CLAUDE_PLUGIN_ROOT}/scripts/cc-cleaner-fix.py" DELETE-plugin-cache
 
 Step 2: Present results to user via AskUserQuestion
   "Delete 12 plugins (2.1 GB)? Backup will be created at ~/.claude-backups/..."
   Options: "Yes, delete" / "No, cancel"
 
 Step 3: Only if user confirms, run with --confirm
-  python3 scripts/cc-cleaner-fix.py DELETE-plugin-cache --confirm
+  python3 "${CLAUDE_PLUGIN_ROOT}/scripts/cc-cleaner-fix.py" DELETE-plugin-cache --confirm
 
 Step 4: Show results and backup location
 ```

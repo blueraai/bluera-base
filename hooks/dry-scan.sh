@@ -6,6 +6,11 @@
 
 set -euo pipefail
 
+# Require jq for JSON parsing
+if ! command -v jq &>/dev/null; then
+  exit 0  # Skip gracefully if jq missing
+fi
+
 HOOK_INPUT=$(cat)
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"

@@ -22,7 +22,7 @@ fi
 
 # Block --no-verify on git commit (CLAUDE-BASE.md rule: absolute zero exceptions)
 # This is a hard block regardless of /release skill prefix
-if echo "$COMMAND" | grep -qE '\bgit\s+commit\b.*(--no-verify|-n\b)'; then
+if echo "$COMMAND" | grep -qE '(^|[^a-zA-Z])git[[:space:]]+commit([^a-zA-Z]|[[:space:]]).*(--no-verify|-n([[:space:]]|$))'; then
   echo "Blocked: git commit --no-verify/-n is forbidden. Fix pre-commit failures; do not bypass." >&2
   exit 2
 fi
