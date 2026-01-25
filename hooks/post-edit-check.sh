@@ -2,7 +2,8 @@
 # Smart post-edit validation hook
 # Language-independent: invokes project's own lint/typecheck scripts
 #
-# Reads stdin JSON to get the exact file edited, then validates just that file.
+# Per-file checks: anti-patterns, lint suppression, strict typing (on edited file)
+# Project-wide checks: lint/typecheck (rate-limited to once per 30s)
 
 set -euo pipefail
 
@@ -51,7 +52,7 @@ detect_js_runner() {
 
 # Check if project has lint configured
 has_lint_script() {
-  if [ -f "package.json" ] && grep -q '"lint"' package.json 2>/dev/null; then
+  if [ -f "package.json" ] && grep -Eq '"lint"\s*:' package.json 2>/dev/null; then
     return 0
   elif [ -f "Makefile" ] && grep -q 'lint' Makefile 2>/dev/null; then
     return 0
@@ -83,8 +84,10 @@ has_typecheck_script() {
 run_project_lint() {
   has_lint_script || return 0
 
-  # Rate limit: only run if last check was > 30 seconds ago
-  local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-last-run"
+  # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
+  local PROJECT_HASH
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | cut -c1-8)
+  local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
   LAST=0
@@ -113,8 +116,10 @@ run_project_lint() {
 run_project_typecheck() {
   has_typecheck_script || return 0
 
-  # Rate limit: only run if last check was > 30 seconds ago
-  local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-last-run"
+  # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
+  local PROJECT_HASH
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | cut -c1-8)
+  local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
   LAST=0

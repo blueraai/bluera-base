@@ -43,7 +43,7 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 │ notifications│ ON      │ Desktop notifications on prompts        │
 │ dry-check    │ OFF     │ Detect duplicate code                   │
 │ dry-auto     │ OFF     │ Auto-scan for duplicates on stop        │
-│ strict-typing│ OFF     │ Block any/as casts in TypeScript        │
+│ strict-typing│ OFF     │ Block any/as (TS), Any/cast (Python)    │
 └──────────────┴─────────┴─────────────────────────────────────────┘
 
 Settings (change with: /bluera-base:config set <key> <value>)
@@ -301,7 +301,7 @@ Toggle features by name. If the feature name is not recognized, list available f
 | `notifications` | `.notifications.enabled` | Desktop notifications on permission prompts |
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate code detection |
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop |
-| `strict-typing` | `.strictTyping.enabled` | Block `any`, `as` casts, `type: ignore` |
+| `strict-typing` | `.strictTyping.enabled` | Block `any`/`as` (TS), `Any`/`cast` (Python) |
 
 **If unrecognized feature name:**
 
@@ -315,7 +315,7 @@ Available features:
   notifications  Desktop notifications on prompts
   dry-check      Detect duplicate code
   dry-auto       Auto-scan for duplicates on stop
-  strict-typing  Block any/as casts in TypeScript
+  strict-typing  Block any/as (TS), Any/cast (Python)
 ```
 
 ### Reset

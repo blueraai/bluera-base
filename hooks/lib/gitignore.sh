@@ -6,7 +6,7 @@
 # Order matters: ignore .bluera/, then allow specific subdirs and files
 BLUERA_GITIGNORE_PATTERNS=(
   "# Bluera plugins - shared config committed, local/state ignored"
-  ".bluera/*"
+  ".bluera/"
   "!.bluera/bluera-base/"
   "!.bluera/bluera-knowledge/"
   ".bluera/bluera-base/*"
@@ -50,7 +50,7 @@ gitignore_missing_patterns() {
   # If we have missing patterns, include the header comment
   if [[ ${#missing[@]} -gt 0 ]]; then
     # Check if header comment is missing
-    if ! gitignore_has_pattern "# Bluera plugins"; then
+    if ! grep -q "^# Bluera plugins" "${CLAUDE_PROJECT_DIR:-.}/.gitignore" 2>/dev/null; then
       echo "# Bluera plugins"
     fi
     printf '%s\n' "${missing[@]}"

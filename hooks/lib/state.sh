@@ -20,7 +20,7 @@ bluera_get_state() {
 }
 
 # Update YAML frontmatter value in markdown file
-# Replaces "key: old_value" with "key: new_value"
+# Only modifies keys within frontmatter (between --- markers), not document body
 # Usage: bluera_set_state "$file" "iteration" "6"
 bluera_set_state() {
   local file="$1"
@@ -28,8 +28,13 @@ bluera_set_state() {
   local value="$3"
   local temp_file="${file}.tmp.$$"
 
-  sed "s/^${key}: .*/${key}: ${value}/" "$file" > "$temp_file"
-  mv "$temp_file" "$file"
+  # Use awk to only modify within frontmatter bounds
+  awk -v key="$key" -v value="$value" '
+    /^---$/ { in_frontmatter = !in_frontmatter; print; next }
+    in_frontmatter && $0 ~ ("^" key ": ") { print key ": " value; next }
+    { print }
+  ' "$file" > "$temp_file"
+  command mv -f "$temp_file" "$file"
 }
 
 # Check if state file exists and has YAML frontmatter
