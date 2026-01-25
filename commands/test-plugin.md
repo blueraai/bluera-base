@@ -135,7 +135,8 @@ Execute each test in order. Mark each as PASS or FAIL.
    cd /tmp/bluera-base-test
    echo 'const fallback = true;' >> index.js
    git add index.js
-   CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}" bash "$PLUGIN_PATH/hooks/post-edit-check.sh" 2>&1
+   echo '{"tool_name": "Edit", "tool_input": {"file_path": "index.js"}}' | \
+     CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "${CLAUDE_PLUGIN_ROOT:-$(pwd)}/hooks/post-edit-check.sh" 2>&1
    EXIT=$?
    git checkout index.js 2>/dev/null
    echo "Exit code: $EXIT"
@@ -150,7 +151,8 @@ Execute each test in order. Mark each as PASS or FAIL.
    cd /tmp/bluera-base-test
    echo 'const clean = true;' >> index.js
    git add index.js
-   CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}" bash "$PLUGIN_PATH/hooks/post-edit-check.sh" 2>&1
+   echo '{"tool_name": "Edit", "tool_input": {"file_path": "index.js"}}' | \
+     CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "${CLAUDE_PLUGIN_ROOT:-$(pwd)}/hooks/post-edit-check.sh" 2>&1
    EXIT=$?
    git checkout index.js 2>/dev/null
    echo "Exit code: $EXIT"

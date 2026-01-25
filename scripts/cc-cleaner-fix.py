@@ -24,6 +24,7 @@ Actions:
 import argparse
 import json
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -99,7 +100,7 @@ class BackupManager:
             "created": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "action": action,
             "description": description,
-            "hostname": os.uname().nodename,
+            "hostname": platform.node(),
             "user": os.getenv("USER", "unknown"),
             "files": [],
         }

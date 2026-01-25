@@ -105,9 +105,14 @@ run_project_lint() {
   elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
     cargo clippy --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2 || true
   elif [ -f "pyproject.toml" ]; then
+    local lint_ran=false
     if command -v poetry &>/dev/null && grep -q '\[tool.poetry\]' pyproject.toml; then
-      poetry run lint 2>/dev/null || true
-    elif command -v ruff &>/dev/null; then
+      if poetry run lint 2>/dev/null; then
+        lint_ran=true
+      fi
+    fi
+    # Fallback to ruff if poetry lint didn't run or failed
+    if [ "$lint_ran" = "false" ] && command -v ruff &>/dev/null; then
       ruff check . --quiet 2>/dev/null || true
     fi
   fi
@@ -210,29 +215,29 @@ check_lint_suppression_file() {
 
   case "$file" in
     .markdownlint*)
-      # Check for disabling markdown rules: "MD___": false
-      if echo "$ADDED" | grep -E '"MD[0-9]+"[[:space:]]*:[[:space:]]*false' | grep -v '// ok:' | grep -q .; then
+      # Check for disabling markdown rules: "MD___": false (JSON) or MD___: false (YAML)
+      if echo "$ADDED" | grep -E '("MD[0-9]+"|MD[0-9]+)[[:space:]]*:[[:space:]]*false' | grep -v '// ok:' | grep -v '# ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling markdownlint rules" >&2
         echo "Fix the markdown issues instead of disabling rules." >&2
-        echo "$ADDED" | grep -E '"MD[0-9]+"[[:space:]]*:[[:space:]]*false' | head -5 >&2
+        echo "$ADDED" | grep -E '("MD[0-9]+"|MD[0-9]+)[[:space:]]*:[[:space:]]*false' | head -5 >&2
         return 2
       fi
       ;;
     .eslintrc*|eslint.config.*)
-      # Check for disabling eslint rules: "off" or 0
-      if echo "$ADDED" | grep -E ':[[:space:]]*("off"|0)[[:space:]]*[,}]' | grep -v '// ok:' | grep -q .; then
+      # Check for disabling eslint rules: "off", 'off', or 0
+      if echo "$ADDED" | grep -E ":[[:space:]]*(\"off\"|'off'|0)[[:space:]]*[,}\]]" | grep -v '// ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling ESLint rules" >&2
         echo "Fix the code issues instead of disabling rules." >&2
-        echo "$ADDED" | grep -E ':[[:space:]]*("off"|0)' | head -5 >&2
+        echo "$ADDED" | grep -E ":[[:space:]]*(\"off\"|'off'|0)" | head -5 >&2
         return 2
       fi
       ;;
     pyproject.toml|.ruff.toml|ruff.toml)
-      # Check for ignore patterns in ruff config
-      if echo "$ADDED" | grep -E 'ignore[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
+      # Check for ignore patterns in ruff config (including extend-ignore)
+      if echo "$ADDED" | grep -E '(extend-)?ignore[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
         echo "Lint suppression detected ($file): adding ruff ignore patterns" >&2
         echo "Fix the Python issues instead of ignoring rules." >&2
-        echo "$ADDED" | grep -E 'ignore[[:space:]]*=' | head -5 >&2
+        echo "$ADDED" | grep -E '(extend-)?ignore[[:space:]]*=' | head -5 >&2
         return 2
       fi
       ;;
@@ -279,9 +284,10 @@ check_strict_typing_file() {
       fi
 
       # Unsafe 'as' type casts (but allow 'as const')
-      if echo "$CONTENT" | grep -E '(^|[^a-zA-Z])as[[:space:]]+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | grep -q .; then
+      # Match uppercase types and lowercase TS primitives (string, number, boolean, unknown, etc.)
+      if echo "$CONTENT" | grep -E '(^|[^a-zA-Z])as[[:space:]]+(string|number|boolean|unknown|never|null|undefined|object|symbol|bigint|[A-Z])' | grep -v 'as const' | grep -v '// ok:' | grep -q .; then
         echo "Strict typing violation ($file): unsafe 'as' cast is forbidden (use type guards)" >&2
-        echo "$CONTENT" | grep -En '(^|[^a-zA-Z])as[[:space:]]+[A-Z]' | grep -v 'as const' | grep -v '// ok:' | head -5 >&2
+        echo "$CONTENT" | grep -En '(^|[^a-zA-Z])as[[:space:]]+(string|number|boolean|unknown|never|null|undefined|object|symbol|bigint|[A-Z])' | grep -v 'as const' | grep -v '// ok:' | head -5 >&2
         return 2
       fi
 
