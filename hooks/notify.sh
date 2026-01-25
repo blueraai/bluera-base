@@ -17,8 +17,15 @@ INPUT=$(cat 2>/dev/null || true)
 
 # Extract notification type and message if JSON provided
 if [[ -n "$INPUT" ]]; then
-    NOTIFICATION_TYPE=$(echo "$INPUT" | jq -r '.notification_type // "info"' 2>/dev/null || echo "info")
-    MESSAGE=$(echo "$INPUT" | jq -r '.message // "Claude needs your input"' 2>/dev/null || echo "Claude needs your input")
+    # Require jq for JSON parsing
+    if command -v jq &>/dev/null; then
+        NOTIFICATION_TYPE=$(echo "$INPUT" | jq -r '.notification_type // "info"' 2>/dev/null || echo "info")
+        MESSAGE=$(echo "$INPUT" | jq -r '.message // "Claude needs your input"' 2>/dev/null || echo "Claude needs your input")
+    else
+        # Without jq, use defaults
+        NOTIFICATION_TYPE="info"
+        MESSAGE="Claude needs your input"
+    fi
 else
     NOTIFICATION_TYPE="info"
     MESSAGE="Claude needs your input"

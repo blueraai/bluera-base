@@ -67,7 +67,7 @@ has_lint_script() {
 
 # Check if project has typecheck configured
 has_typecheck_script() {
-  if [ -f "package.json" ] && grep -q '"typecheck\|"type-check\|"tsc"' package.json 2>/dev/null; then
+  if [ -f "package.json" ] && grep -Eq '"typecheck"|"type-check"|"tsc"' package.json 2>/dev/null; then
     return 0
   elif [ -f "tsconfig.json" ]; then
     return 0

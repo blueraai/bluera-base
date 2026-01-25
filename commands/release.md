@@ -1,6 +1,6 @@
 ---
 description: Cut a release using conventional commits auto-detection and CI monitoring
-allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(bun:*), Bash(yarn:*), Bash(pnpm:*), Bash(poetry:*), Bash(hatch:*), Bash(cargo:*), Bash(make:*), Read, Glob
+allowed-tools: Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(bun:*), Bash(yarn:*), Bash(pnpm:*), Bash(poetry:*), Bash(hatch:*), Bash(cargo:*), Bash(make:*), Bash(bash:*), Read, Glob
 ---
 
 # Release

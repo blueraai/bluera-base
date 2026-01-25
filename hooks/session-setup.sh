@@ -66,6 +66,12 @@ if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
     STATE_DIR="$PROJECT_DIR/.bluera/bluera-base/state"
     CONFIG_FILE="$PROJECT_DIR/.bluera/bluera-base/config.json"
 
+    # Remove existing BLUERA_ exports to prevent accumulation across sessions
+    if grep -q '^export BLUERA_' "$CLAUDE_ENV_FILE" 2>/dev/null; then
+        grep -v '^export BLUERA_' "$CLAUDE_ENV_FILE" > "${CLAUDE_ENV_FILE}.tmp" && \
+            mv "${CLAUDE_ENV_FILE}.tmp" "$CLAUDE_ENV_FILE"
+    fi
+
     # Write environment exports (available to subsequent Bash tool calls)
     {
         echo "export BLUERA_STATE_DIR=\"$STATE_DIR\""
