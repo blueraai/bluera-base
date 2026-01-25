@@ -96,7 +96,7 @@ claude --plugin-dir /path/to/bluera-base
 
 | Hook | Event | Purpose |
 |------|-------|---------|
-| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, export env vars |
+| `session-setup.sh` | SessionStart | Check jq dependency, fix hook permissions, update .gitignore, export env vars |
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |

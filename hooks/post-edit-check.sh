@@ -54,9 +54,9 @@ detect_js_runner() {
 has_lint_script() {
   if [ -f "package.json" ] && grep -Eq '"lint"\s*:' package.json 2>/dev/null; then
     return 0
-  elif [ -f "Makefile" ] && grep -q 'lint' Makefile 2>/dev/null; then
+  elif [ -f "Makefile" ] && grep -Eq '^lint\s*:' Makefile 2>/dev/null; then
     return 0
-  elif [ -f "pyproject.toml" ] && grep -q 'lint' pyproject.toml 2>/dev/null; then
+  elif [ -f "pyproject.toml" ] && grep -Eq '\[tool\.(ruff|pylint)\]' pyproject.toml 2>/dev/null; then
     return 0
   elif [ -f "Cargo.toml" ]; then
     # Rust projects use cargo clippy by convention
@@ -71,9 +71,9 @@ has_typecheck_script() {
     return 0
   elif [ -f "tsconfig.json" ]; then
     return 0
-  elif [ -f "Makefile" ] && grep -q 'typecheck\|type-check' Makefile 2>/dev/null; then
+  elif [ -f "Makefile" ] && grep -Eq '^(typecheck|type-check)\s*:' Makefile 2>/dev/null; then
     return 0
-  elif [ -f "pyproject.toml" ] && grep -q 'mypy\|pyright' pyproject.toml 2>/dev/null; then
+  elif [ -f "pyproject.toml" ] && grep -Eq '\[tool\.(mypy|pyright)\]' pyproject.toml 2>/dev/null; then
     return 0
   fi
   return 1
@@ -86,7 +86,7 @@ run_project_lint() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | cut -c1-8)
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | grep -oE '[a-f0-9]{8}' | head -1)
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
@@ -118,7 +118,7 @@ run_project_typecheck() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | cut -c1-8)
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | grep -oE '[a-f0-9]{8}' | head -1)
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
