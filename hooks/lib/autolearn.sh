@@ -4,7 +4,7 @@
 # Used by session-end-learn.sh when autoLearn.mode is "auto"
 
 # Secrets pattern - NEVER write content matching these
-BLUERA_SECRETS_PATTERN='api[_-]?key|token|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API|OPENAI_API|private[_-]?key|credential'
+BLUERA_SECRETS_PATTERN='api[_-]?key|token|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|private[_-]?key|credential'
 
 # Marker delimiters for auto-learned section
 BLUERA_LEARN_START='<!-- AUTO:bluera-base:learned -->'

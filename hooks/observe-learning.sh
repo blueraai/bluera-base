@@ -6,6 +6,11 @@
 
 set -euo pipefail
 
+# Require jq for JSON parsing
+if ! command -v jq &>/dev/null; then
+  exit 0  # Skip gracefully if jq missing
+fi
+
 # Read hook input
 INPUT=$(cat 2>/dev/null || true)
 

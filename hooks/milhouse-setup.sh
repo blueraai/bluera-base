@@ -11,10 +11,11 @@ source "$SCRIPT_DIR/lib/config.sh"
 
 PROMPT_FILE=""
 PROMPT_TEXT=""
-MAX_ITERATIONS=0
+# Read defaults from config (CLI flags override these)
+MAX_ITERATIONS=$(bluera_get_config ".milhouse.defaultMaxIterations" "0")
 COMPLETION_PROMISE="TASK COMPLETE"
 GATES=()
-STUCK_LIMIT=3
+STUCK_LIMIT=$(bluera_get_config ".milhouse.defaultStuckLimit" "3")
 INIT_HARNESS=false
 
 # Parse arguments

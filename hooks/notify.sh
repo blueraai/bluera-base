@@ -2,6 +2,16 @@
 # Cross-platform notification hook for Claude Code
 # Supports: macOS (osascript/terminal-notifier), Linux (notify-send), Windows (PowerShell)
 
+# Source config library to check if notifications are enabled
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
+  source "$SCRIPT_DIR/lib/config.sh"
+  # Check if notifications are enabled (default: true)
+  if ! bluera_config_enabled ".notifications.enabled"; then
+    exit 0
+  fi
+fi
+
 # Read notification info from stdin (optional - hook may not provide JSON)
 INPUT=$(cat 2>/dev/null || true)
 
