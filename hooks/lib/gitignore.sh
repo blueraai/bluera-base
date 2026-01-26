@@ -106,28 +106,3 @@ gitignore_status() {
     fi
   done
 }
-
-# Validate gitignore patterns are in correct order
-# Returns: 0 if order is correct, 1 if problematic
-gitignore_validate_order() {
-  local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
-
-  if [[ ! -f "$gitignore" ]]; then
-    return 0  # No gitignore, no order issues
-  fi
-
-  # The main .bluera/ ignore must come before the negations
-  local base_line negation_line
-
-  base_line=$(grep -n "^\.bluera/$" "$gitignore" 2>/dev/null | head -1 | cut -d: -f1)
-  negation_line=$(grep -n "^!\.bluera/" "$gitignore" 2>/dev/null | head -1 | cut -d: -f1)
-
-  if [[ -n "$base_line" ]] && [[ -n "$negation_line" ]]; then
-    if [[ "$negation_line" -lt "$base_line" ]]; then
-      echo "Warning: Negation patterns appear before base .bluera/ pattern" >&2
-      return 1
-    fi
-  fi
-
-  return 0
-}

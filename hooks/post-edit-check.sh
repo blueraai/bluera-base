@@ -100,7 +100,7 @@ run_project_lint() {
 
   if [ -f "package.json" ]; then
     $runner run lint --quiet 2>/dev/null || true
-  elif [ -f "Makefile" ] && grep -q '^lint:' Makefile; then
+  elif [ -f "Makefile" ] && grep -Eq '^lint[[:space:]]*:' Makefile; then
     make lint 2>/dev/null || true
   elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
     cargo clippy --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2 || true
@@ -142,8 +142,13 @@ run_project_typecheck() {
     $runner run tsc --quiet 2>/dev/null || true
   elif [ -f "tsconfig.json" ] && [ -f "node_modules/.bin/tsc" ]; then
     node_modules/.bin/tsc --noEmit --pretty false 2>&1 | head -20 >&2 || true
-  elif [ -f "Makefile" ] && grep -q '^typecheck:' Makefile; then
-    make typecheck 2>/dev/null || true
+  elif [ -f "Makefile" ]; then
+    # Support both typecheck and type-check targets (with optional space before colon)
+    if grep -Eq '^typecheck[[:space:]]*:' Makefile; then
+      make typecheck 2>/dev/null || true
+    elif grep -Eq '^type-check[[:space:]]*:' Makefile; then
+      make type-check 2>/dev/null || true
+    fi
   elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
     cargo check --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2 || true
   elif [ -f "pyproject.toml" ]; then

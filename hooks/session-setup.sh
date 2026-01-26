@@ -21,10 +21,12 @@ if ! command -v jq &> /dev/null; then
         brew install jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
             echo -e "${YELLOW}${PREFIX} jq missing. Install: brew install jq${NC}"
     elif command -v apt-get &> /dev/null; then
-        sudo apt-get install -y jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
+        # Use sudo -n (non-interactive) to fail fast instead of hanging for password
+        sudo -n apt-get install -y jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
             echo -e "${YELLOW}${PREFIX} jq missing. Install: sudo apt-get install jq${NC}"
     elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
+        # Use sudo -n (non-interactive) to fail fast instead of hanging for password
+        sudo -n pacman -S --noconfirm jq &>/dev/null && echo -e "${GREEN}${PREFIX} jq installed ✓${NC}" || \
             echo -e "${YELLOW}${PREFIX} jq missing. Install: sudo pacman -S jq${NC}"
     else
         echo -e "${YELLOW}${PREFIX} jq missing. Install: https://stedolan.github.io/jq/download/${NC}"

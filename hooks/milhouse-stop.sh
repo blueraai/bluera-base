@@ -111,6 +111,12 @@ fi
 # Get transcript path from hook input
 TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
 
+# Validate transcript_path is not null/empty (jq returns "null" for missing keys)
+if [[ -z "$TRANSCRIPT_PATH" ]] || [[ "$TRANSCRIPT_PATH" == "null" ]]; then
+  echo "⚠️  Milhouse: transcript_path missing or invalid. State preserved." >&2
+  exit 0  # Exit WITHOUT deleting state - may be transient issue
+fi
+
 if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
   echo "⚠️  Milhouse: transcript not found ($TRANSCRIPT_PATH). Stopping." >&2
   rm "$STATE_FILE"
