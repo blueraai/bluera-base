@@ -124,15 +124,16 @@ if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
 fi
 
 # Read last assistant message from transcript (JSONL format - one JSON per line)
-if ! grep -q '"role":"assistant"' "$TRANSCRIPT_PATH"; then
+# Use jq for robust parsing (handles whitespace variations in JSON)
+if ! jq -e 'select(.role == "assistant")' "$TRANSCRIPT_PATH" >/dev/null 2>&1; then
   echo "⚠️  Milhouse: no assistant messages in transcript. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
-# Extract last assistant message
-LAST_LINE=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" | tail -1)
-if [[ -z "$LAST_LINE" ]]; then
+# Extract last assistant message using jq (JSONL: -s slurps all lines into array)
+LAST_LINE=$(jq -s '[.[] | select(.role == "assistant")] | last' "$TRANSCRIPT_PATH" 2>/dev/null)
+if [[ -z "$LAST_LINE" ]] || [[ "$LAST_LINE" == "null" ]]; then
   echo "⚠️  Milhouse: failed to extract assistant message. Stopping." >&2
   rm "$STATE_FILE"
   exit 0
@@ -210,12 +211,15 @@ if [[ "$PROMISE_MATCHED" == true ]] && [[ "$GATES_PASSED" == false ]]; then
     fi
   fi
 
-  # Check for stuck (last N hashes identical)
+  # Check for stuck (last N hashes must be identical, not just total count)
   if [[ "$STUCK_LIMIT" -gt 0 ]]; then
-    # Count consecutive identical hashes at the end
-    HASH_COUNT=$(echo "$NEW_HASHES" | grep -o "\"$FAILURE_HASH\"" | wc -l | tr -d ' ')
-    if [[ "$HASH_COUNT" -ge "$STUCK_LIMIT" ]]; then
-      echo "🛑 Milhouse: stuck detected (same failure $HASH_COUNT times). Stopping."
+    # Extract last STUCK_LIMIT hashes and check if all are identical
+    LAST_N_HASHES=$(echo "$NEW_HASHES" | jq -r ".[-$STUCK_LIMIT:]")
+    TOTAL_COUNT=$(echo "$LAST_N_HASHES" | jq 'length')
+    UNIQUE_COUNT=$(echo "$LAST_N_HASHES" | jq 'unique | length')
+
+    if [[ "$TOTAL_COUNT" -ge "$STUCK_LIMIT" ]] && [[ "$UNIQUE_COUNT" -eq 1 ]]; then
+      echo "🛑 Milhouse: stuck detected (same failure $STUCK_LIMIT consecutive times). Stopping."
       echo "Last failure: $GATE_FAILURE_OUTPUT" | head -5
       rm "$STATE_FILE"
       exit 0

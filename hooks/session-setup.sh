@@ -41,6 +41,12 @@ fi
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$(dirname "$0")")}"
 source "${PLUGIN_ROOT}/hooks/lib/gitignore.sh"
+
+# Warn if CLAUDE_PROJECT_DIR is unset (could modify wrong gitignore)
+if [[ -z "${CLAUDE_PROJECT_DIR:-}" ]]; then
+  echo -e "${YELLOW}${PREFIX} Warning: CLAUDE_PROJECT_DIR not set, using current directory for gitignore${NC}" >&2
+fi
+
 gitignore_ensure_patterns
 
 # =====================

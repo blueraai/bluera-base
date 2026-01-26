@@ -9,10 +9,17 @@
 # Read tool input from stdin
 INPUT=$(cat)
 
-# Security: fail closed if jq unavailable (can't parse command = can't verify safe)
+# jq unavailable: do basic string check for release patterns
+# Only fail-closed if command looks like a release; otherwise warn and allow
 if ! command -v jq &>/dev/null; then
-  echo "Security: jq required for release protection. Install jq or use /release skill." >&2
-  exit 2
+  RELEASE_KEYWORDS='npm publish|yarn publish|npm version|yarn version|pnpm version|cargo release|poetry publish|poetry version|hatch version|gh release|git tag.*v[0-9]'
+  if echo "$INPUT" | grep -qEi "$RELEASE_KEYWORDS"; then
+    echo "Security: jq required to verify release commands. Install jq or use /release skill." >&2
+    exit 2
+  fi
+  # Non-release command - warn but allow
+  echo "Warning: jq not available, release protection limited" >&2
+  exit 0
 fi
 
 # Extract the command from Bash tool input

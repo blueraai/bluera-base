@@ -215,8 +215,11 @@ check_lint_suppression_file() {
     fi
   fi
 
-  # Skip if no added lines (only check new suppressions)
-  [ -z "$ADDED" ] && return 0
+  # Fallback: read entire file for untracked files (matches strict-typing approach)
+  if [ -z "$ADDED" ]; then
+    ADDED=$(cat "$file" 2>/dev/null || true)
+    [ -z "$ADDED" ] && return 0
+  fi
 
   case "$file" in
     .markdownlint*)
