@@ -16,30 +16,44 @@ Scan the repo's `.claude/**` for functionality that overlaps with bluera-base, r
 
 This plugin provides:
 
-### Commands
+### Commands (21 total)
 
-- `/bluera-base:commit` - atomic commits with documentation awareness
-- `/bluera-base:release` - version bumping and release workflow
-- `/bluera-base:milhouse-loop` - iterative development loop
-- `/bluera-base:cancel-milhouse` - cancel active loop
+- `/bluera-base:analyze-config` - analyze .claude/ for overlap with bluera-base
+- `/bluera-base:audit-plugin` - audit a Claude Code plugin against best practices
+- `/bluera-base:cancel-milhouse` - cancel active milhouse loop
 - `/bluera-base:claude-md` - CLAUDE.md maintenance
+- `/bluera-base:clean` - diagnose slow startup and guide cleanup
 - `/bluera-base:code-review` - multi-agent code review
+- `/bluera-base:commit` - atomic commits with documentation awareness
 - `/bluera-base:config` - configuration management
+- `/bluera-base:dry` - detect duplicate code using jscpd
+- `/bluera-base:explain` - explain plugin functionality
 - `/bluera-base:harden-repo` - git hooks, linters, formatters setup
+- `/bluera-base:help` - show plugin features and usage
+- `/bluera-base:init` - initialize project with conventions
 - `/bluera-base:install-rules` - install rule templates
+- `/bluera-base:milhouse-loop` - iterative development loop
 - `/bluera-base:readme` - README.md maintenance
-- `/bluera-base:test-plugin` - plugin validation
+- `/bluera-base:release` - version bumping and release workflow
+- `/bluera-base:statusline` - configure status line display
+- `/bluera-base:test-plugin` - plugin validation test suite
+- `/bluera-base:todo` - manage project TODO tasks
+- `/bluera-base:worktree` - manage git worktrees
 
-### Skills
+### Skills (12 total)
 
 - `atomic-commits` - commit grouping and documentation checks
+- `auto-learn` - command pattern learning
+- `claude-cleaner` - diagnose slow Claude Code startup
 - `claude-md-maintainer` - CLAUDE.md structure and validation
 - `code-review-repo` - code review guidelines
+- `dry-refactor` - language-specific DRY refactoring guidance
+- `large-file-refactor` - break apart large files
 - `milhouse` - iterative loop patterns
 - `readme-maintainer` - README formatting
 - `release` - release workflow
 - `repo-hardening` - linter/hook setup per language
-- `architectural-constraints` - design constraints
+- `statusline` - terminal status line configuration
 
 ### Hooks
 

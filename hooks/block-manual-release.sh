@@ -9,6 +9,12 @@
 # Read tool input from stdin
 INPUT=$(cat)
 
+# Security: fail closed if jq unavailable (can't parse command = can't verify safe)
+if ! command -v jq &>/dev/null; then
+  echo "Security: jq required for release protection. Install jq or use /release skill." >&2
+  exit 2
+fi
+
 # Extract the command from Bash tool input
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 

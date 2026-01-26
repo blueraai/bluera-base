@@ -224,8 +224,8 @@ check_lint_suppression_file() {
       fi
       ;;
     .eslintrc*|eslint.config.*)
-      # Check for disabling eslint rules: "off", 'off', or 0
-      if echo "$ADDED" | grep -E ":[[:space:]]*(\"off\"|'off'|0)[[:space:]]*[,}\]]" | grep -v '// ok:' | grep -q .; then
+      # Check for disabling eslint rules: "off", 'off', 0, or array forms ["off"], ['off'], [0]
+      if echo "$ADDED" | grep -E ":[[:space:]]*(\"off\"|'off'|0|\[\"off\"\]|\['off'\]|\[0\])[[:space:]]*[,}\]]" | grep -v '// ok:' | grep -q .; then
         echo "Lint suppression detected ($file): disabling ESLint rules" >&2
         echo "Fix the code issues instead of disabling rules." >&2
         echo "$ADDED" | grep -E ":[[:space:]]*(\"off\"|'off'|0)" | head -5 >&2
@@ -233,8 +233,8 @@ check_lint_suppression_file() {
       fi
       ;;
     pyproject.toml|.ruff.toml|ruff.toml)
-      # Check for ignore patterns in ruff config (including extend-ignore)
-      if echo "$ADDED" | grep -E '(extend-)?ignore[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
+      # Check for ignore patterns in ruff config (including extend-ignore and per-file-ignores)
+      if echo "$ADDED" | grep -E '(extend-ignore|per-file-ignores|ignore)[[:space:]]*=' | grep -v '# ok:' | grep -q .; then
         echo "Lint suppression detected ($file): adding ruff ignore patterns" >&2
         echo "Fix the Python issues instead of ignoring rules." >&2
         echo "$ADDED" | grep -E '(extend-)?ignore[[:space:]]*=' | head -5 >&2

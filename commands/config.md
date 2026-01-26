@@ -297,10 +297,10 @@ Toggle features by name. If the feature name is not recognized, list available f
 |---------|-------------|-------------|
 | `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits |
 | `auto-commit` | `.autoCommit.enabled` | Auto-commit uncommitted changes on session stop |
-| `auto-push` | `.autoCommit.push` | Push to remote after auto-commit |
+| `auto-push` | `.autoCommit.push` | Push to remote after auto-commit (requires `auto-commit` enabled) |
 | `notifications` | `.notifications.enabled` | Desktop notifications on permission prompts |
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate code detection |
-| `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop |
+| `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop (requires `dry-check` enabled) |
 | `strict-typing` | `.strictTyping.enabled` | Block `any`/`as` (TS), `Any`/`cast` (Python) |
 
 **If unrecognized feature name:**
@@ -466,11 +466,14 @@ Env (from CLAUDE_ENV_FILE):
 The `/bluera-base:config init` command adds these patterns to `.gitignore`:
 
 ```gitignore
-# Bluera plugins
+# Bluera plugins - shared config committed, local/state ignored
 .bluera/
 !.bluera/bluera-base/
-!.bluera/bluera-base/config.json
 !.bluera/bluera-knowledge/
+.bluera/bluera-base/*
+.bluera/bluera-knowledge/*
+!.bluera/bluera-base/config.json
+!.bluera/bluera-base/TODO.txt
 !.bluera/bluera-knowledge/stores.config.json
 ```
 
