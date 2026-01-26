@@ -42,14 +42,14 @@ fi
 
 # Block patterns for manual release commands across languages
 
-# JavaScript/TypeScript: npm version, yarn version, pnpm version, bun version, release scripts
-JS_PATTERNS='(npm|yarn|pnpm|bun)( run)? (version|release)(:|$| )'
+# JavaScript/TypeScript: npm version, yarn version, pnpm version, bun version, release scripts, publish
+JS_PATTERNS='(npm|yarn|pnpm|bun)( run)? (version|release|publish)(:|$| )'
 
-# Python: poetry version, hatch version, bump2version
-PY_PATTERNS='(poetry|hatch) version|bump2version'
+# Python: poetry version, hatch version, bump2version, poetry publish
+PY_PATTERNS='(poetry|hatch) (version|publish)|bump2version'
 
-# Rust: cargo release
-RUST_PATTERNS='cargo release'
+# Rust: cargo release, cargo publish
+RUST_PATTERNS='cargo (release|publish)'
 
 # Go/Generic: direct git tag creation for versions
 GIT_PATTERNS='git tag .*v[0-9]|gh release create'

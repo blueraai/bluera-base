@@ -4,7 +4,9 @@
 
 # Source config library to check if notifications are enabled
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
+
+# Require jq for config parsing - skip config check if missing (use default: enabled)
+if command -v jq &>/dev/null && [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
   source "$SCRIPT_DIR/lib/config.sh"
   # Check if notifications are enabled (default: true)
   if ! bluera_config_enabled ".notifications.enabled"; then

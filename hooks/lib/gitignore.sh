@@ -14,6 +14,8 @@ BLUERA_GITIGNORE_PATTERNS=(
   "!.bluera/bluera-base/config.json"
   "!.bluera/bluera-base/TODO.txt"
   "!.bluera/bluera-knowledge/stores.config.json"
+  "# Claude Code local files (not committed)"
+  "*.local.md"
 )
 
 # Check if a pattern exists in gitignore
@@ -51,7 +53,7 @@ gitignore_missing_patterns() {
   if [[ ${#missing[@]} -gt 0 ]]; then
     # Check if header comment is missing
     if ! grep -q "^# Bluera plugins" "${CLAUDE_PROJECT_DIR:-.}/.gitignore" 2>/dev/null; then
-      echo "# Bluera plugins"
+      echo "# Bluera plugins - shared config committed, local/state ignored"
     fi
     printf '%s\n' "${missing[@]}"
   fi
