@@ -12,7 +12,7 @@ INPUT=$(cat)
 # jq unavailable: do basic string check for release patterns
 # Only fail-closed if command looks like a release; otherwise warn and allow
 if ! command -v jq &>/dev/null; then
-  RELEASE_KEYWORDS='npm publish|yarn publish|npm version|yarn version|pnpm publish|pnpm version|bun publish|bun version|cargo release|cargo publish|poetry publish|poetry version|hatch publish|hatch version|bump2version|gh release|git tag.*v[0-9]'
+  RELEASE_KEYWORDS='npm publish|yarn publish|npm version|yarn version|pnpm publish|pnpm version|bun publish|bun version|cargo release|cargo publish|poetry publish|poetry version|hatch publish|hatch version|bump2version|gh release|git tag.*[v]?[0-9]'
   if echo "$INPUT" | grep -qEi "$RELEASE_KEYWORDS"; then
     echo "Security: jq required to verify release commands. Install jq or use /release skill." >&2
     exit 2
@@ -52,7 +52,7 @@ PY_PATTERNS='(poetry|hatch) (version|publish)|bump2version'
 RUST_PATTERNS='cargo (release|publish)'
 
 # Go/Generic: direct git tag creation for versions
-GIT_PATTERNS='git tag .*v[0-9]|gh release create'
+GIT_PATTERNS='git tag .*[v]?[0-9]|gh release create'
 
 if echo "$COMMAND" | grep -qE "($JS_PATTERNS)|($PY_PATTERNS)|($RUST_PATTERNS)|($GIT_PATTERNS)"; then
   echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2

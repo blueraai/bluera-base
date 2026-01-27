@@ -75,7 +75,7 @@ __SKILL__=release <detected-command>
 
 ### Detection Priority
 
-1. **Makefile** with `release:` or `version:` targets
+1. **Makefile** with `release-*` or `version-*` targets (e.g., `release-patch:`)
 2. **package.json** with `version:*` scripts (e.g., `version:patch`)
 3. **package.json** with `release:*` scripts
 4. **pyproject.toml** with Poetry or Hatch

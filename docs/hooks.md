@@ -54,7 +54,7 @@ On every Write/Edit operation, the hook auto-detects your project type and runs 
 ### JavaScript/TypeScript
 
 - Auto-detects package manager (bun/yarn/pnpm/npm) from lockfiles
-- Runs project lint script: `$runner run lint --quiet`
+- Runs project lint script: `$runner run lint`
 - Runs project typecheck: `typecheck`, `type-check`, or `tsc` scripts
 - Falls back to `tsc --noEmit` only if NO package.json exists but tsconfig.json and `node_modules/.bin/tsc` are present
 

@@ -123,7 +123,7 @@ flowchart LR
 
 ### Version Tool Detection Order
 
-1. **Makefile:** `make release:patch`, `make version:patch`, or `make release BUMP=patch` (requires targets named `release:patch:` or `release:` with BUMP variable)
+1. **Makefile:** `make release-patch`, `make version-patch`, or `make release BUMP=patch` (requires hyphenated targets like `release-patch:` or `release:` with BUMP variable)
 2. **JS/TS scripts:** `bun/pnpm/yarn/npm run version:patch` or `release:patch`
 3. **Python Poetry:** `poetry version patch`
 4. **Python Hatch:** `hatch version patch`
