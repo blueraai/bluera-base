@@ -29,7 +29,6 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   "dryCheck": {
     "enabled": false,
     "onStop": false,
-    "threshold": 5,
     "minTokens": 70,
     "minLines": 5
   },

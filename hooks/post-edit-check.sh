@@ -92,7 +92,8 @@ run_project_lint() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null || echo "${RANDOM:-$$}"; } | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH="${PROJECT_HASH:-default}"
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
@@ -105,7 +106,7 @@ run_project_lint() {
   runner=$(detect_js_runner)
 
   if [ -f "package.json" ]; then
-    $runner run lint --quiet 2>/dev/null || true
+    $runner run lint 2>/dev/null || true
   elif [ -f "Makefile" ] && grep -Eq '^lint[[:space:]]*:' Makefile; then
     make lint 2>/dev/null || true
   elif [ -f "Cargo.toml" ] && command -v cargo &>/dev/null; then
@@ -129,7 +130,8 @@ run_project_typecheck() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | (md5sum 2>/dev/null || md5) | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null || echo "${RANDOM:-$$}"; } | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH="${PROJECT_HASH:-default}"
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-${PROJECT_HASH}"
   local NOW LAST
   NOW=$(date +%s)
@@ -142,10 +144,10 @@ run_project_typecheck() {
   runner=$(detect_js_runner)
 
   if [ -f "package.json" ]; then
-    # Try common script names
-    $runner run typecheck --quiet 2>/dev/null || \
-    $runner run type-check --quiet 2>/dev/null || \
-    $runner run tsc --quiet 2>/dev/null || true
+    # Try common script names (no --quiet; tsc doesn't support it)
+    $runner run typecheck 2>/dev/null || \
+    $runner run type-check 2>/dev/null || \
+    $runner run tsc 2>/dev/null || true
   elif [ -f "tsconfig.json" ] && [ -f "node_modules/.bin/tsc" ]; then
     node_modules/.bin/tsc --noEmit --pretty false 2>&1 | head -20 >&2 || true
   elif [ -f "Makefile" ]; then

@@ -36,25 +36,30 @@ gitignore_has_pattern() {
 # Usage: missing=$(gitignore_missing_patterns)
 gitignore_missing_patterns() {
   local missing=()
+  local pending_comment=""
 
   for pattern in "${BLUERA_GITIGNORE_PATTERNS[@]}"; do
-    # Skip comments when checking (but include them in output)
+    # Track comments to include before missing patterns
     if [[ "$pattern" =~ ^# ]]; then
-      # Only add comment if the next non-comment pattern is missing
+      pending_comment="$pattern"
       continue
     fi
 
     if ! gitignore_has_pattern "$pattern"; then
+      # Include pending comment if any
+      if [[ -n "$pending_comment" ]]; then
+        missing+=("$pending_comment")
+        pending_comment=""
+      fi
       missing+=("$pattern")
+    else
+      # Pattern exists, clear pending comment
+      pending_comment=""
     fi
   done
 
-  # If we have missing patterns, include the header comment
+  # Output missing patterns (comments are already inline)
   if [[ ${#missing[@]} -gt 0 ]]; then
-    # Check if header comment is missing
-    if ! grep -q "^# Bluera plugins" "${CLAUDE_PROJECT_DIR:-.}/.gitignore" 2>/dev/null; then
-      echo "# Bluera plugins - shared config committed, local/state ignored"
-    fi
     printf '%s\n' "${missing[@]}"
   fi
 }
