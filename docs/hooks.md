@@ -83,7 +83,7 @@ TypeScript, JavaScript, Python, Rust (full lint/typecheck support), Go (anti-pat
 Applies to: `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.py`, `.pyi`, `.rs`, `.go`
 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
-- **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Only checks added lines in tracked files; untracked files skip this check)
+- **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Checks added lines in tracked files, or full file content for new/untracked files)
 - **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`, `@ts-ignore` without 10+ char explanation
   - Python: blocks `Any`, `cast()`, `type: ignore` without error code `[code]`

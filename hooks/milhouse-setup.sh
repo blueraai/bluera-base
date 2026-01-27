@@ -11,11 +11,18 @@ source "$SCRIPT_DIR/lib/config.sh"
 
 PROMPT_FILE=""
 PROMPT_TEXT=""
-# Read defaults from config (CLI flags override these)
-MAX_ITERATIONS=$(bluera_get_config ".milhouse.defaultMaxIterations" "0")
 COMPLETION_PROMISE="TASK COMPLETE"
 GATES=()
-STUCK_LIMIT=$(bluera_get_config ".milhouse.defaultStuckLimit" "3")
+
+# Read defaults from config (CLI flags override these)
+# Check jq availability for config reading - use defaults when unavailable
+if command -v jq &>/dev/null; then
+  MAX_ITERATIONS=$(bluera_get_config ".milhouse.defaultMaxIterations" "0")
+  STUCK_LIMIT=$(bluera_get_config ".milhouse.defaultStuckLimit" "3")
+else
+  MAX_ITERATIONS=0
+  STUCK_LIMIT=3
+fi
 INIT_HARNESS=false
 
 # Parse arguments

@@ -59,7 +59,6 @@ Manage with `/bluera-base:config enable|disable <feature>`:
   "dryCheck": {
     "enabled": false,
     "onStop": false,
-    "threshold": 5,
     "minTokens": 70,
     "minLines": 5
   },
@@ -69,7 +68,7 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 }
 ```
 
-> **Note:** The `dryCheck.threshold` is only used by the `/dry` command, not by the stop hook. The `autoCommit.remote` field is defined but currently unused.
+> **Note:** The `autoCommit.remote` field is defined but currently unused.
 
 ## State Files
 
