@@ -8,14 +8,15 @@ node_modules/
 # Personal notes (not committed)
 *.local.md
 
-# Bluera plugins - local testing state (this is the plugin source repo)
+# Bluera plugins - shared config committed, local/state ignored
 .bluera/
-__pycache__
-.DS_Store
-
-# Bluera plugins
 !.bluera/bluera-base/
+!.bluera/bluera-knowledge/
+.bluera/bluera-base/*
+.bluera/bluera-knowledge/*
 !.bluera/bluera-base/config.json
 !.bluera/bluera-base/TODO.txt
-!.bluera/bluera-knowledge/
 !.bluera/bluera-knowledge/stores.config.json
+
+__pycache__
+.DS_Store

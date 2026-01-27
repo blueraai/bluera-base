@@ -39,7 +39,7 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 ├──────────────┼─────────┼─────────────────────────────────────────┤
 │ auto-learn   │ OFF     │ Track patterns, suggest CLAUDE.md edits │
 │ auto-commit  │ OFF     │ Prompt to commit on stop                │
-│ auto-push    │ OFF     │ Push after auto-commit                  │
+│ auto-push    │ OFF     │ Add push instruction to prompt          │
 │ notifications│ ON      │ Desktop notifications on prompts        │
 │ dry-check    │ OFF     │ Detect duplicate code                   │
 │ dry-auto     │ OFF     │ Auto-scan for duplicates on stop        │
@@ -297,7 +297,7 @@ Toggle features by name. If the feature name is not recognized, list available f
 |---------|-------------|-------------|
 | `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits |
 | `auto-commit` | `.autoCommit.enabled` | Auto-commit uncommitted changes on session stop |
-| `auto-push` | `.autoCommit.push` | Push to remote after auto-commit (requires `auto-commit` enabled) |
+| `auto-push` | `.autoCommit.push` | Add push instruction to auto-commit prompt (requires `auto-commit` enabled) |
 | `notifications` | `.notifications.enabled` | Desktop notifications on permission prompts |
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate code detection |
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop (requires `dry-check` enabled) |
@@ -311,7 +311,7 @@ Unknown feature: "autoLearn"
 Available features:
   auto-learn     Track patterns, suggest CLAUDE.md edits
   auto-commit    Prompt to commit on stop
-  auto-push      Push after auto-commit
+  auto-push      Add push instruction to prompt
   notifications  Desktop notifications on prompts
   dry-check      Detect duplicate code
   dry-auto       Auto-scan for duplicates on stop

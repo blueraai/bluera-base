@@ -9,6 +9,12 @@ set -euo pipefail
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
+# Warn if jq unavailable - checks will be skipped
+if ! command -v jq &>/dev/null; then
+  echo "Warning: jq not available, post-edit checks skipped" >&2
+  exit 0
+fi
+
 # === Read stdin JSON ===
 
 INPUT=$(cat || true)

@@ -82,7 +82,7 @@ if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
 
     # Remove existing BLUERA_ exports to prevent accumulation across sessions
     if grep -q '^export BLUERA_' "$CLAUDE_ENV_FILE" 2>/dev/null; then
-        grep -v '^export BLUERA_' "$CLAUDE_ENV_FILE" > "${CLAUDE_ENV_FILE}.tmp" && \
+        { grep -v '^export BLUERA_' "$CLAUDE_ENV_FILE" || true; } > "${CLAUDE_ENV_FILE}.tmp" && \
             mv "${CLAUDE_ENV_FILE}.tmp" "$CLAUDE_ENV_FILE"
     fi
 

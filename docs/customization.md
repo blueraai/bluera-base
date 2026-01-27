@@ -51,25 +51,6 @@ Add project-specific rules after the @include:
 * commit directly to main without PR
 ```
 
-## Architectural Constraint Skills
-
-For projects with critical architectural requirements (e.g., "code must be database-agnostic"), use the template:
-
-```bash
-# Copy the template
-cp /path/to/bluera-base/skills/architectural-constraints/SKILL.md.template \
-   .claude/skills/[constraint-name]/SKILL.md
-
-# Edit to match your constraint
-```
-
-The template provides structure for:
-
-- What violates the constraint (with code examples)
-- Where constrained code IS allowed (table format)
-- The correct pattern (with code examples)
-- Why it matters
-
 ## Subdirectory CLAUDE.md Files
 
 For large projects, create directory-specific CLAUDE.md files that auto-load when working in that directory:

@@ -188,7 +188,7 @@ Manage settings with `/bluera-base:config`. Config stored in `.bluera/bluera-bas
 /bluera-base:config enable auto-learn      # Track commands for learning
 /bluera-base:config enable notifications   # Desktop notifications
 /bluera-base:config enable auto-commit     # Auto-commit on session stop
-/bluera-base:config enable auto-push       # Push after auto-commit
+/bluera-base:config enable auto-push       # Add push instruction to prompt
 /bluera-base:config enable dry-check       # Enable DRY detection
 /bluera-base:config enable dry-auto        # Auto-scan on session stop
 ```

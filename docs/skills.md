@@ -261,13 +261,3 @@ Configures Claude Code's terminal status line with:
 - Custom format strings
 
 ---
-
-## Templates
-
-Templates are not active skills - they're meant to be copied to your project and customized.
-
-| Template | Purpose |
-|----------|---------|
-| `architectural-constraints` | Template for project-specific constraints (copy to your project) |
-
-See `skills/architectural-constraints/SKILL.md.template` for the template content.

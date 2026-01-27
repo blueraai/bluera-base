@@ -86,8 +86,6 @@ bluera-base/
 │   ├── cc-cleaner-fix.py         # Claude Code cleaner fix script
 │   └── cc-cleaner-scan.py        # Claude Code cleaner scan script
 ├── skills/
-│   ├── architectural-constraints/
-│   │   └── SKILL.md.template     # Template for project-specific constraints
 │   ├── auto-learn/
 │   │   └── SKILL.md              # Automatic learning from sessions
 │   ├── atomic-commits/
