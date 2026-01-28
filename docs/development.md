@@ -9,7 +9,7 @@ git clone https://github.com/blueraai/bluera-base.git
 cd bluera-base
 ```
 
-No build step required - this plugin is pure markdown, shell scripts, and Python utilities.
+No build step required - the plugin itself is pure markdown, shell scripts, and Python utilities. Node.js dependencies (`package.json`) are for release tooling only and not required for plugin runtime.
 
 ## Dogfooding (Testing Your Development Version)
 

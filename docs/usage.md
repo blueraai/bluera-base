@@ -13,7 +13,7 @@ Create a `CLAUDE.md` in your project root. Here's a **template** - customize the
 
 ## Package Manager
 
-**Use `bun`** - All scripts: `bun run <script>`
+**Use `bun`** (or your preferred package manager) - Example: `bun run <script>`
 
 ---
 

@@ -101,7 +101,7 @@ claude --plugin-dir /path/to/bluera-base
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
 | `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
-| `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
+| `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release`; blocks `--no-verify` |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end |
@@ -178,8 +178,10 @@ The hook automatically detects and validates:
 | **JavaScript/TypeScript** | `package.json` | ESLint | tsc |
 | **Python** | `pyproject.toml` | ruff | mypy |
 | **Rust** | `Cargo.toml` | cargo clippy | cargo check |
-| **Go** | `go.mod` | — | — |
+| **Go** | `go.mod` | Anti-pattern only | — |
 | **Makefile** | `Makefile` | make lint | make typecheck |
+
+> **Note:** Lint and typecheck failures are advisory (non-blocking). Checks run at most once per 30 seconds to avoid slowing down frequent edits.
 
 ### Repo Hardening
 
@@ -218,15 +220,30 @@ Default coverage threshold: **80%** (user-configurable)
 
 ---
 
+## Configuration
+
+| Path | Purpose |
+|------|---------|
+| `.claude/settings.json` | Claude Code permissions and settings |
+| `.bluera/bluera-base/config.json` | Plugin feature toggles (auto-learn, notifications, etc.) |
+
+See [Configuration](docs/configuration.md) for feature toggles and [Usage](docs/usage.md) for Claude Code settings.
+
+---
+
 ## Documentation
 
 | Guide | Description |
 |-------|-------------|
+| [Commands](docs/commands.md) | Full command reference |
+| [Configuration](docs/configuration.md) | Feature toggles, config schema |
 | [Hooks](docs/hooks.md) | Hook details, flow diagrams, configuration |
 | [Skills](docs/skills.md) | Skill workflows, usage examples |
 | [Usage](docs/usage.md) | @includes, overriding skills, settings templates |
-| [Customization](docs/customization.md) | Trigger files, hooks, rules, architectural constraints |
+| [Customization](docs/customization.md) | Trigger files, hooks, rules |
 | [Development](docs/development.md) | Setup, dogfooding, project structure |
+| [Troubleshooting](docs/troubleshooting.md) | Common issues and solutions |
+| [Hook Examples](docs/hook-examples.md) | Additional hook patterns |
 | [Contributing](CONTRIBUTING.md) | How to contribute |
 
 ---
