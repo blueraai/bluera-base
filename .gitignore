@@ -20,3 +20,11 @@ node_modules/
 
 __pycache__
 .DS_Store
+
+# Bluera Knowledge
+# Config files (stores.config.json, config.json, skill-activation.json) can be committed
+# Data directory (vector DB, cloned repos) is not committed
+!.bluera/
+!.bluera/bluera-knowledge/config.json
+!.bluera/bluera-knowledge/skill-activation.json
+.bluera/bluera-knowledge/data/
