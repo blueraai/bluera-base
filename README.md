@@ -128,7 +128,6 @@ claude --plugin-dir /path/to/bluera-base
 | `/test-plugin` | | Run plugin validation test suite |
 | `/dry` | `[scan\|report\|config\|init] [--threshold N] [--path <dir>]` | Detect duplicate code, suggest DRY refactors |
 | `/harden-repo` | `[--language <lang>] [--skip-hooks] [--coverage <threshold>]` | Set up linters, formatters, git hooks (13 langs) |
-| `/worktree` | `[list\|add\|remove\|prune\|status] [branch] [path]` | Manage Git worktrees |
 | `/statusline` | `[show\|preset\|custom\|reset]` | Configure terminal status line |
 | `/analyze-config` | `[--cleanup]` | Scan `.claude/**` for bluera-base overlap |
 | `/audit-plugin` | `[path/to/plugin] [--fix]` | Audit plugin against best practices |
@@ -154,6 +153,7 @@ claude --plugin-dir /path/to/bluera-base
 | `statusline` | Status line configuration with presets |
 | `auto-learn` | Auto-learning pattern detection and consolidation |
 | `claude-cleaner` | Diagnose slow startup and guide cleanup |
+| `worktree` | Git worktree management for parallel development |
 
 → [Full skills documentation](docs/skills.md)
 

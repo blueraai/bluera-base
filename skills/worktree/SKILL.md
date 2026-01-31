@@ -1,7 +1,7 @@
 ---
+name: worktree
 description: Manage Git worktrees for parallel development workflows
-allowed-tools: Bash(git:*), Bash(ls:*), Bash(mkdir:*), Bash(rm:*), Read, AskUserQuestion
-argument-hint: [list|add|remove|prune|status] [branch] [path]
+allowed-tools: [Bash, Read, AskUserQuestion]
 ---
 
 # Git Worktree Management
