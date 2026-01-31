@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.17.0](https://github.com/blueraai/bluera-base/compare/v0.16.1...v0.17.0) (2026-01-31)
+
+### Features
+
+* **commands:** add context: fork to heavy commands ([4c1f134](https://github.com/blueraai/bluera-base/commit/4c1f1343e528207e24c20676e3345500c9397f89))
+* **skills:** add allowed-tools frontmatter for bounded tool access ([e549e61](https://github.com/blueraai/bluera-base/commit/e549e6138734ef9d0e650d3a2fc203b624c833f9))
+
+### Bug Fixes
+
+* address CODEX-17 documentation and code issues ([d2d286a](https://github.com/blueraai/bluera-base/commit/d2d286a65d20024328af178d9e7b8c523d8c20b1))
+* address CODEX-ANALYSIS-28 issues (CODEX-28) ([eabcd82](https://github.com/blueraai/bluera-base/commit/eabcd827d737baf7544345809b120c606861e1d2))
+* address CODEX-ANALYSIS-29 issues (CODEX-29) ([cfd4f0b](https://github.com/blueraai/bluera-base/commit/cfd4f0b8634fdc5a4c1befc1fb9fa8e432b864d7))
+* address CODEX-ANALYSIS-30 issues (CODEX-30) ([64eb1e4](https://github.com/blueraai/bluera-base/commit/64eb1e4ae025aede7daa4bb18d6dfd639e9c655f))
+* address CODEX-ANALYSIS-31 issues (CODEX-31) ([b76cf00](https://github.com/blueraai/bluera-base/commit/b76cf00cd605c7b55bcdb7ccbf10a29aee4a3680))
+* address CODEX-ANALYSIS-32 issues (CODEX-32) ([4417189](https://github.com/blueraai/bluera-base/commit/4417189c62e70acc4155e7d86247e34af5885a8a))
+* address CODEX-ANALYSIS-33 issues (CODEX-33) ([40e947a](https://github.com/blueraai/bluera-base/commit/40e947ab41e9e71c1484574a5c63ce211591f152))
+* address CODEX-ANALYSIS-34 issues (CODEX-34) ([345bf5d](https://github.com/blueraai/bluera-base/commit/345bf5d1852c29da776367c9b016930e125a18d2))
+* address CODEX-ANALYSIS-35 issues (CODEX-35) ([e401bb7](https://github.com/blueraai/bluera-base/commit/e401bb79972277a424cbef496effd1c24a72fc68))
+* address CODEX-ANALYSIS-36 issues (CODEX-36) ([22e2249](https://github.com/blueraai/bluera-base/commit/22e2249dc86064303c821d60839ce312ec67eed1))
+* address CODEX-ANALYSIS-37 issues (CODEX-37) ([3e21d7c](https://github.com/blueraai/bluera-base/commit/3e21d7c945a80ecd8abe27222ba64e268f84d880))
+* address CODEX-ANALYSIS-8 tool restrictions and doc mismatches ([1f77bd8](https://github.com/blueraai/bluera-base/commit/1f77bd8bde93800e87d58ce16e850756403ace59))
+* convert PCRE patterns to POSIX ERE for cross-platform compatibility ([790c2b9](https://github.com/blueraai/bluera-base/commit/790c2b95231246509bc0056aa55c80841e932c59))
+* **gitignore:** fully ignore .bluera/ in plugin source repo ([00f1c93](https://github.com/blueraai/bluera-base/commit/00f1c9320cc9020d043c9bafe1ae6d8d4847f242))
+* md5 macOS hash extraction, tighten lint/typecheck detection ([236c69a](https://github.com/blueraai/bluera-base/commit/236c69afe5b1a5fe822ce7752b8e9ca0ca2436b2))
+* **readme:** never remove content, only reorganize ([a40faad](https://github.com/blueraai/bluera-base/commit/a40faad06338f2b9dbc5748b3535093d5a9aa985))
+* release-block bypasses and gitignore pattern structure ([5310350](https://github.com/blueraai/bluera-base/commit/53103507019dd193d3bad1ba491349f5e99160bd))
+* strict typing regex, auto-commit wording, pre-compact guidance ([1865071](https://github.com/blueraai/bluera-base/commit/18650710640d3e6d8a4832b9cb397ff44f9b6208))
+* **templates:** correct plugin.json path to .claude-plugin directory ([2b5b891](https://github.com/blueraai/bluera-base/commit/2b5b891623a3ced89acab6144ecfde6444e6908b))
+* Windows compatibility and documentation fixes from CODEX analysis ([bbce755](https://github.com/blueraai/bluera-base/commit/bbce755750f7f4108b3f3fcd220527ed9d4a4285))
+* wire up config toggles and fix consistency issues (CODEX-27) ([46a5ba4](https://github.com/blueraai/bluera-base/commit/46a5ba496c962dd9a9a0bb29e789fe796b5706aa))
+* YAML frontmatter scope, gitignore patterns, rate limit collision ([8069027](https://github.com/blueraai/bluera-base/commit/80690271405a9a3d68d5dee69f43c8b6b5fc2de7))
+
 ## [0.16.1](https://github.com/blueraai/bluera-base/compare/v0.16.0...v0.16.1) (2026-01-19)
 
 ### Bug Fixes
