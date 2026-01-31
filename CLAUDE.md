@@ -36,8 +36,8 @@ Push to main triggers:
 
 ```text
 .claude-plugin/plugin.json  - Manifest (version synced via .versionrc.json)
-commands/*.md               - Slash commands (21 total)
-skills/*/SKILL.md           - Skill documentation
+commands/*.md               - Slash commands
+skills/*/SKILL.md           - Skills (invocable via /bluera-base:<name>)
 hooks/hooks.json            - Hook registration
 hooks/*.sh                  - Hook scripts
 includes/CLAUDE-BASE.md     - @includeable content
