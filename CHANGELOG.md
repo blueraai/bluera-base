@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.21.1](https://github.com/blueraai/bluera-base/compare/v0.21.0...v0.21.1) (2026-02-01)
+
+### Bug Fixes
+
+* **hooks:** improve robustness with atomic locking and error handling ([52b1d22](https://github.com/blueraai/bluera-base/commit/52b1d22f6945622232faab0d1e123d6cb86f03ad))
+* **scripts:** add path validation and error handling to cleaner ([74eb885](https://github.com/blueraai/bluera-base/commit/74eb88574f87eb7bb9e89571603763a186f8c340))
+
 ## [0.21.0](https://github.com/blueraai/bluera-base/compare/v0.20.0...v0.21.0) (2026-02-01)
 
 ### Features
