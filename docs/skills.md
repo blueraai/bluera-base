@@ -7,6 +7,7 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 | Skill | Purpose |
 |-------|---------|
 | `auto-learn` | Automatic learning from session patterns |
+| `learn` | Deep learning management (show, apply, dismiss learnings) |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
@@ -48,6 +49,49 @@ Automatically detects recurring command patterns during sessions and suggests le
 | Target | `local`/`shared` | `local` | CLAUDE.local.md vs CLAUDE.md |
 
 See `skills/auto-learn/SKILL.md` for full documentation.
+
+---
+
+## learn
+
+Manage learnings captured from semantic session analysis (deep learning).
+
+### Usage
+
+```bash
+/bluera-base:learn show              # View pending learnings
+/bluera-base:learn apply 1           # Apply specific learning
+/bluera-base:learn apply all         # Apply all learnings
+/bluera-base:learn dismiss 1         # Dismiss a learning
+/bluera-base:learn clear             # Clear all pending
+```
+
+### Learning Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `correction` | User corrected Claude's approach | "Use `bun run test:e2e` not `bun test`" |
+| `error` | Error resolution discovered | "vitest.config.ts requires explicit include" |
+| `fact` | Project-specific fact | "The API uses snake_case" |
+| `workflow` | Successful pattern | "Run type-check before build" |
+
+### Configuration
+
+```bash
+# Enable deep learning (required for session analysis)
+/bluera-base:config enable deep-learn
+
+# Configure model (haiku is faster, sonnet is smarter)
+/bluera-base:config set .deepLearn.model sonnet
+```
+
+### Cost
+
+- Haiku: ~$0.001/session
+- Daily (10 sessions): ~$0.01
+- Monthly: ~$0.30
+
+See `skills/learn/SKILL.md` for full documentation.
 
 ---
 

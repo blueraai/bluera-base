@@ -14,6 +14,7 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end |
+| `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end |
 | `auto-commit.sh` | Stop | Blocks session stop and prompts to run `/bluera-base:commit` if uncommitted changes exist (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
@@ -185,6 +186,40 @@ Observes Bash commands during the session to identify patterns for auto-learning
 **Opt-in feature.** Enable with `/bluera-base:config enable auto-learn`.
 
 Consolidates patterns observed during the session into learnings.
+
+---
+
+## session-end-analyze.sh
+
+**Opt-in feature.** Enable with `/bluera-base:config enable deep-learn`.
+
+Semantic session analysis using Claude CLI. Analyzes session transcripts to extract meaningful, project-specific learnings.
+
+**What it does:**
+
+1. Extracts key events (user messages, errors) from the session transcript
+2. Sends to Claude Haiku for semantic analysis
+3. Stores learnings in `.bluera/bluera-base/state/pending-learnings.jsonl`
+4. Shows systemMessage with learning count
+
+**Learning types:**
+
+- `correction` - User corrected Claude's approach
+- `error` - Error resolution discovered during work
+- `fact` - Project-specific fact learned
+- `workflow` - Successful workflow pattern
+
+**Configuration:**
+
+```bash
+/bluera-base:config enable deep-learn
+/bluera-base:config set .deepLearn.model haiku    # or sonnet
+/bluera-base:config set .deepLearn.maxBudget 0.05 # USD per analysis
+```
+
+**Cost:** ~$0.001 per session (Haiku)
+
+**Review learnings:** Use `/bluera-base:learn show` to view and apply pending learnings.
 
 ---
 

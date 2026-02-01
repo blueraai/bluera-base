@@ -38,6 +38,11 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   "standardsReview": {
     "enabled": false,
     "mode": "warn"
+  },
+  "deepLearn": {
+    "enabled": false,
+    "model": "haiku",
+    "maxBudget": 0.02
   }
 }'
 

@@ -46,6 +46,7 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 │ strict-typing│ OFF     │ Block any/as (TS), Any/cast (Python)    │
 │ standards-   │ OFF     │ Review code against CLAUDE.md on commit │
 │   review     │         │                                         │
+│ deep-learn   │ OFF     │ Semantic session analysis via Claude    │
 └──────────────┴─────────┴─────────────────────────────────────────┘
 
 Settings (change with: /bluera-base:config set <key> <value>)
@@ -305,6 +306,7 @@ Toggle features by name. If the feature name is not recognized, list available f
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop (requires `dry-check` enabled) |
 | `strict-typing` | `.strictTyping.enabled` | Block `any`/`as` (TS), `Any`/`cast` (Python) |
 | `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commit |
+| `deep-learn` | `.deepLearn.enabled` | Semantic session analysis using Claude CLI |
 
 **If unrecognized feature name:**
 
@@ -320,6 +322,7 @@ Available features:
   dry-auto         Auto-scan for duplicates on stop
   strict-typing    Block any/as (TS), Any/cast (Python)
   standards-review Review code against CLAUDE.md on commit
+  deep-learn       Semantic session analysis via Claude CLI
 ```
 
 ### Reset
@@ -394,6 +397,11 @@ Env (from CLAUDE_ENV_FILE):
   "standardsReview": {
     "enabled": false,    // opt-in: review code against CLAUDE.md on commit
     "mode": "warn"       // warn (report only) | block (prevent commit)
+  },
+  "deepLearn": {
+    "enabled": false,    // opt-in: semantic session analysis
+    "model": "haiku",    // haiku | sonnet
+    "maxBudget": 0.02    // max USD per analysis
   }
 }
 ```
@@ -409,6 +417,7 @@ Env (from CLAUDE_ENV_FILE):
 └── state/                   # Runtime state (gitignored)
     ├── milhouse-loop.md     # Active loop state
     ├── session-signals.json # Learning observation data
+    ├── pending-learnings.jsonl # Deep learning pending queue
     ├── dry-report.md        # Last DRY scan report
     └── jscpd-report.json    # Raw jscpd output
 ```
@@ -471,6 +480,15 @@ Env (from CLAUDE_ENV_FILE):
 
 # Set standards review to block mode (prevents commits with violations)
 /bluera-base:config set .standardsReview.mode block --shared
+
+# Enable deep learning (semantic session analysis)
+/bluera-base:config enable deep-learn
+
+# Set deep learning model (haiku is faster/cheaper, sonnet is smarter)
+/bluera-base:config set .deepLearn.model sonnet
+
+# Set max budget per analysis
+/bluera-base:config set .deepLearn.maxBudget 0.05
 ```
 
 ---
