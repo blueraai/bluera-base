@@ -55,6 +55,41 @@ Remove all pending learnings:
 /bluera-base:learn clear
 ```
 
+### Extract Learnings Now
+
+Manually trigger deep-learn analysis on the current session:
+
+```bash
+/bluera-base:learn extract
+```
+
+**How it works:**
+
+1. Find current session transcript: most recent `.jsonl` in `~/.claude/projects/<project-id>/`
+2. Extract user messages and errors (same as session-end-analyze.sh)
+3. Send to Claude Haiku for analysis (~$0.001)
+4. Write learnings to `.bluera/bluera-base/state/pending-learnings.jsonl`
+5. Show count of learnings captured
+
+**Requirements:**
+
+- `deep-learn` must be enabled
+- `claude` CLI must be installed
+- Session must have ≥3 meaningful events (user messages or errors)
+
+**Implementation notes:**
+
+```bash
+# Find project transcript directory
+PROJECT_ID=$(echo "$PWD" | sed 's|/|-|g')
+TRANSCRIPT_DIR="$HOME/.claude/projects/$PROJECT_ID"
+
+# Get most recent transcript
+TRANSCRIPT=$(ls -t "$TRANSCRIPT_DIR"/*.jsonl 2>/dev/null | head -1)
+
+# Run analysis using same logic as hooks/session-end-analyze.sh
+```
+
 ## Learning Types
 
 | Type | Description | Example |
@@ -94,5 +129,6 @@ When this skill is invoked:
 3. For `apply`: Use the autolearn library to write to CLAUDE.local.md, mark as applied
 4. For `dismiss`: Remove from pending file
 5. For `clear`: Remove all pending learnings
+6. For `extract`: Run the analysis workflow from `<repo root>/hooks/session-end-analyze.sh` on the current session's transcript
 
 Use the existing `bluera_autolearn_write` function from `hooks/lib/autolearn.sh` for writing learnings.
