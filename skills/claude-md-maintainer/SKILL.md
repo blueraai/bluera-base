@@ -95,7 +95,7 @@ grep -A 20 '^\[project.scripts\]' pyproject.toml | grep '=' | cut -d'=' -f1 | tr
 ### Generated Structure
 
 ```markdown
-@bluera-base/includes/CLAUDE-BASE.md
+includes/CLAUDE-BASE.md
 
 ---
 

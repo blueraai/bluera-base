@@ -41,19 +41,19 @@ Per-language tooling configs (linting, formatting, type checking, hooks, coverag
 
 | Language | Reference |
 |----------|-----------|
-| JavaScript/TypeScript | @bluera-base/skills/repo-hardening/references/javascript-typescript.md |
-| Python | @bluera-base/skills/repo-hardening/references/python.md |
-| Rust | @bluera-base/skills/repo-hardening/references/rust.md |
-| Go | @bluera-base/skills/repo-hardening/references/go.md |
-| Java | @bluera-base/skills/repo-hardening/references/java.md |
-| Kotlin | @bluera-base/skills/repo-hardening/references/kotlin.md |
-| Ruby | @bluera-base/skills/repo-hardening/references/ruby.md |
-| PHP | @bluera-base/skills/repo-hardening/references/php.md |
-| C#/.NET | @bluera-base/skills/repo-hardening/references/csharp-dotnet.md |
-| Swift | @bluera-base/skills/repo-hardening/references/swift.md |
-| Elixir | @bluera-base/skills/repo-hardening/references/elixir.md |
-| C/C++ | @bluera-base/skills/repo-hardening/references/c-cpp.md |
-| Scala | @bluera-base/skills/repo-hardening/references/scala.md |
+| JavaScript/TypeScript | skills/repo-hardening/references/javascript-typescript.md |
+| Python | skills/repo-hardening/references/python.md |
+| Rust | skills/repo-hardening/references/rust.md |
+| Go | skills/repo-hardening/references/go.md |
+| Java | skills/repo-hardening/references/java.md |
+| Kotlin | skills/repo-hardening/references/kotlin.md |
+| Ruby | skills/repo-hardening/references/ruby.md |
+| PHP | skills/repo-hardening/references/php.md |
+| C#/.NET | skills/repo-hardening/references/csharp-dotnet.md |
+| Swift | skills/repo-hardening/references/swift.md |
+| Elixir | skills/repo-hardening/references/elixir.md |
+| C/C++ | skills/repo-hardening/references/c-cpp.md |
+| Scala | skills/repo-hardening/references/scala.md |
 
 ---
 

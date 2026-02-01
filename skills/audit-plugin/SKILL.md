@@ -8,7 +8,7 @@ allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 
 Apply Claude Code plugin best practices from our documentation to audit a plugin repo.
 
-See @bluera-base/docs/claude-code-best-practices.md for the full best practices guide.
+See docs/claude-code-best-practices.md for the full best practices guide.
 
 ## Context
 

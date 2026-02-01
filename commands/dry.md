@@ -4,4 +4,4 @@ argument-hint: "[scan|report|config|init] [--threshold N] [--path <dir>]"
 allowed-tools: Bash, Read, Write, Glob, Grep
 ---
 
-See @bluera-base/skills/dry/SKILL.md
+See skills/dry/SKILL.md

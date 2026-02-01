@@ -4,4 +4,4 @@ argument-hint: [--cleanup]
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See @bluera-base/skills/analyze-config/SKILL.md
+See skills/analyze-config/SKILL.md

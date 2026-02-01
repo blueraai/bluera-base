@@ -61,4 +61,4 @@ Results are stored in `.bluera/bluera-base/state/jscpd-report.json`
 
 ### 4. Refactoring Guidance
 
-See @bluera-base/skills/dry-refactor/SKILL.md for language-specific refactoring patterns.
+See skills/dry-refactor/SKILL.md for language-specific refactoring patterns.

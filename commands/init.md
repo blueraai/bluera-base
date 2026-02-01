@@ -4,4 +4,4 @@ argument-hint: [--quick|--full]
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See @bluera-base/skills/init/SKILL.md
+See skills/init/SKILL.md

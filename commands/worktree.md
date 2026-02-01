@@ -4,4 +4,4 @@ argument-hint: "[list|add|remove|prune|status] [args]"
 allowed-tools: Bash, Read, AskUserQuestion
 ---
 
-See @bluera-base/skills/worktree/SKILL.md
+See skills/worktree/SKILL.md

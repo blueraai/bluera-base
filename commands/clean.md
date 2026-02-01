@@ -4,4 +4,4 @@ argument-hint: "[scan|fix <action>|backups <list|restore>] [--days N]"
 allowed-tools: Bash, Read, AskUserQuestion
 ---
 
-See @bluera-base/skills/claude-cleaner/SKILL.md
+See skills/claude-cleaner/SKILL.md

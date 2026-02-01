@@ -4,4 +4,4 @@ argument-hint: [overview|features|commands|behaviors|config|philosophy]
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See @bluera-base/skills/explain/SKILL.md
+See skills/explain/SKILL.md

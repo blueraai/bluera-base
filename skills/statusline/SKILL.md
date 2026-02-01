@@ -29,9 +29,9 @@ Choose a preset and apply it:
 
 Detailed implementation docs:
 
-- **@bluera-base/skills/statusline/references/themes.md** - 5 theme definitions (default, minimal, vibrant, monochrome, nerd)
-- **@bluera-base/skills/statusline/references/modules.md** - All module implementations (directory, model, context, git, cost, rate-limits, project, lines-changed, battery, cpu, memory, docker, time, cca-status)
-- **@bluera-base/skills/statusline/references/preset-scripts.md** - Complete ready-to-use bash scripts for each preset
+- **skills/statusline/references/themes.md** - 5 theme definitions (default, minimal, vibrant, monochrome, nerd)
+- **skills/statusline/references/modules.md** - All module implementations (directory, model, context, git, cost, rate-limits, project, lines-changed, battery, cpu, memory, docker, time, cca-status)
+- **skills/statusline/references/preset-scripts.md** - Complete ready-to-use bash scripts for each preset
 
 ---
 

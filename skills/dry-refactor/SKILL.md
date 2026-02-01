@@ -77,7 +77,7 @@ Not all duplication is bad. Keep duplicates when:
 
 ## Language-Specific Patterns
 
-See `@bluera-base/skills/dry-refactor/references/patterns.md` for detailed examples:
+See `skills/dry-refactor/references/patterns.md` for detailed examples:
 
 | Language | Primary Pattern |
 |----------|-----------------|
