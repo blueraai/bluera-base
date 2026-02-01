@@ -1,4 +1,32 @@
 {
   "version": 1,
-  "stores": []
+  "stores": [
+    {
+      "name": "bluera",
+      "type": "repo",
+      "url": "https://github.com/blueraai/bluera-marketplace"
+    },
+    {
+      "name": "bluera-knowledge",
+      "type": "repo",
+      "url": "https://github.com/blueraai/bluera-knowledge"
+    },
+    {
+      "name": "claude-code-anywhere",
+      "type": "repo",
+      "url": "https://github.com/blueraai/claude-code-anywhere"
+    },
+    {
+      "name": "claude-code-docs",
+      "type": "web",
+      "url": "https://docs.anthropic.com/en/docs/claude-code",
+      "depth": 1
+    },
+    {
+      "name": "claude-code-plugin-docs",
+      "type": "web",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/plugins",
+      "depth": 1
+    }
+  ]
 }
