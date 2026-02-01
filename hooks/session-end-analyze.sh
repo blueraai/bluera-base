@@ -39,6 +39,7 @@ MAX_BUDGET=$(bluera_get_config ".deepLearn.maxBudget" "0.02")
 
 # Extract learning-relevant events from transcript
 # Focus on: user messages (corrections), tool errors (resolutions)
+# Note: Content may contain newlines that break JSON output - sanitize with gsub
 EVENTS=$(jq -s '
   [.[] | select(
     (.type == "user") or
@@ -49,12 +50,12 @@ EVENTS=$(jq -s '
   )] |
   # Limit to first 50 events
   .[0:50] |
-  # Extract relevant fields
+  # Extract relevant fields and sanitize newlines in content
   map(
     if .type == "user" then
-      {type: "user", content: (.message.content // .content | if type == "array" then map(.text // "") | join(" ") else . end)[0:500]}
+      {type: "user", content: ((.message.content // .content | if type == "array" then map(.text // "") | join(" ") else . end)[0:500] | gsub("\n"; " ") | gsub("\r"; ""))}
     else
-      {type: "error", content: (.content | tostring)[0:300], is_error: .is_error}
+      {type: "error", content: ((.content | tostring)[0:300] | gsub("\n"; " ") | gsub("\r"; "")), is_error: .is_error}
     end
   )
 ' "$TRANSCRIPT" 2>/dev/null)
