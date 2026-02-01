@@ -12,6 +12,7 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 | `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
 | `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `dry` | Scan for code duplication using jscpd |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
 | `milhouse` | Iterative development loop documentation |

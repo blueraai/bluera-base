@@ -134,7 +134,7 @@ claude --plugin-dir /path/to/bluera-base
 | `/analyze-config` | `[--cleanup]` | Scan `.claude/**` for bluera-base overlap |
 | `/audit-plugin` | `[path/to/plugin] [--fix]` | Audit plugin against best practices |
 | `/help` | `[commands\|skills\|hooks\|config\|all]` | Show plugin features and usage |
-| `/explain` | `[overview\|commands\|skills\|hooks\|config\|philosophy]` | Explain plugin functionality |
+| `/explain` | `[overview\|features\|commands\|behaviors\|config\|philosophy]` | Explain plugin functionality |
 | `/todo` | | Manage project TODO tasks |
 | `/worktree` | `[list\|add\|remove\|prune\|status] [args]` | Manage Git worktrees for parallel development |
 | `/learn` | `[show\|apply\|dismiss\|clear]` | Manage semantic learnings from session analysis |

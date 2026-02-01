@@ -24,6 +24,8 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 | Feature | Config Path | Description | Default |
 |---------|-------------|-------------|---------|
 | `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits | OFF |
+| `deep-learn` | `.deepLearn.enabled` | Semantic session analysis via Claude CLI | OFF |
+| `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commits | OFF |
 | `auto-commit` | `.autoCommit.enabled` | Prompt to commit on session stop | OFF |
 | `auto-push` | `.autoCommit.push` | Add push instruction to commit prompt | OFF |
 | `notifications` | `.notifications.enabled` | Desktop notifications on prompts | ON |
@@ -59,11 +61,21 @@ Manage with `/bluera-base:config enable|disable <feature>`:
   "dryCheck": {
     "enabled": false,
     "onStop": false,
+    "threshold": 5,
     "minTokens": 70,
     "minLines": 5
   },
   "strictTyping": {
     "enabled": false
+  },
+  "deepLearn": {
+    "enabled": false,
+    "model": "claude-sonnet-4-20250514",
+    "maxBudget": 0.05
+  },
+  "standardsReview": {
+    "enabled": false,
+    "mode": "advisory"
   }
 }
 ```

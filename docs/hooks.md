@@ -14,7 +14,8 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end *(async)* |
-| `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) *(async)* |
+| `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) *(async, opt-in)* |
+| `standards-review.sh` | PreToolUse (Bash) | Review code against CLAUDE.md before commits *(opt-in)* |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end *(async)* |
 | `auto-commit.sh` | Stop | Blocks session stop and prompts to run `/bluera-base:commit` if uncommitted changes exist (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) *(async)*|
@@ -46,7 +47,7 @@ flowchart LR
     style J fill:#f59e0b,color:#fff
 ```
 
-> **Note:** Lint and typecheck failures are advisory (non-blocking). Anti-pattern detection and strict typing checks (when enabled) block the operation.
+> **Note:** Lint and typecheck failures are advisory (non-blocking). Anti-pattern detection, lint suppression detection, and strict typing checks (when enabled) **block** the operation with exit code 2.
 
 ---
 
@@ -230,6 +231,32 @@ Semantic session analysis using Claude CLI. Analyzes session transcripts to extr
 **Opt-in feature.** Enable with `/bluera-base:config enable dry-check`. For auto-scan on session stop, also enable `dry-auto`.
 
 Scans for code duplication at session end using `jscpd`. Reports duplicates that could be refactored.
+
+---
+
+## standards-review.sh
+
+**Opt-in feature.** Enable with `/bluera-base:config enable standards-review`.
+
+Reviews code against CLAUDE.md guidelines before Bash commands. Helps ensure code follows project conventions.
+
+**What it does:**
+
+1. Loads CLAUDE.md and .claude/rules/*.md files
+2. Checks recent edits against documented standards
+3. Warns if code may violate guidelines
+
+**Configuration:**
+
+```bash
+/bluera-base:config enable standards-review
+/bluera-base:config set .standardsReview.mode advisory  # or blocking
+```
+
+**Modes:**
+
+- `advisory` (default): Shows warnings but doesn't block
+- `blocking`: Blocks operations that violate standards
 
 ---
 
