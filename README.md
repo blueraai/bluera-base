@@ -136,6 +136,9 @@ claude --plugin-dir /path/to/bluera-base
 | `/help` | `[commands\|skills\|hooks\|config\|all]` | Show plugin features and usage |
 | `/explain` | `[overview\|commands\|skills\|hooks\|config\|philosophy]` | Explain plugin functionality |
 | `/todo` | | Manage project TODO tasks |
+| `/worktree` | `[list\|add\|remove\|prune\|status] [args]` | Manage Git worktrees for parallel development |
+| `/learn` | `[show\|apply\|dismiss\|clear]` | Manage semantic learnings from session analysis |
+| `/large-file-refactor` | `<file>` | Break apart files that exceed token limits |
 
 *All commands prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`)*
 

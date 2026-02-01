@@ -27,6 +27,8 @@ All commands are invoked with `/bluera-base:<command>`.
 | `test-plugin` | Run plugin validation test suite |
 | `todo` | Manage project TODO tasks |
 | `worktree` | Manage git worktrees |
+| `learn` | Manage semantic learnings from session analysis |
+| `large-file-refactor` | Break apart files that exceed token limits |
 
 ## By Category
 
@@ -47,6 +49,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `test-plugin` | Run comprehensive plugin test suite |
 | `dry` | Detect duplicate code |
 | `clean` | Diagnose startup performance |
+| `large-file-refactor` | Break apart files that exceed token limits |
 
 ### Documentation
 
@@ -70,6 +73,7 @@ All commands are invoked with `/bluera-base:<command>`.
 |---------|-------------|
 | `config` | Manage plugin settings (enable/disable features) |
 | `statusline` | Configure terminal status line display |
+| `learn` | Manage semantic learnings from session analysis |
 | `help` | Show features and usage |
 | `explain` | Explain all plugin functionality |
 | `todo` | Manage project TODO tasks |
