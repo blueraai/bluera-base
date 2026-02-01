@@ -12,7 +12,7 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 
 | Command | Description |
 |---------|-------------|
-| `/bluera-base:config` or `/bluera-base:config show` | Display current effective config |
+| `/bluera-base:config` or `/bluera-base:config show` | Interactive feature toggle (view and change settings) |
 | `/bluera-base:config init` | Initialize config for this project |
 | `/bluera-base:config set <key> <value>` | Set a config value |
 | `/bluera-base:config enable <feature>` | Enable a feature |
@@ -26,52 +26,104 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 
 ### Show (default)
 
-Display a **user-friendly summary** with current status and available options.
-
-**Output format:**
-
-```text
-bluera-base configuration
-
-Features (toggle with: /bluera-base:config enable|disable <feature>)
-┌──────────────┬─────────┬─────────────────────────────────────────┐
-│ Feature      │ Status  │ Description                             │
-├──────────────┼─────────┼─────────────────────────────────────────┤
-│ auto-learn   │ OFF     │ Track patterns, suggest CLAUDE.md edits │
-│ auto-commit  │ OFF     │ Prompt to commit on stop                │
-│ auto-push    │ OFF     │ Add push instruction to prompt          │
-│ notifications│ ON      │ Desktop notifications on prompts        │
-│ dry-check    │ OFF     │ Detect duplicate code                   │
-│ dry-auto     │ OFF     │ Auto-scan for duplicates on stop        │
-│ strict-typing│ OFF     │ Block any/as (TS), Any/cast (Python)    │
-│ standards-   │ OFF     │ Review code against CLAUDE.md on commit │
-│   review     │         │                                         │
-│ deep-learn   │ OFF     │ Semantic session analysis via Claude    │
-└──────────────┴─────────┴─────────────────────────────────────────┘
-
-Settings (change with: /bluera-base:config set <key> <value>)
-  .autoLearn.mode = "suggest"     # suggest | auto
-  .autoLearn.threshold = 3        # occurrences before acting
-  .autoLearn.target = "local"     # local | shared
-  .milhouse.defaultMaxIterations = 0
-  .milhouse.defaultStuckLimit = 3
-  .milhouse.defaultGates = []
-
-Config files:
-  .bluera/bluera-base/config.json       (not found)
-  .bluera/bluera-base/config.local.json (exists)
-
-Run /bluera-base:config init to create shared config.
-```
+Interactive feature toggle with current status display.
 
 **Steps:**
 
 1. Check if `.bluera/bluera-base/` exists
 2. Load and merge: defaults ← `config.json` ← `config.local.json`
-3. Display feature table with ON/OFF status
-4. Display key settings with current values
-5. Show config file status
-6. Suggest next action if config not initialized
+3. Display brief current status showing which features are enabled
+4. Use AskUserQuestion with multiSelect to let user toggle features
+5. Apply changes based on selections (handle dependencies)
+6. Display summary of changes made
+
+**Phase 1: Display Current Status**
+
+Show a compact summary of current state:
+
+```text
+bluera-base configuration
+
+Currently enabled: notifications
+Currently disabled: auto-learn, deep-learn, auto-commit, auto-push, dry-check, dry-auto, strict-typing, standards-review
+```
+
+**Phase 2: Interactive Toggle**
+
+Use AskUserQuestion with multiSelect. The question text indicates which features are currently ON so users know what to re-select to keep them enabled.
+
+```yaml
+question: "Select features to enable (unselected = disabled). Currently ON: notifications"
+header: "Features"
+multiSelect: true
+options:
+  - label: "auto-learn"
+    description: "Track command patterns, suggest CLAUDE.md edits"
+  - label: "deep-learn"
+    description: "Semantic session analysis via Claude CLI (~$0.001/session)"
+  - label: "auto-commit"
+    description: "Prompt to commit on session stop"
+  - label: "auto-push"
+    description: "Push after commit (requires auto-commit)"
+  - label: "notifications"
+    description: "Desktop notifications when Claude needs input"
+  - label: "dry-check"
+    description: "Enable /dry command for duplicate detection"
+  - label: "dry-auto"
+    description: "Auto-scan for duplicates on stop (requires dry-check)"
+  - label: "strict-typing"
+    description: "Block any/as (TS), Any/cast (Python)"
+  - label: "standards-review"
+    description: "Review code against CLAUDE.md before commit"
+```
+
+**Phase 3: Apply Changes with Dependency Handling**
+
+Compare user selections to current state and apply changes:
+
+1. **Parse selections** - Get list of selected feature names from response
+2. **Handle dependencies** - When enabling dependent features, auto-enable parent:
+   - `auto-push` selected → also enable `auto-commit`
+   - `dry-auto` selected → also enable `dry-check`
+3. **Handle dependency removal** - When disabling parent, also disable dependent:
+   - `auto-commit` deselected → also disable `auto-push`
+   - `dry-check` deselected → also disable `dry-auto`
+4. **Apply changes** - For each feature:
+   - If newly selected (was OFF, now ON) → enable it
+   - If newly deselected (was ON, now OFF) → disable it
+
+**Phase 4: Display Summary**
+
+```text
+Configuration updated:
+
+  ✓ Enabled: auto-learn, strict-typing
+  ✗ Disabled: notifications
+
+Unchanged: deep-learn, auto-commit, auto-push, dry-check, dry-auto, standards-review
+
+Config saved to .bluera/bluera-base/config.local.json
+```
+
+If no changes were made:
+
+```text
+No changes made. Current configuration unchanged.
+```
+
+**Feature to Config Path Mapping**
+
+| Feature | Config Path |
+|---------|-------------|
+| `auto-learn` | `.autoLearn.enabled` |
+| `deep-learn` | `.deepLearn.enabled` |
+| `auto-commit` | `.autoCommit.enabled` |
+| `auto-push` | `.autoCommit.push` |
+| `notifications` | `.notifications.enabled` |
+| `dry-check` | `.dryCheck.enabled` |
+| `dry-auto` | `.dryCheck.onStop` |
+| `strict-typing` | `.strictTyping.enabled` |
+| `standards-review` | `.standardsReview.enabled` |
 
 ### Init
 
@@ -427,13 +479,16 @@ Env (from CLAUDE_ENV_FILE):
 ## Examples
 
 ```bash
-# Initialize config for a new project
-/bluera-base:config init
+# Interactive toggle - view current settings and toggle features on/off
+/bluera-base:config
 
-# Show current settings
+# Same as above (show is the default)
 /bluera-base:config show
 
-# Enable auto-learning (opt-in)
+# Initialize config for a new project (guided setup)
+/bluera-base:config init
+
+# CLI toggle - enable/disable specific features (for scripting)
 /bluera-base:config enable auto-learn
 
 # Set learning mode to auto-apply
