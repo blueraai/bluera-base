@@ -10,14 +10,16 @@ Bluera Base provides automatic validation hooks that run during Claude Code sess
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
-| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
+| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning *(async)* |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release` command for releases |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
-| `session-end-learn.sh` | Stop | Consolidate learnings at session end |
-| `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) |
-| `dry-scan.sh` | Stop | Scan for code duplication at session end |
+| `session-end-learn.sh` | Stop | Consolidate learnings at session end *(async)* |
+| `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) *(async)* |
+| `dry-scan.sh` | Stop | Scan for code duplication at session end *(async)* |
 | `auto-commit.sh` | Stop | Blocks session stop and prompts to run `/bluera-base:commit` if uncommitted changes exist (opt-in) |
-| `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
+| `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) *(async)*|
+
+> **Async hooks** run in the background without blocking Claude. Output is delivered on the next conversation turn.
 
 ## Hook Flow
 
