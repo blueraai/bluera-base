@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.18.0](https://github.com/blueraai/bluera-base/compare/v0.17.0...v0.18.0) (2026-02-01)
+
+### Features
+
+* **hooks:** add standards-review hook for pre-commit validation ([d6b901b](https://github.com/blueraai/bluera-base/commit/d6b901bbc54cc2c1b21abb4a517b3bfdfbfdb10a))
+
 ## [0.17.0](https://github.com/blueraai/bluera-base/compare/v0.16.1...v0.17.0) (2026-01-31)
 
 ### Features
