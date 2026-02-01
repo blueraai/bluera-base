@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.22.0](https://github.com/blueraai/bluera-base/compare/v0.21.4...v0.22.0) (2026-02-01)
+
+### Features
+
+* **learn:** add extract command for manual mid-session analysis ([3b6991b](https://github.com/blueraai/bluera-base/commit/3b6991bdf78ca70201dde0f80e877e0cda0783d9))
+
+### Bug Fixes
+
+* **hooks:** sanitize newlines in transcript content extraction ([7a06ca4](https://github.com/blueraai/bluera-base/commit/7a06ca4fe2b294cab04dac46038d43e9f56d7f65))
+
 ## [0.21.4](https://github.com/blueraai/bluera-base/compare/v0.21.3...v0.21.4) (2026-02-01)
 
 ## [0.21.3](https://github.com/blueraai/bluera-base/compare/v0.21.2...v0.21.3) (2026-02-01)

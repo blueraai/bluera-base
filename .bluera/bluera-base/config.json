@@ -1,7 +1,7 @@
 {
   "version": 1,
   "autoLearn": {
-    "enabled": false,
+    "enabled": true,
     "mode": "suggest",
     "threshold": 3,
     "target": "local"
@@ -29,5 +29,10 @@
   },
   "strictTyping": {
     "enabled": false
+  },
+  "deepLearn": {
+    "enabled": true,
+    "model": "haiku",
+    "maxBudget": 0.02
   }
 }
