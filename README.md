@@ -146,19 +146,29 @@ claude --plugin-dir /path/to/bluera-base
 
 | Skill | Purpose |
 |-------|---------|
-| `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `analyze-config` | Analyze repo's .claude/** for overlap with bluera-base |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
-| `release` | Release workflow with multi-language version bumping |
-| `milhouse` | Iterative development loop documentation |
+| `audit-plugin` | Audit Claude Code plugins against best practices |
+| `auto-learn` | Auto-learning pattern detection and consolidation |
+| `claude-cleaner` | Diagnose slow startup and guide cleanup |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
-| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `config` | Manage bluera-base plugin configuration |
+| `dry` | Detect duplicate code using jscpd |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
+| `explain` | Explain all bluera-base plugin functionality |
+| `help` | Show plugin features and usage |
+| `init` | Initialize project with bluera-base conventions |
+| `install-rules` | Install rule templates into .claude/rules/ |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
+| `learn` | Deep learning management (show, apply, dismiss learnings) |
+| `milhouse` | Iterative development loop documentation |
+| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `release` | Release workflow with multi-language version bumping |
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets |
-| `auto-learn` | Auto-learning pattern detection and consolidation |
-| `learn` | Deep learning management (show, apply, dismiss learnings) |
-| `claude-cleaner` | Diagnose slow startup and guide cleanup |
+| `test-plugin` | Run comprehensive plugin validation test suite |
+| `todo` | Manage project TODO tasks |
 | `worktree` | Git worktree management for parallel development |
 
 → [Full skills documentation](docs/skills.md)

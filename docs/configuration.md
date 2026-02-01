@@ -61,7 +61,6 @@ Manage with `/bluera-base:config enable|disable <feature>`:
   "dryCheck": {
     "enabled": false,
     "onStop": false,
-    "threshold": 5,
     "minTokens": 70,
     "minLines": 5
   },
@@ -70,12 +69,12 @@ Manage with `/bluera-base:config enable|disable <feature>`:
   },
   "deepLearn": {
     "enabled": false,
-    "model": "claude-sonnet-4-20250514",
-    "maxBudget": 0.05
+    "model": "haiku",
+    "maxBudget": 0.02
   },
   "standardsReview": {
     "enabled": false,
-    "mode": "advisory"
+    "mode": "warn"
   }
 }
 ```

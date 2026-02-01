@@ -250,13 +250,13 @@ Reviews code against CLAUDE.md guidelines before Bash commands. Helps ensure cod
 
 ```bash
 /bluera-base:config enable standards-review
-/bluera-base:config set .standardsReview.mode advisory  # or blocking
+/bluera-base:config set .standardsReview.mode warn  # or block
 ```
 
 **Modes:**
 
-- `advisory` (default): Shows warnings but doesn't block
-- `blocking`: Blocks operations that violate standards
+- `warn` (default): Shows warnings but doesn't block
+- `block`: Blocks operations that violate standards
 
 ---
 
