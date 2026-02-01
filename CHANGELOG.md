@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.21.0](https://github.com/blueraai/bluera-base/compare/v0.20.0...v0.21.0) (2026-02-01)
+
+### Features
+
+* **commands:** expose worktree, learn, large-file-refactor as slash commands ([4d32de8](https://github.com/blueraai/bluera-base/commit/4d32de8de5c7b45f8fae2f8396000ef4ed3b9225)), closes [#17271](https://github.com/blueraai/bluera-base/issues/17271)
+
 ## [0.20.0](https://github.com/blueraai/bluera-base/compare/v0.19.0...v0.20.0) (2026-02-01)
 
 ### Features
