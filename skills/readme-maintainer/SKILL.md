@@ -322,6 +322,70 @@ For large READMEs (> 400 lines) that should be split into modular documentation.
 - docs/ folder structure
 - Post-breakout README template
 
+## Audit Algorithm
+
+Verify README.md and docs/ accuracy against actual codebase.
+
+### Process
+
+1. **Gather context**: Use Haiku agent to find CLAUDE.md files and identify source files
+
+2. **Parallel verification** (2 Sonnet agents):
+   - **Agent #1 - README audit**: Check README.md against codebase
+     - Commands listed exist in commands/
+     - Skills listed exist in skills/
+     - Hooks documented match hooks/hooks.json
+     - Version numbers match package.json
+     - Feature descriptions match implementations
+
+   - **Agent #2 - docs/ audit**: Check docs/*.md against codebase
+     - Configuration options match actual schema
+     - Hook behaviors match implementations
+     - Examples are accurate and runnable
+     - API references are current
+
+3. **Confidence scoring**: For each issue, score 0-100:
+   - 0: False positive
+   - 25: Unverified/stylistic
+   - 50: Real but minor
+   - 75: Verified, impacts functionality
+   - 100: Critical inaccuracy
+
+4. **Filter and report**: Only show issues with score ≥ 80
+
+### Output Format
+
+#### Issues Found
+
+```markdown
+## Documentation Audit
+
+Found N issues:
+
+1. **description** (reason)
+   `file/path.md:line` → should be "correct value"
+
+2. **description** (reason)
+   `file/path.md:line`
+```
+
+#### No Issues
+
+```markdown
+## Documentation Audit (no issues)
+
+Documentation is consistent with codebase.
+```
+
+### False Positives to Avoid
+
+- Intentional documentation of future features
+- Version numbers in examples (not actual version)
+- Stylistic differences that don't affect accuracy
+- Links to external documentation
+
+---
+
 ## References
 
 Read these templates for detailed syntax and examples:
