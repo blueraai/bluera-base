@@ -92,15 +92,26 @@ run_project_lint() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null || echo "${RANDOM:-$$}"; } | grep -oE '[a-f0-9]{8}' | head -1)
-  PROJECT_HASH="${PROJECT_HASH:-default}"
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null; } | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH="${PROJECT_HASH:-$(printf '%08x' $$)}"  # Fallback to hex PID
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-lint-${PROJECT_HASH}"
+  local LOCK_DIR="${RATE_FILE}.lock"
   local NOW LAST
   NOW=$(date +%s)
+
+  # Atomic lock using mkdir (POSIX-portable)
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    return 0  # Another process is checking, skip
+  fi
+
   LAST=0
   [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-  [ $((NOW - LAST)) -le 30 ] && return 0
+  if [ $((NOW - LAST)) -le 30 ]; then
+    rmdir "$LOCK_DIR" 2>/dev/null || true
+    return 0
+  fi
   echo "$NOW" > "$RATE_FILE"
+  rmdir "$LOCK_DIR" 2>/dev/null || true
 
   local runner
   runner=$(detect_js_runner)
@@ -130,15 +141,26 @@ run_project_typecheck() {
 
   # Rate limit: only run if last check was > 30 seconds ago (scoped per project)
   local PROJECT_HASH
-  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null || echo "${RANDOM:-$$}"; } | grep -oE '[a-f0-9]{8}' | head -1)
-  PROJECT_HASH="${PROJECT_HASH:-default}"
+  PROJECT_HASH=$(echo "${CLAUDE_PROJECT_DIR:-$(pwd)}" | { md5sum 2>/dev/null || md5 2>/dev/null; } | grep -oE '[a-f0-9]{8}' | head -1)
+  PROJECT_HASH="${PROJECT_HASH:-$(printf '%08x' $$)}"  # Fallback to hex PID
   local RATE_FILE="${TMPDIR:-/tmp}/bluera-typecheck-${PROJECT_HASH}"
+  local LOCK_DIR="${RATE_FILE}.lock"
   local NOW LAST
   NOW=$(date +%s)
+
+  # Atomic lock using mkdir (POSIX-portable)
+  if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    return 0  # Another process is checking, skip
+  fi
+
   LAST=0
   [ -f "$RATE_FILE" ] && LAST=$(cat "$RATE_FILE" 2>/dev/null || echo 0)
-  [ $((NOW - LAST)) -le 30 ] && return 0
+  if [ $((NOW - LAST)) -le 30 ]; then
+    rmdir "$LOCK_DIR" 2>/dev/null || true
+    return 0
+  fi
   echo "$NOW" > "$RATE_FILE"
+  rmdir "$LOCK_DIR" 2>/dev/null || true
 
   local runner
   runner=$(detect_js_runner)

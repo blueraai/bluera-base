@@ -82,8 +82,15 @@ if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
 
     # Remove existing BLUERA_ exports to prevent accumulation across sessions
     if grep -q '^export BLUERA_' "$CLAUDE_ENV_FILE" 2>/dev/null; then
-        { grep -v '^export BLUERA_' "$CLAUDE_ENV_FILE" || true; } > "${CLAUDE_ENV_FILE}.tmp" && \
-            mv "${CLAUDE_ENV_FILE}.tmp" "$CLAUDE_ENV_FILE"
+        tmp_file="${CLAUDE_ENV_FILE}.tmp.$$"
+        if grep -v '^export BLUERA_' "$CLAUDE_ENV_FILE" > "$tmp_file" 2>/dev/null; then
+            if ! mv "$tmp_file" "$CLAUDE_ENV_FILE" 2>/dev/null; then
+                rm -f "$tmp_file"
+                echo -e "${YELLOW}${PREFIX} Warning: Failed to update env file${NC}" >&2
+            fi
+        else
+            rm -f "$tmp_file"
+        fi
     fi
 
     # Write environment exports (available to subsequent Bash tool calls)

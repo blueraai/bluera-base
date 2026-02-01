@@ -74,10 +74,17 @@ bluera_state_dir() {
 # Ensure config directory exists
 # Usage: bluera_ensure_config_dir
 bluera_ensure_config_dir() {
-  local config_dir
+  local config_dir state_dir
   config_dir=$(bluera_config_dir)
-  mkdir -p "$config_dir"
-  mkdir -p "$(bluera_state_dir)"
+  state_dir=$(bluera_state_dir)
+  if ! mkdir -p "$config_dir" 2>/dev/null; then
+    echo "Error: Cannot create config directory: $config_dir" >&2
+    return 1
+  fi
+  if ! mkdir -p "$state_dir" 2>/dev/null; then
+    echo "Error: Cannot create state directory: $state_dir" >&2
+    return 1
+  fi
 }
 
 # Load effective configuration (merged: defaults <- shared <- local)
@@ -93,12 +100,22 @@ bluera_load_config() {
 
   # Merge shared config if exists
   if [[ -f "$shared_config" ]]; then
-    result=$(echo "$result" | jq -s '.[0] * .[1]' - "$shared_config" 2>/dev/null || echo "$result")
+    local merged
+    if merged=$(echo "$result" | jq -s '.[0] * .[1]' - "$shared_config" 2>&1); then
+      result="$merged"
+    else
+      echo "Warning: Failed to merge shared config, using defaults: $merged" >&2
+    fi
   fi
 
   # Merge local config if exists
   if [[ -f "$local_config" ]]; then
-    result=$(echo "$result" | jq -s '.[0] * .[1]' - "$local_config" 2>/dev/null || echo "$result")
+    local merged
+    if merged=$(echo "$result" | jq -s '.[0] * .[1]' - "$local_config" 2>&1); then
+      result="$merged"
+    else
+      echo "Warning: Failed to merge local config, using defaults: $merged" >&2
+    fi
   fi
 
   echo "$result"
