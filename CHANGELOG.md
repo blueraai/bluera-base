@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.21.2](https://github.com/blueraai/bluera-base/compare/v0.21.1...v0.21.2) (2026-02-01)
+
+### Bug Fixes
+
+* **commands:** restore command files required for plugin slash commands ([5724594](https://github.com/blueraai/bluera-base/commit/5724594ba3e7a8b0a1896166b2c4364099acc5eb))
+
 ## [0.21.1](https://github.com/blueraai/bluera-base/compare/v0.21.0...v0.21.1) (2026-02-01)
 
 ### Bug Fixes
