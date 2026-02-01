@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.19.0](https://github.com/blueraai/bluera-base/compare/v0.18.0...v0.19.0) (2026-02-01)
+
+### Features
+
+* **hooks:** add deep learning for semantic session analysis ([ac42b22](https://github.com/blueraai/bluera-base/commit/ac42b220d8621d0a1b5fdac9b1b42a5cd9a09a05))
+
+### Bug Fixes
+
+* **scripts:** add strict type annotations to cc-cleaner-scan.py ([bd73757](https://github.com/blueraai/bluera-base/commit/bd73757bd332285f6277a0f369952029bd598515))
+
 ## [0.18.0](https://github.com/blueraai/bluera-base/compare/v0.17.0...v0.18.0) (2026-02-01)
 
 ### Features
