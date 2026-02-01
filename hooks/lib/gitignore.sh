@@ -69,7 +69,14 @@ gitignore_missing_patterns() {
 # Returns: 0 on success (patterns added or already exist), 1 on error
 gitignore_ensure_patterns() {
   local gitignore="${CLAUDE_PROJECT_DIR:-.}/.gitignore"
+  local marker="# Bluera plugins - shared config committed"
   local missing
+
+  # Idempotency check: if marker comment exists, assume already configured
+  # This prevents duplicate appends even if individual patterns differ slightly
+  if [[ -f "$gitignore" ]] && grep -qF "$marker" "$gitignore" 2>/dev/null; then
+    return 0  # Already configured - skip
+  fi
 
   missing=$(gitignore_missing_patterns)
 
