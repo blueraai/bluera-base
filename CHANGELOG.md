@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.21.3](https://github.com/blueraai/bluera-base/compare/v0.21.2...v0.21.3) (2026-02-01)
+
 ## [0.21.2](https://github.com/blueraai/bluera-base/compare/v0.21.1...v0.21.2) (2026-02-01)
 
 ### Bug Fixes
