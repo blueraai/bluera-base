@@ -2,6 +2,7 @@
 name: learn
 description: Manage semantic learnings from session analysis
 user-invocable: true
+allowed-tools: [Read, Write, Edit, Bash, AskUserQuestion]
 ---
 
 # Deep Learning Management
