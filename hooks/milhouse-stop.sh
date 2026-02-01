@@ -160,7 +160,7 @@ fi
 # Check for completion promise
 # Must appear on the LAST non-empty line (prevents false triggers from examples/docs)
 # This ensures the promise is a deliberate completion signal, not part of an explanation
-LAST_CONTENT_LINE=$(echo "$LAST_OUTPUT" | grep -v '^\s*$' | tail -1)
+LAST_CONTENT_LINE=$(echo "$LAST_OUTPUT" | grep -v '^[[:space:]]*$' | tail -1)
 PROMISE_TEXT=""
 if echo "$LAST_CONTENT_LINE" | grep -qE '^\s*<promise>.*</promise>\s*$'; then
   PROMISE_TEXT=$(echo "$LAST_CONTENT_LINE" | sed 's/.*<promise>\(.*\)<\/promise>.*/\1/')
