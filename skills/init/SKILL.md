@@ -132,29 +132,26 @@ Delegate entirely to `/bluera-base:harden-repo` which has its own interview for:
 
 ### Feature Enablement
 
-After setup, offer to enable features:
+After setup, offer to enable features using 3 grouped questions.
 
-```yaml
-question: "Enable any optional features?"
-header: "Features"
-options:
-  - label: "strict-typing"
-    description: "Block any/as casts, type: ignore"
-  - label: "auto-commit"
-    description: "Commit uncommitted changes on stop"
-  - label: "dry-check"
-    description: "Detect duplicate code"
-  - label: "None"
-    description: "Skip feature enablement"
-multiSelect: true
-```
+**Source of truth:** See `<repo root>/skills/config/SKILL.md` for the canonical feature list, descriptions, config paths, and dependencies.
 
-For each selected feature, run:
+**Feature groups:**
 
-```bash
-# Example for strict-typing
-# Follow /bluera-base:config enable workflow
-```
+| Group | Features |
+|-------|----------|
+| Learning | `auto-learn`, `deep-learn` |
+| Workflow | `auto-commit`, `auto-push`, `notifications` |
+| Quality | `dry-check`, `dry-auto`, `strict-typing`, `standards-review` |
+
+For each group, use AskUserQuestion with multiSelect=true. Pull feature labels and descriptions from the config skill's feature table.
+
+**Dependency handling:** When enabling dependent features, auto-enable parent:
+
+- `auto-push` → also enable `auto-commit`
+- `dry-auto` → also enable `dry-check`
+
+For each selected feature, update config using the config path from `<repo root>/skills/config/SKILL.md`.
 
 ### Report
 
