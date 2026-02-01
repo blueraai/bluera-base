@@ -1,7 +1,7 @@
 ---
 name: statusline
 description: Configure Claude Code's terminal status line display
-version: 1.0.0
+user-invocable: true
 allowed-tools: [Read, Write, Edit, Bash]
 ---
 
