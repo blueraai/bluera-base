@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.20.0](https://github.com/blueraai/bluera-base/compare/v0.19.0...v0.20.0) (2026-02-01)
+
+### Features
+
+* **config:** add interactive toggle UI for feature settings ([e48f4f5](https://github.com/blueraai/bluera-base/commit/e48f4f5c07253f88102edb46e028db03d372af75))
+
 ## [0.19.0](https://github.com/blueraai/bluera-base/compare/v0.18.0...v0.19.0) (2026-02-01)
 
 ### Features
