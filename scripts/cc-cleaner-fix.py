@@ -348,7 +348,20 @@ class ActionExecutor:
         with open(backup_dir / "deleted-plugins.json", "w") as f:
             json.dump(files_info, f, indent=2)
 
-        shutil.rmtree(cache_dir)
+        try:
+            shutil.rmtree(cache_dir)
+        except PermissionError as e:
+            return {
+                "status": "partial",
+                "error": f"Could not fully remove cache: {e}",
+                "backup": str(backup_dir),
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to remove cache: {e}",
+                "backup": str(backup_dir),
+            }
 
         return {
             "status": "success",
@@ -410,13 +423,19 @@ class ActionExecutor:
         # Backup projects directory as tarball
         self.backup_mgr.backup_dir_tar(backup_dir, projects_dir, "projects.tgz")
 
-        # Delete old files
+        # Delete old files (with path validation for security)
         deleted = 0
+        base_dir = projects_dir.resolve()
         for file_info in files_info:
-            path = Path(str(file_info["path"]))
+            path = Path(str(file_info["path"])).resolve()
             try:
+                # Validate path is within expected directory (prevent traversal)
+                path.relative_to(base_dir)
                 path.unlink()
                 deleted += 1
+            except ValueError:
+                # Path is outside base_dir - skip for security
+                self.permission_errors.append(f"{path}: outside allowed directory")
             except PermissionError as e:
                 self.permission_errors.append(f"{path}: {e}")
 
