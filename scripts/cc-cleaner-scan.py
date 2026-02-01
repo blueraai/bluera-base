@@ -20,6 +20,8 @@ from pathlib import Path
 from typing import List, Dict, Optional, Union
 
 # Type aliases for structured data
+JsonPrimitive = Union[str, int, float, bool, None]
+JsonValue = Union[Dict[str, object], List[object], JsonPrimitive]
 EvidenceValue = Union[str, int, bool, List[str]]
 EnvInfo = Dict[str, Union[str, bool]]
 PathInfo = Dict[str, Union[str, List[str]]]
@@ -657,7 +659,7 @@ class ClaudeCodeScanner:
         )
 
 
-def to_dict(obj: object) -> object:
+def to_dict(obj: object) -> JsonValue:
     """Convert dataclass to dict recursively."""
     if hasattr(obj, "__dataclass_fields__"):
         return {k: to_dict(v) for k, v in asdict(obj).items()}  # type: ignore[arg-type]
@@ -668,7 +670,7 @@ def to_dict(obj: object) -> object:
     return obj
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Scan ~/.claude for common startup issues"
     )
