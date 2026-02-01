@@ -44,6 +44,8 @@ Features (toggle with: /bluera-base:config enable|disable <feature>)
 │ dry-check    │ OFF     │ Detect duplicate code                   │
 │ dry-auto     │ OFF     │ Auto-scan for duplicates on stop        │
 │ strict-typing│ OFF     │ Block any/as (TS), Any/cast (Python)    │
+│ standards-   │ OFF     │ Review code against CLAUDE.md on commit │
+│   review     │         │                                         │
 └──────────────┴─────────┴─────────────────────────────────────────┘
 
 Settings (change with: /bluera-base:config set <key> <value>)
@@ -302,6 +304,7 @@ Toggle features by name. If the feature name is not recognized, list available f
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate code detection |
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on session stop (requires `dry-check` enabled) |
 | `strict-typing` | `.strictTyping.enabled` | Block `any`/`as` (TS), `Any`/`cast` (Python) |
+| `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commit |
 
 **If unrecognized feature name:**
 
@@ -309,13 +312,14 @@ Toggle features by name. If the feature name is not recognized, list available f
 Unknown feature: "autoLearn"
 
 Available features:
-  auto-learn     Track patterns, suggest CLAUDE.md edits
-  auto-commit    Prompt to commit on stop
-  auto-push      Add push instruction to prompt
-  notifications  Desktop notifications on prompts
-  dry-check      Detect duplicate code
-  dry-auto       Auto-scan for duplicates on stop
-  strict-typing  Block any/as (TS), Any/cast (Python)
+  auto-learn       Track patterns, suggest CLAUDE.md edits
+  auto-commit      Prompt to commit on stop
+  auto-push        Add push instruction to prompt
+  notifications    Desktop notifications on prompts
+  dry-check        Detect duplicate code
+  dry-auto         Auto-scan for duplicates on stop
+  strict-typing    Block any/as (TS), Any/cast (Python)
+  standards-review Review code against CLAUDE.md on commit
 ```
 
 ### Reset
@@ -386,6 +390,10 @@ Env (from CLAUDE_ENV_FILE):
   },
   "strictTyping": {
     "enabled": false     // opt-in: block 'any', 'as' casts, type: ignore
+  },
+  "standardsReview": {
+    "enabled": false,    // opt-in: review code against CLAUDE.md on commit
+    "mode": "warn"       // warn (report only) | block (prevent commit)
   }
 }
 ```
@@ -457,6 +465,12 @@ Env (from CLAUDE_ENV_FILE):
 
 # Enable strict typing enforcement (blocks any, as casts, type: ignore)
 /bluera-base:config enable strict-typing
+
+# Enable standards review on commit (validates against CLAUDE.md)
+/bluera-base:config enable standards-review
+
+# Set standards review to block mode (prevents commits with violations)
+/bluera-base:config set .standardsReview.mode block --shared
 ```
 
 ---

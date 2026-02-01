@@ -34,6 +34,10 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   },
   "strictTyping": {
     "enabled": false
+  },
+  "standardsReview": {
+    "enabled": false,
+    "mode": "warn"
   }
 }'
 

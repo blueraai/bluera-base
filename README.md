@@ -102,6 +102,7 @@ claude --plugin-dir /path/to/bluera-base
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
 | `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release`; blocks `--no-verify` |
+| `standards-review.sh` | PreToolUse (Bash) | Review staged code against CLAUDE.md on commit (opt-in) |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
 | `session-end-learn.sh` | Stop | Consolidate learnings at session end |
 | `dry-scan.sh` | Stop | Scan for code duplication at session end |

@@ -45,6 +45,12 @@
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/observe-learning.sh",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/standards-review.sh",
+            "timeout": 60,
+            "statusMessage": "Reviewing code standards..."
           }
         ]
       }
