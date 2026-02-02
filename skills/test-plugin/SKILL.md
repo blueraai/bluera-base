@@ -20,7 +20,7 @@ The following commands are **NOT tested** by this suite:
 
 ## Context
 
-!`echo "Hooks: $(ls hooks/*.sh 2>/dev/null | wc -l) files"`
+!`echo "=== Bluera Base Plugin Test ===" && echo "Hooks: $(ls "${CLAUDE_PLUGIN_ROOT:-$(pwd)}/hooks/"*.sh 2>/dev/null | wc -l | tr -d ' ') files" && echo "Skills: $(ls -d "${CLAUDE_PLUGIN_ROOT:-$(pwd)}/skills/"*/ 2>/dev/null | wc -l | tr -d ' ') directories" && echo "Commands: $(ls "${CLAUDE_PLUGIN_ROOT:-$(pwd)}/commands/"*.md 2>/dev/null | wc -l | tr -d ' ') files"`
 
 ## Pre-Test Cleanup
 
@@ -298,6 +298,51 @@ Execute each test in order. Mark each as PASS or FAIL.
     - Expected: 4 tests pass
     - PASS if output contains "4 passed, 0 failed"
 
+### Part 9: Checklist Hook
+
+1. **Checklist Hook - No File**: Test that hook exits cleanly when no checklist exists
+
+    ```bash
+    cd /tmp/bluera-base-test
+    rm -rf .bluera/bluera-base/checklist.md
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/checklist-remind.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Silent exit 0 (no checklist file)
+    - PASS if exits 0 with no output
+
+2. **Checklist Hook - With Items**: Test that hook returns context when checklist has items
+
+    ```bash
+    cd /tmp/bluera-base-test
+    mkdir -p .bluera/bluera-base
+    printf '%s\n' '# Test Checklist' '' '[ ] Item 1' '[ ] Item 2' > .bluera/bluera-base/checklist.md
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/checklist-remind.sh" 2>&1
+    EXIT=$?
+    echo "Exit code: $EXIT"
+    ```
+
+    - Expected: JSON output with additionalContext containing "2 items pending"
+    - PASS if output contains "CHECKLIST" and "2 items pending"
+
+3. **Checklist Hook - All Completed**: Test that hook exits silently when all items checked
+
+    ```bash
+    cd /tmp/bluera-base-test
+    printf '%s\n' '# Test Checklist' '' '[x] Item 1' '[x] Item 2' > .bluera/bluera-base/checklist.md
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/checklist-remind.sh" 2>&1
+    EXIT=$?
+    rm -rf .bluera/bluera-base/checklist.md
+    echo "Exit code: $EXIT"
+    ```
+
+    - Expected: Silent exit 0 (no pending items)
+    - PASS if exits 0 with no JSON output
+
 ### Part 10: TODO Command
 
 1. **TODO File Creation**: Test that TODO.txt can be created
@@ -374,12 +419,15 @@ After running all tests, report results in this format:
 | 16 | Signals Library Tests | ? |
 | 17 | State Library Tests | ? |
 | 18 | Gitignore Integration Tests | ? |
-| 19 | TODO File Creation | ? |
-| 20 | TODO File Structure | ? |
-| 21 | Remove Test Directory | ? |
-| 22 | Verify Cleanup | ? |
+| 19 | Checklist Hook - No File | ? |
+| 20 | Checklist Hook - With Items | ? |
+| 21 | Checklist Hook - All Completed | ? |
+| 22 | TODO File Creation | ? |
+| 23 | TODO File Structure | ? |
+| 24 | Remove Test Directory | ? |
+| 25 | Verify Cleanup | ? |
 
-**Result: X/22 tests passed**
+**Result: X/25 tests passed**
 
 ## Error Recovery
 
