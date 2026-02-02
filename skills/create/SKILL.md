@@ -1,12 +1,33 @@
 ---
 name: create
 description: Create plugin components (commands, skills, hooks, agents, prompts) interactively
-allowed-tools: [Read, Write, Edit, Glob, Grep, AskUserQuestion, Bash]
+allowed-tools: [Read, Write, Edit, Glob, Grep, AskUserQuestion, Bash, Task]
 ---
 
 # Create Plugin Component
 
 Scaffold plugin components through iterative interviews. Works with any Claude Code plugin.
+
+## Expert Consultation
+
+**Always consult the `claude-code-guide` agent** when:
+
+- Designing hook logic (exit codes, matchers, event types)
+- Choosing between component types (skill vs agent vs hook)
+- Validating generated content against best practices
+- User asks questions about Claude Code features
+
+```yaml
+task:
+  subagent_type: claude-code-guide
+  prompt: |
+    User is creating a <component_type> named <name>.
+
+    Validate this design against Claude Code best practices:
+    - <design details>
+
+    Flag any anti-patterns or suggest improvements.
+```
 
 ## Context
 
@@ -516,7 +537,14 @@ arguments:
 
 ---
 
-## Phase 3: Confirmation
+## Phase 3: Expert Review & Confirmation
+
+**For hooks**: Before showing preview, consult claude-code-guide to validate:
+
+- Exit code usage (0=allow, 2=block)
+- Defensive stdin pattern
+- stop_hook_active check for Stop hooks
+- Proper use of ${CLAUDE_PLUGIN_ROOT}
 
 Before writing files, show preview:
 
@@ -558,8 +586,10 @@ multiSelect: false
 
 ## Constraints
 
+- **Consult claude-code-guide**: For hooks and complex components, spawn the expert agent to validate design
 - **Detect plugin root**: Use `$CLAUDE_PLUGIN_ROOT` or `.claude-plugin/plugin.json`
 - **Safe file creation**: Never overwrite without asking
 - **Valid names**: Enforce kebab-case for all names
 - **Executable hooks**: `chmod +x` for shell scripts
 - **hooks.json merge**: Preserve existing hooks when adding new ones
+- **Best practices**: Use defensive stdin pattern, proper exit codes, ${CLAUDE_PLUGIN_ROOT} paths
