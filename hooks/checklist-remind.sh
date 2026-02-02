@@ -12,7 +12,8 @@ CHECKLIST=".bluera/bluera-base/checklist.md"
 command -v jq &>/dev/null || exit 0
 
 # Count unchecked items (lines starting with [ ])
-UNCHECKED=$(grep -c '^\[ \]' "$CHECKLIST" 2>/dev/null || echo "0")
+# Use tr -d to strip any whitespace/newlines from grep output
+UNCHECKED=$(grep -c '^\[ \]' "$CHECKLIST" 2>/dev/null | tr -d '[:space:]' || echo "0")
 
 # Exit silently if no pending items
 [[ "$UNCHECKED" -eq 0 ]] && exit 0
