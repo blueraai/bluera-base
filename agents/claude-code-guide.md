@@ -98,6 +98,36 @@ fi
 
 **Event types:** SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, SessionEnd, Notification, SubagentStart, SubagentStop, PreCompact, PermissionRequest, UserPromptSubmit
 
+**PreToolUse hook output fields:**
+
+- `additionalContext` - Inject context into Claude's next response
+- `updatedInput` - Modify tool input before execution
+
+**One-time hooks:**
+
+```json
+{
+  "hooks": [{
+    "type": "command",
+    "command": "setup.sh",
+    "once": true
+  }]
+}
+```
+
+**Environment persistence (SessionStart):**
+
+```bash
+# Write to CLAUDE_ENV_FILE to persist env vars
+echo "MY_VAR=value" >> "$CLAUDE_ENV_FILE"
+```
+
+**Variable substitutions:**
+
+- `${CLAUDE_PLUGIN_ROOT}` - Plugin directory
+- `${CLAUDE_PROJECT_DIR}` - Project directory
+- `${CLAUDE_SESSION_ID}` - Current session ID
+
 ### Skills
 
 - Keep SKILL.md lean (<200 lines)
@@ -105,11 +135,54 @@ fi
 - Progressive disclosure: scannable summary first, details on demand
 - Use `disable-model-invocation: true` for user-only skills
 
+**Advanced frontmatter:**
+
+```yaml
+---
+name: my-skill
+context: fork          # Isolated context (doesn't pollute main)
+agent: my-agent        # Spawn as this agent instead of inline
+hooks:                 # Skill-specific hooks
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "${CLAUDE_PLUGIN_ROOT}/hooks/validate.sh"
+---
+```
+
+**Argument syntax (BREAKING CHANGE):**
+
+```markdown
+# Old (deprecated): $ARGUMENTS.0
+# New (required): $ARGUMENTS[0]
+First argument: $ARGUMENTS[0]
+All arguments: $ARGUMENTS
+```
+
 ### Commands
 
 - Use frontmatter: `description`, `allowed-tools`, `argument-hint`
 - Thin command + thick skill pattern: command file just says "See skills/name/SKILL.md"
 - Use `context: fork` for isolated execution
+
+**Wildcard tool permissions:**
+
+```yaml
+allowed-tools:
+  - Bash(npm *)      # npm with any subcommand
+  - Bash(* install)  # Any command ending with install
+  - Task(*)          # All agents
+  - Task(my-agent)   # Specific agent only
+```
+
+**Restricting agents:**
+
+```yaml
+# Disable a specific agent
+allowed-tools:
+  - -Task(dangerous-agent)
+```
 
 ### Token Efficiency
 
@@ -121,12 +194,14 @@ fi
 
 | Anti-Pattern | Why It's Bad | Fix |
 |--------------|--------------|-----|
-| `Bash(*)` in allowed-tools | Too permissive, security risk | Use specific patterns |
+| `Bash(*)` in allowed-tools | Too permissive, security risk | Use wildcard patterns: `Bash(npm *)` |
 | Inline large content | Wastes context | Use pointers/state files |
 | Missing `stop_hook_active` check | Infinite loops in Stop hooks | Check and early-exit |
 | Hardcoded paths in hooks | Breaks portability | Use `${CLAUDE_PLUGIN_ROOT}` |
 | Bare `cat` for stdin | Hangs on empty input | Use `cat 2>/dev/null \|\| true` |
 | `--no-verify` on git commit | Bypasses hooks | Never allow, fix underlying issue |
+| `$ARGUMENTS.0` dot syntax | Deprecated, will break | Use `$ARGUMENTS[0]` bracket syntax |
+| Missing `once: true` on setup hooks | Runs every session unnecessarily | Add `once: true` for one-time hooks |
 
 ## How to Answer Questions
 
@@ -177,3 +252,37 @@ Common causes:
 2. Hook file not executable (`chmod +x`)
 3. Wrong event type for the lifecycle point
 4. JSON syntax error in hooks.json
+
+### "How do I inject context from a PreToolUse hook?"
+
+Return JSON with `additionalContext`:
+
+```bash
+echo '{"additionalContext": "Remember: use strict mode"}' >&2
+exit 0
+```
+
+### "How do I modify tool input from a hook?"
+
+Return JSON with `updatedInput`:
+
+```bash
+echo '{"updatedInput": {"command": "npm ci"}}' >&2
+exit 0
+```
+
+### "How do I persist environment variables from SessionStart?"
+
+Write to `CLAUDE_ENV_FILE`:
+
+```bash
+echo "API_KEY=$key" >> "$CLAUDE_ENV_FILE"
+```
+
+### "How do I run a setup hook only once?"
+
+Use `once: true`:
+
+```json
+{"type": "command", "command": "setup.sh", "once": true}
+```
