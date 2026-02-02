@@ -7,7 +7,7 @@
 # 2 = block with message (manual release attempt)
 
 # Read tool input from stdin
-INPUT=$(cat)
+INPUT=$(cat 2>/dev/null || true)
 
 # jq unavailable: fail closed for security
 # This hook protects against accidental releases - better to block than allow bypass
