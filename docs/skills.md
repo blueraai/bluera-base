@@ -20,6 +20,7 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 | `release` | Release workflow with multi-language version bumping |
 | `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets |
+| `claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
 
 ---
 
@@ -304,5 +305,55 @@ Configures Claude Code's terminal status line with:
 
 - Preset configurations (minimal, informative, developer, system, bluera)
 - Custom format strings
+
+---
+
+## claude-code-guide
+
+Expert guidance for Claude Code plugin development. Provides three modes:
+
+### Modes
+
+| Mode | Usage | Description |
+|------|-------|-------------|
+| Question | `/bluera-base:claude-code-guide how do I create a hook?` | Answer questions using expert knowledge |
+| Review | `/bluera-base:claude-code-guide review` | Review current plugin against best practices |
+| Audit | `/bluera-base:claude-code-audit [path] [instructions]` | Comprehensive audit against checklist |
+
+### Audit Command
+
+```bash
+# Full audit of current directory
+/bluera-base:claude-code-audit
+
+# Audit a specific plugin
+/bluera-base:claude-code-audit ~/repos/my-plugin
+
+# Focused audit
+/bluera-base:claude-code-audit focus on hooks
+
+# Specific path + focus
+/bluera-base:claude-code-audit ~/repos/my-plugin check for security issues
+```
+
+### Audit Checklist
+
+The audit uses a comprehensive checklist covering:
+
+1. **Project Configuration** - CLAUDE.md, rules, settings
+2. **Plugin Structure** - Manifest, directory layout
+3. **Commands** - Frontmatter, allowed-tools, structure
+4. **Skills** - Organization, syntax, progressive disclosure
+5. **Hooks** - Configuration, scripts, defensive patterns
+6. **Token Efficiency** - State management, optimization
+7. **Security** - Secrets, git safety, tool permissions
+8. **MCP Configuration** - Server configurations
+
+### Resources
+
+- [Claude Code Plugins Documentation](https://docs.anthropic.com/en/docs/claude-code/plugins)
+- [Claude Code Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks)
+- [Claude Code Skills Guide](https://docs.anthropic.com/en/docs/claude-code/skills)
+- [MCP Server Configuration](https://docs.anthropic.com/en/docs/claude-code/mcp)
 
 ---

@@ -29,6 +29,8 @@ All commands are invoked with `/bluera-base:<command>`.
 | `worktree` | Manage git worktrees |
 | `learn` | Manage semantic learnings from session analysis |
 | `large-file-refactor` | Break apart files that exceed token limits |
+| `claude-code-audit` | Audit Claude Code configuration against best practices |
+| `claude-code-guide` | Expert guidance for Claude Code plugins |
 
 ## By Category
 
@@ -46,6 +48,7 @@ All commands are invoked with `/bluera-base:<command>`.
 |---------|-------------|
 | `code-review` | Multi-agent review for bugs and CLAUDE.md compliance |
 | `audit-plugin` | Validate plugin against best practices |
+| `claude-code-audit` | Audit any project's Claude Code configuration |
 | `test-plugin` | Run comprehensive plugin test suite |
 | `dry` | Detect duplicate code |
 | `clean` | Diagnose startup performance |
@@ -77,6 +80,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `help` | Show features and usage |
 | `explain` | Explain all plugin functionality |
 | `todo` | Manage project TODO tasks |
+| `claude-code-guide` | Expert guidance for Claude Code plugins |
 
 ### Iterative Development
 

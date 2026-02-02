@@ -139,6 +139,8 @@ claude --plugin-dir /path/to/bluera-base
 | `/worktree` | `[list\|add\|remove\|prune\|status] [args]` | Manage Git worktrees for parallel development |
 | `/learn` | `[show\|apply\|dismiss\|clear]` | Manage semantic learnings from session analysis |
 | `/large-file-refactor` | `<file>` | Break apart files that exceed token limits |
+| `/claude-code-audit` | `[path] [instructions]` | Audit Claude Code configuration against best practices |
+| `/claude-code-guide` | `<question\|review\|audit>` | Expert guidance for Claude Code plugins |
 
 *All commands prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`)*
 
@@ -170,6 +172,7 @@ claude --plugin-dir /path/to/bluera-base
 | `test-plugin` | Run comprehensive plugin validation test suite |
 | `todo` | Manage project TODO tasks |
 | `worktree` | Git worktree management for parallel development |
+| `claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
 
 → [Full skills documentation](docs/skills.md)
 

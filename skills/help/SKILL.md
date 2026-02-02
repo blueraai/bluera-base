@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (26 total)
+## Commands (27 total)
 
 ### Development & Iteration
 
@@ -119,6 +119,7 @@ Show only the Configuration section.
 
 | Command | Description |
 |---------|-------------|
+| `/bluera-base:claude-code-audit` | Audit a project's Claude Code configuration |
 | `/bluera-base:claude-code-guide` | Ask the Claude Code expert for guidance |
 | `/bluera-base:explain` | Explain all bluera-base plugin functionality |
 | `/bluera-base:help` | Show this help (you are here) |

@@ -25,6 +25,7 @@ Auto-invoke when:
 Parse argument to determine mode:
 
 - **`review`** - Review current plugin against best practices
+- **`audit`** or **`audit [path] [instructions]`** - Comprehensive audit against checklist
 - **Question** - Answer the question using expert knowledge
 - **No argument** - Offer both options
 
@@ -58,6 +59,49 @@ task:
     5. Token efficiency
 
     Provide specific, actionable fixes for any issues found.
+```
+
+### 4. For Audit Mode
+
+Parse arguments:
+
+- First arg starting with `/` or `.` or containing `/` → treat as path
+- Remaining args → natural language instructions (e.g., "focus on hooks")
+
+Spawn the agent with comprehensive audit:
+
+```yaml
+task:
+  subagent_type: claude-code-guide
+  prompt: |
+    Perform a comprehensive Claude Code audit.
+
+    **Target**: $PATH (or current directory if not specified)
+    **Specific focus**: $INSTRUCTIONS (or "full audit" if none)
+
+    Use the checklist at skills/claude-code-guide/references/audit-checklist.md
+
+    For each applicable section:
+    1. Check current state
+    2. Compare against best practices
+    3. Note issues with severity (critical/warning/suggestion)
+    4. Provide specific fixes
+
+    Search documentation and web for latest recommendations if needed.
+
+    Output format:
+    ## Audit Report: [project name]
+
+    ### Summary
+    - Critical: N
+    - Warnings: N
+    - Suggestions: N
+
+    ### Findings
+    [Grouped by checklist section, only include sections with findings]
+
+    ### Recommendations
+    [Prioritized list of fixes]
 ```
 
 ## Quick Reference
