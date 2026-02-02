@@ -297,6 +297,7 @@ Commands are organized by category. All commands are prefixed with `/bluera-base
 | `/milhouse-loop` | Start an iterative development loop |
 | `/cancel-milhouse` | Stop an active milhouse loop |
 | `/todo` | Manage project TODO tasks |
+| `/learn` | Manage learnings from session analysis |
 
 ### Quality
 
@@ -305,6 +306,7 @@ Commands are organized by category. All commands are prefixed with `/bluera-base
 | `/code-review` | Multi-agent codebase review with confidence scoring |
 | `/dry` | Detect duplicate code and suggest DRY refactors |
 | `/clean` | Diagnose slow Claude Code startup and guide cleanup |
+| `/large-file-refactor` | Break apart files exceeding token limits |
 
 ### Documentation
 

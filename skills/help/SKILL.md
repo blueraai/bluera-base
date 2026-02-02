@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (21 total)
+## Commands (23 total)
 
 ### Development & Iteration
 
@@ -77,6 +77,7 @@ Show only the Configuration section.
 | `/bluera-base:milhouse-loop` | Start iterative development loop |
 | `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
 | `/bluera-base:todo` | Manage project TODO tasks (show, add, complete) |
+| `/bluera-base:learn` | Manage semantic learnings from session analysis |
 
 ### Project Setup
 
@@ -102,6 +103,7 @@ Show only the Configuration section.
 | `/bluera-base:audit-plugin` | Audit a Claude Code plugin against best practices |
 | `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
+| `/bluera-base:large-file-refactor` | Break apart files exceeding token limits |
 
 ### Git & Workflows
 
@@ -120,28 +122,40 @@ Show only the Configuration section.
 
 ---
 
-## Skills (12 total)
+## Skills (24 total)
 
 Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
 
 | Skill | Description |
 |-------|-------------|
+| `@analyze-config` | Analyze .claude/** overlap with bluera-base |
 | `@atomic-commits` | Atomic commit creation with grouping rules |
+| `@audit-plugin` | Audit plugins against best practices |
 | `@auto-learn` | Automatic learning from session patterns |
 | `@claude-cleaner` | Diagnose slow startup and guide cleanup |
 | `@claude-md-maintainer` | CLAUDE.md structure and validation |
 | `@code-review-repo` | Multi-agent code review patterns |
+| `@config` | Plugin configuration management |
+| `@dry` | Duplicate code detection with jscpd |
 | `@dry-refactor` | DRY refactoring patterns by language |
-| `@large-file-refactor` | Breaking apart files that exceed token limits |
+| `@explain` | Plugin functionality documentation |
+| `@help` | Plugin features reference |
+| `@init` | Project initialization with conventions |
+| `@install-rules` | Rule template installation |
+| `@large-file-refactor` | Breaking apart files exceeding token limits |
+| `@learn` | Deep learning management |
 | `@milhouse` | Iterative development loop guidance |
 | `@readme-maintainer` | README.md formatting and structure |
 | `@release` | Release workflow with CI monitoring |
 | `@repo-hardening` | Security and quality tool setup |
 | `@statusline` | Status line configuration with presets |
+| `@test-plugin` | Plugin validation test suite |
+| `@todo` | Project TODO task management |
+| `@worktree` | Git worktree management |
 
 ---
 
-## Hooks (11 total)
+## Hooks (12 total)
 
 Hooks run automatically on specific events. No action required.
 
@@ -153,6 +167,7 @@ Hooks run automatically on specific events. No action required.
 | `session-start-inject.sh` | SessionStart | Inject context into session |
 | `pre-compact.sh` | PreCompact | Preserve state before context compaction |
 | `session-end-learn.sh` | Stop | Process learning observations |
+| `session-end-analyze.sh` | Stop | Deep learning session analysis |
 
 ### Tool Validation
 
@@ -161,6 +176,7 @@ Hooks run automatically on specific events. No action required.
 | `block-manual-release.sh` | PreToolUse:Bash | Block manual version bumps (use /bluera-base:release) |
 | `post-edit-check.sh` | PostToolUse:Write\|Edit | Validate file changes |
 | `observe-learning.sh` | PreToolUse:Bash | Track commands for learning |
+| `standards-review.sh` | PreToolUse:Bash | Review code against CLAUDE.md standards |
 
 ### Notifications
 
