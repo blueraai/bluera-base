@@ -11,7 +11,7 @@ if ! command -v jq &>/dev/null; then
 fi
 
 # Read hook input from stdin (advanced stop hook API)
-HOOK_INPUT=$(cat)
+HOOK_INPUT=$(cat 2>/dev/null || true)
 
 # Check if stop hook already triggered continuation - prevent infinite loop
 # See: https://code.claude.com/docs/en/hooks (stop_hook_active field)

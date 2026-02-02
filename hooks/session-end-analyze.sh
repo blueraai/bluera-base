@@ -26,7 +26,7 @@ if ! bluera_config_enabled ".deepLearn.enabled"; then
 fi
 
 # Get transcript path from hook input
-INPUT=$(cat)
+INPUT=$(cat 2>/dev/null || true)
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 if [[ -z "$TRANSCRIPT" ]] || [[ ! -f "$TRANSCRIPT" ]]; then

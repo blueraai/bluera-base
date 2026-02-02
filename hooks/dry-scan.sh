@@ -11,7 +11,7 @@ if ! command -v jq &>/dev/null; then
   exit 0  # Skip gracefully if jq missing
 fi
 
-HOOK_INPUT=$(cat)
+HOOK_INPUT=$(cat 2>/dev/null || true)
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 

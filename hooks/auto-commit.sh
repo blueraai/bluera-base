@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
 
 # Read hook input
-HOOK_INPUT=$(cat)
+HOOK_INPUT=$(cat 2>/dev/null || true)
 
 # Check stop_hook_active to prevent infinite loops
 STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
