@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (24 total)
+## Commands (26 total)
 
 ### Development & Iteration
 
@@ -85,6 +85,7 @@ Show only the Configuration section.
 | Command | Description |
 |---------|-------------|
 | `/bluera-base:config` | Manage plugin configuration |
+| `/bluera-base:create` | Create plugin components (commands, skills, hooks, agents, prompts) |
 | `/bluera-base:harden-repo` | Set up git hooks, linters, formatters |
 | `/bluera-base:init` | Initialize a project with bluera-base conventions |
 | `/bluera-base:install-rules` | Install rule templates to `.claude/rules/` |
@@ -114,16 +115,17 @@ Show only the Configuration section.
 | `/bluera-base:statusline` | Configure Claude Code terminal status line |
 | `/bluera-base:test-plugin` | Run plugin validation test suite |
 
-### Help
+### Help & Guidance
 
 | Command | Description |
 |---------|-------------|
+| `/bluera-base:claude-code-guide` | Ask the Claude Code expert for guidance |
 | `/bluera-base:explain` | Explain all bluera-base plugin functionality |
 | `/bluera-base:help` | Show this help (you are here) |
 
 ---
 
-## Skills (25 total)
+## Skills (27 total)
 
 Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
 
@@ -132,6 +134,8 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 | `@analyze-config` | Analyze .claude/** overlap with bluera-base |
 | `@atomic-commits` | Atomic commit creation with grouping rules |
 | `@audit-plugin` | Audit plugins against best practices |
+| `@claude-code-guide` | Claude Code and plugin expert guidance |
+| `@create` | Create plugin components interactively |
 | `@auto-learn` | Automatic learning from session patterns |
 | `@checklist` | Project checklist management |
 | `@claude-cleaner` | Diagnose slow startup and guide cleanup |
