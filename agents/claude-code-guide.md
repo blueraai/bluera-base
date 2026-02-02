@@ -128,6 +128,28 @@ echo "MY_VAR=value" >> "$CLAUDE_ENV_FILE"
 - `${CLAUDE_PROJECT_DIR}` - Project directory
 - `${CLAUDE_SESSION_ID}` - Current session ID
 
+**Passing context between components:**
+
+Use `CLAUDE_ENV_FILE` to publish path pointers from SessionStart:
+
+```bash
+# SessionStart hook publishes pointers for subsequent Bash commands
+if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
+    {
+        echo "export MY_STATE_DIR=\"$PROJECT_DIR/.my-plugin/state\""
+        echo "export MY_CONFIG=\"$PROJECT_DIR/.my-plugin/config.json\""
+    } >> "$CLAUDE_ENV_FILE"
+fi
+```
+
+Now all subsequent Bash commands have `$MY_STATE_DIR` and `$MY_CONFIG` available.
+
+**Gotchas:**
+
+- Always check: `[[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]`
+- Clean old values to prevent accumulation across sessions
+- Known bug: May be empty/missing on some platforms (see GitHub #9567)
+
 ### Skills
 
 - Keep SKILL.md lean (<200 lines)
@@ -186,9 +208,42 @@ allowed-tools:
 
 ### Token Efficiency
 
-- **State bus pattern**: Store large data in `.bluera/plugin/state/`, pass file paths
-- **Pointer-based continuation**: Don't re-inject full prompts
-- **Capsule digests**: Small hashes/IDs reference larger payloads
+**The problem**: Passing large data (diffs, logs, file contents) through conversation wastes tokens.
+
+**State Bus + Capsules (80-90% token savings):**
+
+| Channel | Content | Token Cost |
+|---------|---------|------------|
+| In-band (conversation) | Pointers, IDs, summaries | Small |
+| Out-of-band (disk) | Actual payloads | Zero until read |
+
+**Implementation:**
+
+1. **SessionStart**: Write path pointers to `CLAUDE_ENV_FILE`
+2. **State file**: Store capsule index in `.bluera/plugin/state/state.json`
+3. **Capsule files**: Store actual content (diffs, logs) separately
+4. **Conversation**: Pass only capsule IDs and summaries
+5. **On-demand**: Claude reads full content via `$MY_STATE_DIR` when needed
+
+**Capsule state file example:**
+
+```json
+{
+  "capsules": {
+    "cap_001": {
+      "type": "git_diff",
+      "path": ".bluera/state/capsules/cap_001.diff",
+      "summary": "Edited 3 files: src/app.ts, src/utils.ts",
+      "bytes": 12345
+    }
+  },
+  "pointers": { "latest_diff": "cap_001" }
+}
+```
+
+Instead of 12KB diff in context → pass pointer + 50-char summary.
+
+See `docs/advanced-patterns.md` for complete implementation.
 
 ## Anti-Patterns to Flag
 
@@ -202,6 +257,7 @@ allowed-tools:
 | `--no-verify` on git commit | Bypasses hooks | Never allow, fix underlying issue |
 | `$ARGUMENTS.0` dot syntax | Deprecated, will break | Use `$ARGUMENTS[0]` bracket syntax |
 | Missing `once: true` on setup hooks | Runs every session unnecessarily | Add `once: true` for one-time hooks |
+| Passing large data through conversation | Wastes tokens, degrades performance | Use state bus + capsules pattern |
 
 ## How to Answer Questions
 
@@ -286,3 +342,22 @@ Use `once: true`:
 ```json
 {"type": "command", "command": "setup.sh", "once": true}
 ```
+
+### "How do I pass state between hooks efficiently?"
+
+Use the two-channel pattern:
+
+1. **SessionStart**: Write path pointers to `CLAUDE_ENV_FILE`
+2. **State file**: Store large data in `.bluera/plugin/state/`
+3. **Conversation**: Pass only capsule IDs and summaries
+4. **On-demand**: Claude reads full content via `$MY_STATE_DIR` when needed
+
+```bash
+# SessionStart publishes pointers
+echo "export MY_STATE_DIR=\"$PROJECT_DIR/.my-plugin/state\"" >> "$CLAUDE_ENV_FILE"
+
+# Later hooks/commands use the pointer
+jq '.capsules.latest' "$MY_STATE_DIR/state.json"
+```
+
+See `docs/advanced-patterns.md` for complete State Bus + Capsules implementation.
