@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.25.0](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.25.0) (2026-02-02)
+
+### Features
+
+* **claude-code-guide:** add Claude Code expert consultant ([aa58aae](https://github.com/blueraai/bluera-base/commit/aa58aaeb3bb3a302449b88aa15d6b60a4f5b7132))
+* **create:** add plugin component generator command ([676ba55](https://github.com/blueraai/bluera-base/commit/676ba55aabbe87cd6565b3a8d75517b708f02f6a))
+* **create:** integrate claude-code-guide expert consultation ([f199543](https://github.com/blueraai/bluera-base/commit/f199543e0a19eb84ee6da87be20bdc57474208de))
+
+### Bug Fixes
+
+* **hooks:** add **BLUERA_TEST** bypass and fix checklist grep ([7e8ee19](https://github.com/blueraai/bluera-base/commit/7e8ee199120b75c3c6e3bac04070e41cc1d6db2a))
+
 ## [0.24.1](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.24.1) (2026-02-02)
 
 ### Bug Fixes
