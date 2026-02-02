@@ -29,8 +29,8 @@ Block dangerous or policy-violating commands before execution.
 #!/bin/bash
 # hooks/block-manual-release.sh
 
-# Read tool input from stdin
-INPUT=$(cat)
+# Read tool input from stdin (defensive: handle closed/empty stdin)
+INPUT=$(cat 2>/dev/null || true)
 
 # Extract the command from Bash tool input
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
@@ -110,8 +110,8 @@ set -euo pipefail
 
 cd "${CLAUDE_PROJECT_DIR:-.}" || exit 0
 
-# Read stdin JSON
-INPUT=$(cat || true)
+# Read stdin JSON (defensive: handle closed/empty stdin)
+INPUT=$(cat 2>/dev/null || true)
 [ -z "$INPUT" ] && exit 0
 
 # Extract tool name and file path
@@ -183,8 +183,8 @@ Intercept session stop for autonomous iteration.
 # hooks/milhouse-stop.sh
 set -euo pipefail
 
-# Read hook input
-HOOK_INPUT=$(cat)
+# Read hook input (defensive: handle closed/empty stdin)
+HOOK_INPUT=$(cat 2>/dev/null || true)
 
 # Prevent infinite loop - check if stop hook already tried
 STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
@@ -337,8 +337,8 @@ Send notifications when Claude is waiting.
 #!/bin/bash
 # hooks/notify.sh
 
-# Read notification payload
-INPUT=$(cat)
+# Read notification payload (defensive: handle closed/empty stdin)
+INPUT=$(cat 2>/dev/null || true)
 TITLE=$(echo "$INPUT" | jq -r '.title // "Claude Code"')
 MESSAGE=$(echo "$INPUT" | jq -r '.message // "Waiting for input"')
 
@@ -358,7 +358,7 @@ exit 0
 
 ```bash
 #!/bin/bash
-INPUT=$(cat)
+INPUT=$(cat 2>/dev/null || true)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 [ -z "$COMMAND" ] && exit 0
 
@@ -375,7 +375,7 @@ exit 0
 
 ```bash
 #!/bin/bash
-INPUT=$(cat)
+INPUT=$(cat 2>/dev/null || true)
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // ""')
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""')
 
@@ -391,7 +391,7 @@ exit 0
 
 ```bash
 #!/bin/bash
-HOOK_INPUT=$(cat)
+HOOK_INPUT=$(cat 2>/dev/null || true)
 
 # Prevent infinite loops
 STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
@@ -410,7 +410,19 @@ exit 0
 
 ## Common Mistakes
 
-### 1. Not Checking stop_hook_active
+### 1. Bare cat Without Error Handling
+
+```bash
+# WRONG - blocks forever if stdin is closed/empty
+INPUT=$(cat)
+
+# RIGHT - defensive pattern handles missing stdin
+INPUT=$(cat 2>/dev/null || true)
+```
+
+**Why this matters:** When multiple hooks run on the same event (especially Stop hooks), only the first sync hook reliably receives stdin. Async hooks and later sync hooks may get empty/closed stdin. Bare `cat` blocks indefinitely waiting for EOF that never comes, hanging the console.
+
+### 2. Not Checking stop_hook_active
 
 ```bash
 # WRONG - infinite loop risk
@@ -425,7 +437,7 @@ if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
 fi
 ```
 
-### 2. Blocking Session Start
+### 3. Blocking Session Start
 
 ```bash
 # WRONG - blocks session
@@ -436,7 +448,7 @@ command_that_fails || echo "Warning: ..." >&2
 exit 0
 ```
 
-### 3. Not Validating JSON
+### 4. Not Validating JSON
 
 ```bash
 # WRONG - fails silently on bad JSON
