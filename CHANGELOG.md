@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.24.0](https://github.com/blueraai/bluera-base/compare/v0.21.4...v0.24.0) (2026-02-02)
+
+### Features
+
+* **checklist:** add dynamic context injection ([111c1ac](https://github.com/blueraai/bluera-base/commit/111c1ac3706dfb0f00b4e4d0ae662aaff0eca450))
+* **checklist:** add project checklist with session start reminder ([bbd2e73](https://github.com/blueraai/bluera-base/commit/bbd2e730ed516b8af996ac49175da2f12f8c1878))
+* **learn:** add extract command for manual mid-session analysis ([3b6991b](https://github.com/blueraai/bluera-base/commit/3b6991bdf78ca70201dde0f80e877e0cda0783d9))
+* **readme:** add audit option to check docs against codebase ([5179153](https://github.com/blueraai/bluera-base/commit/517915362420f61779ad624d91bdeb6775ad781e))
+* **test-plugin:** add context:fork and checklist tests ([a2498da](https://github.com/blueraai/bluera-base/commit/a2498dadc10c7625975d248b9e500dfa91aa2eef))
+* **test-plugin:** expand to full API coverage (41 tests) ([4a2f271](https://github.com/blueraai/bluera-base/commit/4a2f2717861abced877db060560a38a75f27f06d))
+
+### Bug Fixes
+
+* **hooks:** apply defensive cat pattern to PreToolUse hooks ([06a711e](https://github.com/blueraai/bluera-base/commit/06a711ef21f32d584e902bd289c6450a03759861))
+* **hooks:** escape sed metacharacters and use POSIX grep patterns ([9027071](https://github.com/blueraai/bluera-base/commit/9027071a100feb239d92910cd2387712b1672163))
+* **hooks:** make gitignore pattern appending idempotent ([144af64](https://github.com/blueraai/bluera-base/commit/144af64020102b625ac9b121e9138e5a8940892f))
+* **hooks:** prevent stdin blocking in Stop hooks ([5eea8b3](https://github.com/blueraai/bluera-base/commit/5eea8b399bacdd33f6143edb31b77e9182fe7309))
+* **hooks:** sanitize newlines in transcript content extraction ([7a06ca4](https://github.com/blueraai/bluera-base/commit/7a06ca4fe2b294cab04dac46038d43e9f56d7f65))
+
 ## [0.23.2](https://github.com/blueraai/bluera-base/compare/v0.21.4...v0.23.2) (2026-02-01)
 
 ### Features
