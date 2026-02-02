@@ -8,6 +8,11 @@ allowed-tools: [Read, Write, Edit, AskUserQuestion]
 
 Manage a simple markdown checklist that Claude is reminded about at session start.
 
+**Current checklist:**
+!`cat "${CLAUDE_PROJECT_DIR:-.}/.bluera/bluera-base/checklist.md" 2>/dev/null || echo "_No checklist exists yet. Use 'add' to create one._"`
+
+---
+
 ## File Location
 
 `.bluera/bluera-base/checklist.md` - Committed to repo (shared with team)
