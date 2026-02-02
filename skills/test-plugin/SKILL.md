@@ -372,7 +372,121 @@ Execute each test in order. Mark each as PASS or FAIL.
     - Expected: All required sections present
     - PASS if all sections found
 
-### Part 11: Cleanup
+### Part 11: Safe Slash Commands
+
+> **Note:** These commands are safe to run - they don't modify the repo structure.
+
+1. **/help**: Run `/bluera-base:help`
+   - Expected: Output contains "Commands" section
+   - PASS if command executes and shows command list
+
+2. **/explain overview**: Run `/bluera-base:explain overview`
+   - Expected: Output contains "What is Bluera Base"
+   - PASS if command executes and shows overview
+
+3. **/config show**: Run `/bluera-base:config show`
+   - Expected: Output shows config JSON or defaults
+   - PASS if command executes without error
+
+4. **/checklist show**: Run `/bluera-base:checklist show`
+   - Expected: Shows checklist or "No checklist exists"
+   - PASS if command executes without error
+
+5. **/todo show**: Run `/bluera-base:todo show`
+   - Expected: Shows TODO or creates file
+   - PASS if command executes without error
+
+6. **/learn show**: Run `/bluera-base:learn show`
+   - Expected: Shows learnings or "No learnings"
+   - PASS if command executes without error
+
+7. **/worktree list**: Run `/bluera-base:worktree list`
+   - Expected: Shows worktrees or "No worktrees"
+   - PASS if command executes without error
+
+8. **/statusline**: Run `/bluera-base:statusline`
+   - Expected: Shows presets or current config
+   - PASS if command executes without error
+
+9. **/analyze-config**: Run `/bluera-base:analyze-config`
+   - Expected: Shows analysis or "No .claude config"
+   - PASS if command executes without error
+
+10. **/claude-md audit**: Run `/bluera-base:claude-md audit`
+    - Expected: Shows audit results
+    - PASS if command executes without error
+
+### Part 12: Additional Hook Tests
+
+1. **notify.sh - Permission Prompt**:
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    echo '{"notification_type": "permission_prompt", "message": "Test"}' | \
+      bash "$PLUGIN_PATH/hooks/notify.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (notification sent or no notifier available)
+    - PASS if exits 0
+
+2. **session-setup.sh**:
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/session-setup.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (jq check, permissions fix)
+    - PASS if exits 0
+
+3. **session-start-inject.sh**:
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/session-start-inject.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (may output context JSON)
+    - PASS if exits 0
+
+4. **auto-commit.sh - No Changes**:
+
+    ```bash
+    cd /tmp/bluera-base-test
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    echo '{}' | CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/auto-commit.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (no uncommitted changes to prompt about)
+    - PASS if exits 0
+
+5. **dry-scan.sh - Feature Disabled**:
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    echo '{}' | CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/dry-scan.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (feature disabled by default)
+    - PASS if exits 0
+
+6. **pre-compact.sh**:
+
+    ```bash
+    PLUGIN_PATH="${CLAUDE_PLUGIN_ROOT:-$(pwd)}"
+    echo '{"trigger": "manual"}' | CLAUDE_PROJECT_DIR="/tmp/bluera-base-test" bash "$PLUGIN_PATH/hooks/pre-compact.sh" 2>&1
+    echo "Exit code: $?"
+    ```
+
+    - Expected: Exit 0 (preserves state before compaction)
+    - PASS if exits 0
+
+### Part 13: Cleanup
 
 1. **Remove Test Directory**: Clean up test artifacts
 
@@ -424,10 +538,26 @@ After running all tests, report results in this format:
 | 21 | Checklist Hook - All Completed | ? |
 | 22 | TODO File Creation | ? |
 | 23 | TODO File Structure | ? |
-| 24 | Remove Test Directory | ? |
-| 25 | Verify Cleanup | ? |
+| 24 | /help | ? |
+| 25 | /explain overview | ? |
+| 26 | /config show | ? |
+| 27 | /checklist show | ? |
+| 28 | /todo show | ? |
+| 29 | /learn show | ? |
+| 30 | /worktree list | ? |
+| 31 | /statusline | ? |
+| 32 | /analyze-config | ? |
+| 33 | /claude-md audit | ? |
+| 34 | notify.sh | ? |
+| 35 | session-setup.sh | ? |
+| 36 | session-start-inject.sh | ? |
+| 37 | auto-commit.sh | ? |
+| 38 | dry-scan.sh | ? |
+| 39 | pre-compact.sh | ? |
+| 40 | Remove Test Directory | ? |
+| 41 | Verify Cleanup | ? |
 
-**Result: X/25 tests passed**
+**Result: X/41 tests passed**
 
 ## Error Recovery
 
