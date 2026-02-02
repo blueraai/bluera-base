@@ -298,6 +298,7 @@ Commands are organized by category. All commands are prefixed with `/bluera-base
 | `/cancel-milhouse` | Stop an active milhouse loop |
 | `/todo` | Manage project TODO tasks |
 | `/learn` | Manage learnings from session analysis |
+| `/checklist` | Manage project checklist |
 
 ### Quality
 

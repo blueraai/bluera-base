@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (23 total)
+## Commands (24 total)
 
 ### Development & Iteration
 
@@ -78,6 +78,7 @@ Show only the Configuration section.
 | `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
 | `/bluera-base:todo` | Manage project TODO tasks (show, add, complete) |
 | `/bluera-base:learn` | Manage semantic learnings from session analysis |
+| `/bluera-base:checklist` | Manage project checklist (view, add, check, edit) |
 
 ### Project Setup
 
@@ -122,7 +123,7 @@ Show only the Configuration section.
 
 ---
 
-## Skills (24 total)
+## Skills (25 total)
 
 Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
 
@@ -132,6 +133,7 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 | `@atomic-commits` | Atomic commit creation with grouping rules |
 | `@audit-plugin` | Audit plugins against best practices |
 | `@auto-learn` | Automatic learning from session patterns |
+| `@checklist` | Project checklist management |
 | `@claude-cleaner` | Diagnose slow startup and guide cleanup |
 | `@claude-md-maintainer` | CLAUDE.md structure and validation |
 | `@code-review-repo` | Multi-agent code review patterns |
@@ -155,7 +157,7 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 
 ---
 
-## Hooks (12 total)
+## Hooks (13 total)
 
 Hooks run automatically on specific events. No action required.
 
@@ -165,6 +167,7 @@ Hooks run automatically on specific events. No action required.
 |------|-------|-------------|
 | `session-setup.sh` | SessionStart | Check jq, fix hook permissions, update .gitignore |
 | `session-start-inject.sh` | SessionStart | Inject context into session |
+| `checklist-remind.sh` | SessionStart | Remind about pending checklist items |
 | `pre-compact.sh` | PreCompact | Preserve state before context compaction |
 | `session-end-learn.sh` | Stop | Process learning observations |
 | `session-end-analyze.sh` | Stop | Deep learning session analysis |
