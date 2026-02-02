@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.24.1](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.24.1) (2026-02-02)
+
+### Bug Fixes
+
+* **hooks:** add **BLUERA_TEST** bypass and fix checklist grep ([7e8ee19](https://github.com/blueraai/bluera-base/commit/7e8ee199120b75c3c6e3bac04070e41cc1d6db2a))
+
 ## [0.24.0](https://github.com/blueraai/bluera-base/compare/v0.21.4...v0.24.0) (2026-02-02)
 
 ### Features
