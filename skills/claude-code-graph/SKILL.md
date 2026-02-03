@@ -49,19 +49,44 @@ ls "$PLUGIN_PATH/agents/"*.md 2>/dev/null | wc -l
 
 ### Phase 2: Parse Metadata
 
-For each component, extract:
+For each component, extract name and description dynamically:
 
-1. **Commands**: Read frontmatter for `allowed-tools`, `argument-hint`, skill reference
-2. **Skills**: Read SKILL.md frontmatter for `name`, `description`, `allowed-tools`
-3. **Hooks**: Parse hooks.json for event bindings and scripts
-4. **Agents**: Read agent definitions if present
-
-**Frontmatter Extraction:**
-
-For markdown files, extract YAML frontmatter between `---` markers:
+**Command Descriptions:**
 
 ```bash
-sed -n '/^---$/,/^---$/p' FILE.md | sed '1d;$d' | yq -o json
+for f in "$PLUGIN_PATH/commands/"*.md; do
+  name=$(basename "$f" .md)
+  desc=$(sed -n '/^description:/s/description: *//p' "$f" | head -1)
+  printf "%-28s %s\n" "$name" "$desc"
+done
+```
+
+**Skill Descriptions:**
+
+```bash
+for d in "$PLUGIN_PATH/skills/"*/; do
+  name=$(basename "$d")
+  desc=$(sed -n '/^description:/s/description: *//p' "$d/SKILL.md" | head -1)
+  printf "%-28s %s\n" "$name" "$desc"
+done
+```
+
+**Hook Scripts:**
+
+```bash
+jq -r '.hooks | to_entries[] | .key as $event | .value[] | .hooks[] |
+  "\($event)|\(.matcher // "*")|\(.command | split("/") | last)"' \
+  "$PLUGIN_PATH/hooks/hooks.json"
+```
+
+**Agent Descriptions:**
+
+```bash
+for f in "$PLUGIN_PATH/agents/"*.md; do
+  name=$(basename "$f" .md)
+  desc=$(sed -n '/^description:/s/description: *//p' "$f" | head -1)
+  echo "$name|$desc"
+done
 ```
 
 ### Phase 3: Build Dependency Graph
@@ -174,48 +199,85 @@ graph TD
 | `[path]` | Path to plugin directory (default: current directory) |
 | `--json` | Output raw JSON only |
 | `--mermaid` | Output Mermaid diagram only |
+| `--markdown` | Output with markdown tables and collapsible mermaid |
 | `--output FILE` | Write output to file |
 
-## Output Format
+## Output Formats
 
-Default output shows:
+### Default (Terminal-Friendly)
 
-1. **Summary table** of components
-2. **Dependency map** showing key relationships
-3. **Mermaid diagram** (collapsed by default)
-
-### Example Output
+Optimized for Claude Code's output window. Uses Unicode box characters, aligned columns, and visual grouping. **All data is read dynamically from the filesystem at invocation time.**
 
 ```text
-## Plugin Analysis: bluera-base v0.28.0
+╭──────────────────────────────────────────────────────────────────────────────╮
+│  {plugin.name} v{plugin.version}                                             │
+│  {plugin.description}                                                        │
+╰──────────────────────────────────────────────────────────────────────────────╯
 
-### Components
+COMPONENTS
+────────────────────────────────────────────────────────────────────────────────
+  📁 Commands    {count}
+  ⚡ Skills      {count}
+  🪝 Hooks       {count} scripts (across {count} events)
+  🤖 Agents      {count}
+
+HOOK EVENTS
+────────────────────────────────────────────────────────────────────────────────
+  {event}   {count} handlers  matcher: {matcher}
+  ...
+
+ALL HOOKS
+────────────────────────────────────────────────────────────────────────────────
+  {event}  → {script.sh}
+  ...
+
+COMMANDS ({count})
+────────────────────────────────────────────────────────────────────────────────
+  {name}                     {description from frontmatter}
+  {name}                     {description from frontmatter}
+  ...
+
+SKILLS ({count})
+────────────────────────────────────────────────────────────────────────────────
+  {name}                     {description from SKILL.md frontmatter}
+  {name}                     {description from SKILL.md frontmatter}
+  ...
+
+AGENTS ({count})
+────────────────────────────────────────────────────────────────────────────────
+  {name}
+    {description from agent frontmatter}
+```
+
+**Key:** All `{placeholders}` are replaced with values read from the filesystem at runtime.
+
+### --markdown (GitHub/Docs)
+
+Uses markdown tables and collapsible mermaid diagram:
+
+```markdown
+## Plugin Analysis: bluera-base v0.31.5
 
 | Type | Count |
 |------|-------|
-| Commands | 27 |
-| Skills | 20 |
-| Hooks | 13 |
+| Commands | 29 |
+| Skills | 29 |
+| Hooks | 12 |
 | Agents | 1 |
-
-### Key Dependencies
-
-**Commands → Skills:**
-- /commit → atomic-commits
-- /release → release
-- /claude-code-md → claude-code-md-maintainer
-
-**Hooks → Events:**
-- block-manual-release.sh → PreToolUse:Bash
-- milhouse-stop.sh → Stop
 
 <details>
 <summary>Mermaid Diagram</summary>
-
-(diagram here)
-
+(diagram)
 </details>
 ```
+
+### --mermaid (Diagram Only)
+
+Outputs just the Mermaid flowchart for embedding in documentation.
+
+### --json (Machine Readable)
+
+Full JSON structure for programmatic use.
 
 ## Constraints
 
