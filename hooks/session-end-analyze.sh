@@ -60,7 +60,7 @@ EVENTS=$(jq -s '
   # Extract relevant fields and sanitize newlines in content
   map(
     if .type == "user" then
-      {type: "user", content: ((.message.content // .content | if type == "array" then map(.text // "") | join(" ") else . end)[0:500] | gsub("\n"; " ") | gsub("\r"; ""))}
+      {type: "user", content: ((.message.content // .content | if type == "array" then map(.text // .content // "") | join(" ") else . end)[0:500] | gsub("\n"; " ") | gsub("\r"; ""))}
     else
       {type: "error", content: ((.content | tostring)[0:300] | gsub("\n"; " ") | gsub("\r"; "")), is_error: .is_error}
     end
