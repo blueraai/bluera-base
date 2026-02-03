@@ -313,6 +313,7 @@ Use AskUserQuestion:
 
    ```gitignore
    .bluera/
+   !.bluera/
    !.bluera/bluera-base/
    !.bluera/bluera-base/config.json
    ```
@@ -555,6 +556,7 @@ The `/bluera-base:config init` command adds these patterns to `.gitignore`:
 ```gitignore
 # Bluera plugins - shared config committed, local/state ignored
 .bluera/
+!.bluera/
 !.bluera/bluera-base/
 !.bluera/bluera-knowledge/
 .bluera/bluera-base/*
