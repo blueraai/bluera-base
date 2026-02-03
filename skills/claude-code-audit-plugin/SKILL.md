@@ -220,3 +220,17 @@ Key optimizations from our history:
 - Preserve existing functionality
 - Suggest, don't force structural changes
 - Report security issues prominently
+
+## Related Skills
+
+| Skill | Use For |
+|-------|---------|
+| `/bluera-base:claude-code-guide` | Questions about best practices, unclear patterns |
+| `/bluera-base:claude-code-graph` | Visualize plugin structure and dependencies |
+| `/bluera-base:claude-code-test-plugin` | Run validation test suite after fixes |
+
+**When to consult claude-code-guide:**
+
+- Uncertain whether a pattern is best practice
+- Need clarification on hook exit codes or behavior
+- Plugin uses features not covered in checklist
