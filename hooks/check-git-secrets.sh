@@ -39,13 +39,13 @@ STAGED=$(git diff --cached 2>/dev/null || true)
 [[ -z "$STAGED" ]] && exit 0
 
 # Check for escape hatch: # ok: or // ok:
-STAGED_NO_ESCAPES=$(echo "$STAGED" | grep -v '# ok:' | grep -v '// ok:' || true)
+STAGED_NO_ESCAPES=$(echo "$STAGED" | grep -v '# ok:' | grep -v '// ok:' | grep -v '<!-- ok:' || true)
 
 # Phase 1: Static check for secrets
 if echo "$STAGED_NO_ESCAPES" | grep -qiE "$BLUERA_SECRETS_PATTERN"; then
   MATCH=$(echo "$STAGED_NO_ESCAPES" | grep -oiE "$BLUERA_SECRETS_PATTERN" | head -1)
   echo "Blocked: Potential secret in staged changes (matched: $MATCH)" >&2
-  echo "Remove the secret or add '# ok: <reason>' comment to bypass" >&2
+  echo "Remove the secret or add bypass comment: '# ok:', '// ok:', or '<!-- ok:' with reason" >&2
   exit 2
 fi
 
