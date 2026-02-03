@@ -33,6 +33,7 @@ Categorized index of all bluera-base skills.
 
 | Skill | Description | Key Tools |
 |-------|-------------|-----------|
+| [auto-improve](auto-improve/SKILL.md) | Fetch updates and apply improvements | Task, WebFetch, Read |
 | [claude-code-guide](claude-code-guide/SKILL.md) | Claude Code expert guidance | Task, Read, Grep |
 | [audit-plugin](audit-plugin/SKILL.md) | Audit plugin best practices | Read, Grep, Task |
 | [analyze-config](analyze-config/SKILL.md) | Analyze .claude/** overlap | Read, Glob, Grep |
@@ -71,8 +72,8 @@ Categorized index of all bluera-base skills.
 | Development Workflows | 5 |
 | Project Setup | 4 |
 | Configuration | 3 |
-| Analysis & Maintenance | 6 |
+| Analysis & Maintenance | 7 |
 | Documentation | 5 |
 | Creation & Scaffolding | 2 |
 | Learning & Adaptation | 2 |
-| **Total** | **27** |
+| **Total** | **28** |
