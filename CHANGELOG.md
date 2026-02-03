@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.27.0](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.27.0) (2026-02-03)
+
+### Features
+
+* **auto-improve:** add skill to fetch updates and improve plugin ([1e327b7](https://github.com/blueraai/bluera-base/commit/1e327b774c9ba58945cf8a3bba8e732946a1d39e))
+* **claude-code-guide:** add audit command for Claude Code best practices ([9ca81a3](https://github.com/blueraai/bluera-base/commit/9ca81a32ce0041ea78b62df7e12087779268704c))
+* **claude-code-guide:** add Claude Code expert consultant ([aa58aae](https://github.com/blueraai/bluera-base/commit/aa58aaeb3bb3a302449b88aa15d6b60a4f5b7132))
+* **commands:** add argument-hint frontmatter ([201722e](https://github.com/blueraai/bluera-base/commit/201722e7d9c1c8e0905ffc3fd84d7f17ae0b32cb))
+* **create:** add plugin component generator command ([676ba55](https://github.com/blueraai/bluera-base/commit/676ba55aabbe87cd6565b3a8d75517b708f02f6a))
+* **create:** integrate claude-code-guide expert consultation ([f199543](https://github.com/blueraai/bluera-base/commit/f199543e0a19eb84ee6da87be20bdc57474208de))
+
+### Bug Fixes
+
+* **hooks:** add **BLUERA_TEST** bypass and fix checklist grep ([7e8ee19](https://github.com/blueraai/bluera-base/commit/7e8ee199120b75c3c6e3bac04070e41cc1d6db2a))
+* **hooks:** address audit findings ([74246df](https://github.com/blueraai/bluera-base/commit/74246df1bd3a6cc2f36ff85cb287f989fed92a21))
+
 ## [0.26.0](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.26.0) (2026-02-02)
 
 ### Features
