@@ -7,7 +7,7 @@
 BLUERA_BASE_DEFAULT_CONFIG='{
   "version": 1,
   "autoLearn": {
-    "enabled": false,
+    "enabled": true,
     "mode": "suggest",
     "threshold": 3,
     "target": "local"
@@ -21,32 +21,32 @@ BLUERA_BASE_DEFAULT_CONFIG='{
     "enabled": true
   },
   "autoCommit": {
-    "enabled": false,
+    "enabled": true,
     "onStop": true,
     "push": false,
     "remote": "origin"
   },
   "dryCheck": {
-    "enabled": false,
-    "onStop": false,
+    "enabled": true,
+    "onStop": true,
     "minTokens": 70,
     "minLines": 5
   },
   "strictTyping": {
-    "enabled": false
+    "enabled": true
   },
   "standardsReview": {
-    "enabled": false,
+    "enabled": true,
     "mode": "warn"
   },
   "deepLearn": {
-    "enabled": false,
+    "enabled": true,
     "model": "haiku",
     "maxBudget": 0.02
   },
   "secretsCheck": {
     "enabled": true,
-    "aiEnabled": false
+    "aiEnabled": true
   }
 }'
 

@@ -101,14 +101,14 @@ claude --plugin-dir /path/to/bluera-base
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
-| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning (opt-in) |
+| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release`; blocks `--no-verify` |
-| `standards-review.sh` | PreToolUse (Bash) | Review staged code against CLAUDE.md on commit (opt-in) |
+| `standards-review.sh` | PreToolUse (Bash) | Review staged code against CLAUDE.md on commit |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
-| `session-end-learn.sh` | Stop | Consolidate learnings at session end (opt-in) |
+| `session-end-learn.sh` | Stop | Consolidate learnings at session end |
 | `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) |
-| `dry-scan.sh` | Stop | Scan for code duplication at session end (opt-in) |
-| `auto-commit.sh` | Stop | Prompts to run `/bluera-base:commit` on session stop (opt-in) |
+| `dry-scan.sh` | Stop | Scan for code duplication at session end |
+| `auto-commit.sh` | Stop | Prompts to run `/bluera-base:commit` on session stop |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
 → [Full hooks documentation](docs/hooks.md)

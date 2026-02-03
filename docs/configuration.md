@@ -23,15 +23,15 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 
 | Feature | Config Path | Description | Default |
 |---------|-------------|-------------|---------|
-| `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits | OFF |
-| `deep-learn` | `.deepLearn.enabled` | Semantic session analysis via Claude CLI | OFF |
-| `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commits | OFF |
-| `auto-commit` | `.autoCommit.enabled` | Prompt to commit on session stop | OFF |
+| `auto-learn` | `.autoLearn.enabled` | Track command patterns, suggest CLAUDE.md edits | ON |
+| `deep-learn` | `.deepLearn.enabled` | Semantic session analysis via Claude CLI | ON |
+| `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commits | ON |
+| `auto-commit` | `.autoCommit.enabled` | Prompt to commit on session stop | ON |
 | `auto-push` | `.autoCommit.push` | Add push instruction to commit prompt | OFF |
 | `notifications` | `.notifications.enabled` | Desktop notifications on prompts | ON |
-| `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate detection | OFF |
-| `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on stop | OFF |
-| `strict-typing` | `.strictTyping.enabled` | Block `any`, `as` casts | OFF |
+| `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate detection | ON |
+| `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on stop | ON |
+| `strict-typing` | `.strictTyping.enabled` | Block `any`, `as` casts | ON |
 
 ## Default Schema
 
@@ -39,7 +39,7 @@ Manage with `/bluera-base:config enable|disable <feature>`:
 {
   "version": 1,
   "autoLearn": {
-    "enabled": false,
+    "enabled": true,
     "mode": "suggest",
     "threshold": 3,
     "target": "local"
@@ -53,28 +53,32 @@ Manage with `/bluera-base:config enable|disable <feature>`:
     "enabled": true
   },
   "autoCommit": {
-    "enabled": false,
+    "enabled": true,
     "onStop": true,
     "push": false,
     "remote": "origin"
   },
   "dryCheck": {
-    "enabled": false,
-    "onStop": false,
+    "enabled": true,
+    "onStop": true,
     "minTokens": 70,
     "minLines": 5
   },
   "strictTyping": {
-    "enabled": false
+    "enabled": true
   },
   "deepLearn": {
-    "enabled": false,
+    "enabled": true,
     "model": "haiku",
     "maxBudget": 0.02
   },
   "standardsReview": {
-    "enabled": false,
+    "enabled": true,
     "mode": "warn"
+  },
+  "secretsCheck": {
+    "enabled": true,
+    "aiEnabled": true
   }
 }
 ```
