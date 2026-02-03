@@ -101,13 +101,13 @@ claude --plugin-dir /path/to/bluera-base
 | `session-start-inject.sh` | SessionStart | Inject context/invariants into session |
 | `pre-compact.sh` | PreCompact | Validate invariants before compaction |
 | `post-edit-check.sh` | PostToolUse (Write/Edit) | Auto-lint, typecheck, anti-pattern detection |
-| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning |
+| `observe-learning.sh` | PreToolUse (Bash) | Track patterns for auto-learning (opt-in) |
 | `block-manual-release.sh` | PreToolUse (Bash) | Enforces `/bluera-base:release`; blocks `--no-verify` |
 | `standards-review.sh` | PreToolUse (Bash) | Review staged code against CLAUDE.md on commit (opt-in) |
 | `milhouse-stop.sh` | Stop | Intercepts exit to continue milhouse loop iterations |
-| `session-end-learn.sh` | Stop | Consolidate learnings at session end |
+| `session-end-learn.sh` | Stop | Consolidate learnings at session end (opt-in) |
 | `session-end-analyze.sh` | Stop | Deep learning via Claude CLI (semantic session analysis) |
-| `dry-scan.sh` | Stop | Scan for code duplication at session end |
+| `dry-scan.sh` | Stop | Scan for code duplication at session end (opt-in) |
 | `auto-commit.sh` | Stop | Prompts to run `/bluera-base:commit` on session stop (opt-in) |
 | `notify.sh` | Notification | Cross-platform notifications (macOS/Linux/Windows) |
 
@@ -298,6 +298,9 @@ See [Learning System](docs/learning.md) for the full flow and configuration.
 | [Development](docs/development.md) | Setup, dogfooding, project structure |
 | [Troubleshooting](docs/troubleshooting.md) | Common issues and solutions |
 | [Hook Examples](docs/hook-examples.md) | Additional hook patterns |
+| [Advanced Patterns](docs/advanced-patterns.md) | State bus, loops, token efficiency |
+| [Command Patterns](docs/command-patterns.md) | Command conventions and examples |
+| [Best Practices](docs/claude-code-best-practices.md) | Comprehensive Claude Code guide |
 | [Contributing](CONTRIBUTING.md) | How to contribute |
 
 ---
