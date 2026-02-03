@@ -66,7 +66,7 @@ Manually trigger deep-learn analysis on the current session:
 **How it works:**
 
 1. Find current session transcript: most recent `.jsonl` in `~/.claude/projects/<project-id>/`
-2. Extract user messages and errors (same as session-end-analyze.sh)
+2. Extract user messages and errors (same jq query as session-end-analyze.sh)
 3. Send to Claude Haiku for analysis (~$0.001)
 4. Write learnings to `.bluera/bluera-base/state/pending-learnings.jsonl`
 5. Show count of learnings captured
@@ -77,18 +77,14 @@ Manually trigger deep-learn analysis on the current session:
 - `claude` CLI must be installed
 - Session must have ≥3 meaningful events (user messages or errors)
 
-**Implementation notes:**
+**Implementation:** See [references/extract-implementation.md](references/extract-implementation.md) for full bash implementation.
 
-```bash
-# Find project transcript directory
-PROJECT_ID=$(echo "$PWD" | sed 's|/|-|g')
-TRANSCRIPT_DIR="$HOME/.claude/projects/$PROJECT_ID"
+**Key points:**
 
-# Get most recent transcript
-TRANSCRIPT=$(ls -t "$TRANSCRIPT_DIR"/*.jsonl 2>/dev/null | head -1)
-
-# Run analysis using same logic as hooks/session-end-analyze.sh
-```
+- Use 120s timeout (vs 25s for background hook) - claude CLI can be slow to start
+- Pipe prompt via stdin: `echo "$PROMPT" | timeout 120 claude -p --model haiku`
+- Use exact same jq query as `hooks/session-end-analyze.sh` for event extraction
+- Validate JSON response with `jq -e '.learnings'` before storing
 
 ## Learning Types
 
@@ -129,6 +125,10 @@ When this skill is invoked:
 3. For `apply`: Use the autolearn library to write to CLAUDE.local.md, mark as applied
 4. For `dismiss`: Remove from pending file
 5. For `clear`: Remove all pending learnings
-6. For `extract`: Run the analysis workflow from `<repo root>/hooks/session-end-analyze.sh` on the current session's transcript
+6. For `extract`: Follow [references/extract-implementation.md](references/extract-implementation.md)
 
 Use the existing `bluera_autolearn_write` function from `hooks/lib/autolearn.sh` for writing learnings.
+
+## References
+
+- [extract-implementation.md](references/extract-implementation.md) - Full bash implementation for manual extraction
