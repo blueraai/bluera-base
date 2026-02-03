@@ -26,6 +26,7 @@ Parse argument to determine mode:
 
 - **`review`** - Review current plugin against best practices
 - **`audit`** or **`audit [path] [instructions]`** - Comprehensive audit against checklist
+- **`graph`** - Generate dependency graph (delegate to `/bluera-base:claude-code-graph`)
 - **Question** - Answer the question using expert knowledge
 - **No argument** - Offer both options
 
@@ -61,7 +62,22 @@ task:
     Provide specific, actionable fixes for any issues found.
 ```
 
-### 4. For Audit Mode
+### 4. For Graph Mode
+
+Delegate to the specialized graph skill:
+
+```bash
+/bluera-base:claude-code-graph [path]
+```
+
+Use this when user asks about:
+
+- Plugin structure visualization
+- Dependency analysis
+- Component relationships
+- "What calls what" questions
+
+### 5. For Audit Mode
 
 Parse arguments:
 
@@ -135,9 +151,18 @@ plugin/
 | Console hangs | Use `INPUT=$(cat 2>/dev/null \|\| true)` |
 | Paths break | Use `${CLAUDE_PLUGIN_ROOT}` |
 
+## Related Skills
+
+| Skill | Use For |
+|-------|---------|
+| `/bluera-base:claude-code-graph` | Dependency graphs, structure visualization |
+| `/bluera-base:claude-code-audit-plugin` | Full plugin audit with fixes |
+| `/bluera-base:claude-code-test-plugin` | Validation test suite |
+
 ## Constraints
 
 - Always spawn the claude-code-guide agent for detailed work
+- Delegate to specialized skills when appropriate (graph, audit, test)
 - Cite sources (docs, files, line numbers)
 - Provide specific, actionable fixes
 - Don't make assumptions - search documentation when unsure
