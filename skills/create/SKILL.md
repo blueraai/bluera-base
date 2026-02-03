@@ -76,6 +76,74 @@ Based on component type, follow the detailed reference:
 | Agent | [references/agent-creation.md](references/agent-creation.md) |
 | Prompt | [references/prompt-creation.md](references/prompt-creation.md) |
 
+## Phase 2.5: Entity Scan
+
+Before finalizing, scan all existing Claude entities for conflicts and integration opportunities.
+
+### Checklist
+
+- [ ] **Naming conflicts**: Check all entity locations for the chosen name
+- [ ] **Related components**: Find similar functionality for cross-referencing
+- [ ] **Hook opportunities**: Identify potential integrations
+- [ ] **Expert consultation**: If conflicts or complex integrations found
+
+### Check for Naming Conflicts
+
+Use Glob to check for existing entities with the same name:
+
+1. `Glob("commands/<name>.md")` - Existing command
+2. `Glob("skills/<name>/SKILL.md")` - Existing skill
+3. `Glob("hooks/<name>.sh")` - Existing hook script
+4. `Glob("agents/<name>.md")` - Existing agent
+5. `Glob("prompts/<name>.md")` - Existing prompt
+
+Also check `hooks/hooks.json` for hook registrations using the same name pattern.
+
+### Find Related Components
+
+Use Grep to find related functionality by keywords from the new component's name/description:
+
+1. `Grep(pattern: "<keywords>", path: "commands/")` - Related commands
+2. `Grep(pattern: "<keywords>", path: "skills/")` - Related skills
+3. `Grep(pattern: "<keywords>", path: "hooks/")` - Related hooks
+4. `Grep(pattern: "<keywords>", path: "agents/")` - Related agents
+
+### Integration Analysis
+
+Based on component type being created:
+
+**If creating command/skill:**
+
+- Check if existing hooks could enhance it (e.g., PostToolUse notifications)
+- Identify commands that should reference this in their docs
+
+**If creating hook:**
+
+- Identify commands/skills it should integrate with
+- Check for related hooks that might conflict
+
+**If conflicts or complex integrations found:**
+
+- Consult claude-code-guide for naming conventions and resolution
+
+### Output
+
+Report findings to user before Phase 3 confirmation:
+
+```text
+## Entity Scan Results
+
+✓ No naming conflicts (or ⚠ Conflicts: <list>)
+
+**Related Components** (if any):
+- commands/foo.md - Similar functionality [REVIEW]
+- hooks/bar.sh - Could trigger after this command [CONSIDER]
+
+**Integration Suggestions**:
+- Reference this from related-command.md
+- Consider PostToolUse hook for notifications
+```
+
 ## Phase 3: Expert Review & Confirmation
 
 **For hooks**: Before showing preview, consult claude-code-guide to validate:
