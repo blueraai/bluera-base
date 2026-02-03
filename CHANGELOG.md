@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.29.0](https://github.com/blueraai/bluera-base/compare/v0.28.0...v0.29.0) (2026-02-03)
+
+### Features
+
+* **commands:** standardize claude-code naming and add graph skill ([1325cec](https://github.com/blueraai/bluera-base/commit/1325cec92266f8698b9fd6325ce95dc4fb527774))
+
+### Bug Fixes
+
+* **cleaner:** remove unused legacy backup function ([045b911](https://github.com/blueraai/bluera-base/commit/045b91120e6a496af067ef31efa30eae25eb8b76))
+* **learn:** extract content from tool_result blocks in user messages ([d395efd](https://github.com/blueraai/bluera-base/commit/d395efdcc3e1e3abe421832bc7f0ec28cf0682e7))
+
 ## [0.28.0](https://github.com/blueraai/bluera-base/compare/v0.24.0...v0.28.0) (2026-02-03)
 
 ### Features
