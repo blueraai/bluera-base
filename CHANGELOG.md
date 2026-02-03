@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.30.0](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.30.0) (2026-02-03)
+
+### Features
+
+* **create:** add entity scan phase for conflict detection ([4d2ac8d](https://github.com/blueraai/bluera-base/commit/4d2ac8d69db87c5e9c81c1f8122f875b8c2a44d9))
+* **hooks:** add secrets check hook for git add/commit ([befa1ac](https://github.com/blueraai/bluera-base/commit/befa1acdd9e2cc1f20f9d46944cceebd3d76d5cd))
+
 ## [0.29.3](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.29.3) (2026-02-03)
 
 ## [0.29.2](https://github.com/blueraai/bluera-base/compare/v0.29.1...v0.29.2) (2026-02-03)
