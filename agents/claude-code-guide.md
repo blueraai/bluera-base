@@ -96,6 +96,54 @@ if [ "$ACTIVE" = "true" ]; then
 fi
 ```
 
+**Hook output best practices:**
+
+Hooks should be invisible when successful, actionable when not:
+
+| Situation | Output | Exit |
+|-----------|--------|------|
+| Check passes | None (silent) | 0 |
+| Block with feedback | stderr | 2 |
+| Verbose/debug | Log file | 0 |
+
+Quiet flags on tools:
+
+```bash
+cargo clippy --quiet --message-format=short 2>&1 | grep -E "^error" | head -10 >&2
+ruff check . --quiet
+npx eslint --quiet
+```
+
+Limit error output:
+
+```bash
+# Cap lines to avoid flooding context
+tsc --noEmit 2>&1 | head -20 >&2
+mypy . 2>&1 | head -10 >&2
+```
+
+Error format (file:line for Claude):
+
+```bash
+echo "src/app.ts:42: Missing await keyword" >&2
+echo "Anti-pattern detected ($FILE): fallback code found" >&2
+```
+
+Status messages (SessionStart):
+
+```bash
+echo -e "${GREEN}[plugin-name] Ready ✓${NC}"
+echo -e "${YELLOW}[plugin-name] ⚠️  Setup incomplete...${NC}"
+```
+
+Debug to file, not stdout:
+
+```bash
+log_debug() {
+    echo "{\"time\":\"$(date -Iseconds)\",\"msg\":\"$1\"}" >> "$LOG_FILE"
+}
+```
+
 **Event types:** SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, SessionEnd, Notification, SubagentStart, SubagentStop, PreCompact, PermissionRequest, UserPromptSubmit
 
 **PreToolUse hook output fields:**
@@ -258,6 +306,7 @@ See `docs/advanced-patterns.md` for complete implementation.
 | `$ARGUMENTS.0` dot syntax | Deprecated, will break | Use `$ARGUMENTS[0]` bracket syntax |
 | Missing `once: true` on setup hooks | Runs every session unnecessarily | Add `once: true` for one-time hooks |
 | Passing large data through conversation | Wastes tokens, degrades performance | Use state bus + capsules pattern |
+| Verbose hook output | Pollutes Claude's context | Use `--quiet`, `head -N`, log to file |
 
 ## How to Answer Questions
 
@@ -325,6 +374,35 @@ Return JSON with `updatedInput`:
 ```bash
 echo '{"updatedInput": {"command": "npm ci"}}' >&2
 exit 0
+```
+
+### "How should hooks format their output?"
+
+**Silent success** - exit 0 with no output when checks pass:
+
+```bash
+# Good: silent success
+if check_passes; then exit 0; fi
+echo "Failed: reason" >&2
+exit 2
+```
+
+**Quiet tools** - use `--quiet` flags and limit output:
+
+```bash
+cargo clippy --quiet 2>&1 | grep -E "^error" | head -10 >&2
+```
+
+**Error format** - include file path for actionable feedback:
+
+```bash
+echo "$FILE:$LINE: $MESSAGE" >&2
+```
+
+**Debug logging** - write to log file, not stdout:
+
+```bash
+echo "debug: $msg" >> "$LOG_FILE"  # Not to stdout
 ```
 
 ### "How do I persist environment variables from SessionStart?"
