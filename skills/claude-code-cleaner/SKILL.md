@@ -1,6 +1,6 @@
 ---
-name: claude-cleaner
-description: Diagnose slow Claude Code startup and guide cleanup. Use /bluera-base:clean to run.
+name: claude-code-cleaner
+description: Diagnose slow Claude Code startup and guide cleanup. Use /bluera-base:claude-code-clean to run.
 ---
 
 # Claude Code Cleaner

@@ -1,5 +1,5 @@
 ---
-name: auto-improve
+name: claude-code-auto-improve
 description: Fetch latest Claude Code updates, validate plugin, and apply improvements
 allowed-tools: [Read, Write, Edit, Glob, Grep, Task, WebFetch, AskUserQuestion, Bash]
 ---
@@ -298,7 +298,7 @@ Configuration is stored in `.bluera/bluera-base/config.json`:
 
 ```bash
 # View current config
-/bluera-base:auto-improve config
+/bluera-base:claude-code-auto-improve config
 
 # Enable auto-improve
 /bluera-base:config set autoImprove.enabled true

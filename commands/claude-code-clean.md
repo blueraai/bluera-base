@@ -4,4 +4,4 @@ argument-hint: "[scan|fix <action>|backups <list|restore>] [--days N] [--confirm
 allowed-tools: Bash, Read, AskUserQuestion
 ---
 
-See skills/claude-cleaner/SKILL.md
+See skills/claude-code-cleaner/SKILL.md

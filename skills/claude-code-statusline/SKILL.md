@@ -1,5 +1,5 @@
 ---
-name: statusline
+name: claude-code-statusline
 description: Configure Claude Code's terminal status line display
 user-invocable: true
 allowed-tools: [Read, Write, Edit, Bash]
@@ -29,9 +29,9 @@ Choose a preset and apply it:
 
 Detailed implementation docs:
 
-- **skills/statusline/references/themes.md** - 5 theme definitions (default, minimal, vibrant, monochrome, nerd)
-- **skills/statusline/references/modules.md** - All module implementations (directory, model, context, git, cost, rate-limits, project, lines-changed, battery, cpu, memory, docker, time, cca-status)
-- **skills/statusline/references/preset-scripts.md** - Complete ready-to-use bash scripts for each preset
+- **skills/claude-code-statusline/references/themes.md** - 5 theme definitions (default, minimal, vibrant, monochrome, nerd)
+- **skills/claude-code-statusline/references/modules.md** - All module implementations (directory, model, context, git, cost, rate-limits, project, lines-changed, battery, cpu, memory, docker, time, cca-status)
+- **skills/claude-code-statusline/references/preset-scripts.md** - Complete ready-to-use bash scripts for each preset
 
 ---
 

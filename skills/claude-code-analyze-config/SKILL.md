@@ -22,7 +22,7 @@ This plugin provides:
 - `/bluera-base:claude-code-audit-plugin` - audit a Claude Code plugin against best practices
 - `/bluera-base:cancel-milhouse` - cancel active milhouse loop
 - `/bluera-base:claude-code-md` - CLAUDE.md maintenance
-- `/bluera-base:clean` - diagnose slow startup and guide cleanup
+- `/bluera-base:claude-code-clean` - diagnose slow startup and guide cleanup
 - `/bluera-base:code-review` - multi-agent code review
 - `/bluera-base:commit` - atomic commits with documentation awareness
 - `/bluera-base:config` - configuration management
@@ -35,7 +35,7 @@ This plugin provides:
 - `/bluera-base:milhouse-loop` - iterative development loop
 - `/bluera-base:readme` - README.md maintenance
 - `/bluera-base:release` - version bumping and release workflow
-- `/bluera-base:statusline` - configure status line display
+- `/bluera-base:claude-code-statusline` - configure status line display
 - `/bluera-base:claude-code-test-plugin` - plugin validation test suite
 - `/bluera-base:todo` - manage project TODO tasks
 - `/bluera-base:worktree` - manage git worktrees

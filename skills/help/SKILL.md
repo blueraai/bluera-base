@@ -103,7 +103,7 @@ Show only the Configuration section.
 |---------|-------------|
 | `/bluera-base:claude-code-analyze-config` | Analyze repo's `.claude/**` for overlap |
 | `/bluera-base:claude-code-audit-plugin` | Audit a Claude Code plugin against best practices |
-| `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
+| `/bluera-base:claude-code-clean` | Diagnose slow Claude Code startup and guide cleanup |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
 | `/bluera-base:large-file-refactor` | Break apart files exceeding token limits |
 
@@ -112,7 +112,7 @@ Show only the Configuration section.
 | Command | Description |
 |---------|-------------|
 | `/bluera-base:worktree` | Manage git worktrees for parallel development |
-| `/bluera-base:statusline` | Configure Claude Code terminal status line |
+| `/bluera-base:claude-code-statusline` | Configure Claude Code terminal status line |
 | `/bluera-base:claude-code-test-plugin` | Run plugin validation test suite |
 
 ### Help & Guidance

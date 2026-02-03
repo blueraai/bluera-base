@@ -404,7 +404,7 @@ Execute each test in order. Mark each as PASS or FAIL.
    - Expected: Shows worktrees or "No worktrees"
    - PASS if command executes without error
 
-8. **/statusline**: Run `/bluera-base:statusline`
+8. **/claude-code-statusline**: Run `/bluera-base:claude-code-statusline`
    - Expected: Shows presets or current config
    - PASS if command executes without error
 

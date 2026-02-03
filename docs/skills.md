@@ -97,20 +97,20 @@ See `skills/learn/SKILL.md` for full documentation.
 
 ---
 
-## claude-cleaner
+## claude-code-cleaner
 
 Diagnoses slow Claude Code startup by scanning for excessive files in `.claude/` directories.
 
 ### Usage
 
 ```bash
-/bluera-base:clean scan              # Scan for issues
-/bluera-base:clean fix <action>      # Fix specific issue
-/bluera-base:clean backups list      # List available backups
-/bluera-base:clean backups restore   # Restore from backup
+/bluera-base:claude-code-clean scan              # Scan for issues
+/bluera-base:claude-code-clean fix <action>      # Fix specific issue
+/bluera-base:claude-code-clean backups list      # List available backups
+/bluera-base:claude-code-clean backups restore   # Restore from backup
 ```
 
-See `skills/claude-cleaner/SKILL.md` for full documentation.
+See `skills/claude-code-cleaner/SKILL.md` for full documentation.
 
 ---
 

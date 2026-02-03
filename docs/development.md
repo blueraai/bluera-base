@@ -49,7 +49,7 @@ bluera-base/
 │   ├── claude-code-audit-plugin.md    # /bluera-base:claude-code-audit-plugin command
 │   ├── cancel-milhouse.md             # /bluera-base:cancel-milhouse command
 │   ├── claude-code-md.md              # /bluera-base:claude-code-md command
-│   ├── clean.md                  # /bluera-base:clean command
+│   ├── claude-code-clean.md      # /bluera-base:claude-code-clean command
 │   ├── code-review.md            # /bluera-base:code-review command
 │   ├── commit.md                 # /bluera-base:commit command
 │   ├── config.md                 # /bluera-base:config command
@@ -62,7 +62,7 @@ bluera-base/
 │   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
 │   ├── readme.md                 # /bluera-base:readme command
 │   ├── release.md                # /bluera-base:release command
-│   ├── statusline.md             # /bluera-base:statusline command
+│   ├── claude-code-statusline.md # /bluera-base:claude-code-statusline command
 │   ├── claude-code-test-plugin.md     # /bluera-base:claude-code-test-plugin command
 │   ├── todo.md                   # /bluera-base:todo command
 │   └── worktree.md               # /bluera-base:worktree command
