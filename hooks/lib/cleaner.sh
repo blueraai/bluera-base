@@ -287,19 +287,6 @@ cleaner_restore_backup() {
     echo "Restore complete."
 }
 
-# Legacy backup function (for compatibility)
-cleaner_backup() {
-    local path="$1"
-    local timestamp
-    timestamp=$(date +%Y%m%d%H%M%S)
-    local backup_path="${path}.bak.${timestamp}"
-
-    if [[ -e "$path" ]]; then
-        cp -p "$path" "$backup_path"
-        echo "$backup_path"
-    fi
-}
-
 # Take a snapshot of key sizes for before/after comparison
 # Returns JSON-like output
 cleaner_snapshot() {
