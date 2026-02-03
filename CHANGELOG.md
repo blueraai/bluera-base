@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.31.2](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.31.2) (2026-02-03)
+
+### Features
+
+* **config:** enable all features by default (opt-out instead of opt-in) ([28a2773](https://github.com/blueraai/bluera-base/commit/28a2773f9357b0dbc75c10e4195d8fbcf5ed6488))
+* **create:** add entity scan phase for conflict detection ([4d2ac8d](https://github.com/blueraai/bluera-base/commit/4d2ac8d69db87c5e9c81c1f8122f875b8c2a44d9))
+* **hooks:** add secrets check hook for git add/commit ([befa1ac](https://github.com/blueraai/bluera-base/commit/befa1acdd9e2cc1f20f9d46944cceebd3d76d5cd))
+
+### Bug Fixes
+
+* **secrets-hook:** add HTML comment bypass for markdown files ([b357517](https://github.com/blueraai/bluera-base/commit/b35751780ef8df3c7ddd79026c10aa815d9c1664))
+* **secrets-hook:** exclude .bluera/ config from secret scanning ([b5ef1e9](https://github.com/blueraai/bluera-base/commit/b5ef1e9fdb7643fa4eb872ec2b1b3c98db60a4a3))
+
 ## [0.31.1](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.31.1) (2026-02-03)
 
 ### Features
