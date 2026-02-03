@@ -53,7 +53,11 @@ __SKILL__=release cargo release patch --execute
 3. **Detect:** Run `detect-version-tool.sh` to find the right command
 4. **Bump:** Run detected command with `__SKILL__=release` prefix (NO tag yet)
 5. **Push:** Push version bump commit (triggers CI)
-6. **Wait:** Poll `gh run list --commit SHA` until ALL workflows complete
+6. **Wait (REQUIRED):** Run the polling loop from [ci-monitoring.md](references/ci-monitoring.md) - do NOT proceed until:
+   - ALL workflows show `status: completed`
+   - Zero workflows are `in_progress` or `queued`
 7. **Verify workflows:** Compare `.github/workflows/` files vs actual runs - ensure none missing
 8. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
 9. **Verify release:** `gh release list --limit 1` to confirm published
+
+**IMPORTANT:** Do NOT declare "Release Complete" while any workflow shows `in_progress`. Run the full polling loop and wait for ALL workflows to reach `completed` status before finishing.
