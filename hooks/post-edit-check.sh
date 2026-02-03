@@ -17,7 +17,7 @@ fi
 
 # === Read stdin JSON ===
 
-INPUT=$(cat || true)
+INPUT=$(cat 2>/dev/null || true)
 [ -z "$INPUT" ] && exit 0
 
 # Extract tool name and file path

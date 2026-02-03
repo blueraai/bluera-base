@@ -23,6 +23,13 @@ if ! bluera_config_enabled ".autoLearn.enabled"; then
   exit 0
 fi
 
+# Read hook input and check for stop_hook_active
+INPUT=$(cat 2>/dev/null || true)
+STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // false' 2>/dev/null || echo "false")
+if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
+  exit 0
+fi
+
 # Get config values
 AUTO_LEARN_MODE=$(bluera_get_config ".autoLearn.mode")
 AUTO_LEARN_MODE="${AUTO_LEARN_MODE:-suggest}"

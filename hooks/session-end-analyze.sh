@@ -27,6 +27,13 @@ fi
 
 # Get transcript path from hook input
 INPUT=$(cat 2>/dev/null || true)
+
+# Check for stop_hook_active to avoid unnecessary work
+STOP_HOOK_ACTIVE=$(echo "$INPUT" | jq -r '.stop_hook_active // false' 2>/dev/null || echo "false")
+if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
+  exit 0
+fi
+
 TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty')
 
 if [[ -z "$TRANSCRIPT" ]] || [[ ! -f "$TRANSCRIPT" ]]; then
