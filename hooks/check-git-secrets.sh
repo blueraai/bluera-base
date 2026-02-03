@@ -35,7 +35,7 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 echo "$COMMAND" | grep -qE '^git[[:space:]]+(add|commit)' || exit 0
 
 # Get staged content
-STAGED=$(git diff --cached 2>/dev/null || true)
+STAGED=$(git diff --cached -- ':!.bluera/' 2>/dev/null || true)
 [[ -z "$STAGED" ]] && exit 0
 
 # Check for escape hatch: # ok: or // ok:
