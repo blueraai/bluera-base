@@ -1,5 +1,6 @@
 ---
 description: Create atomic commits grouped by logical features
+argument-hint: "[-m message]"
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
