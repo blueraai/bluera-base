@@ -192,7 +192,13 @@ get_project_type() {
     fi
 }
 
-# --- Rate Limits (fetches from Anthropic API via keychain - macOS only) ---
+# --- Rate Limits (UNDOCUMENTED API - may break in future) ---
+# WARNING: This uses an undocumented Anthropic endpoint and macOS keychain
+# - Endpoint: https://api.anthropic.com/api/oauth/usage (not in official docs)
+# - Auth: OAuth token from macOS keychain 'Claude Code-credentials'
+# - Header: anthropic-beta: oauth-2025-04-20 (experimental)
+# - Platform: macOS only (uses 'security' command)
+# This may break if Anthropic changes credential storage or the API
 get_rate_limits() {
     local cache_file="/tmp/.claude_usage_cache"
     local cache_max_age=60

@@ -439,3 +439,26 @@ jq '.capsules.latest' "$MY_STATE_DIR/state.json"
 ```
 
 See `docs/advanced-patterns.md` for complete State Bus + Capsules implementation.
+
+### "What data is available in the statusline JSON input?"
+
+**Officially supported** (via stdin JSON):
+
+| Field | Content |
+|-------|---------|
+| `model.display_name` | Current model name |
+| `context_window.used_percentage` | Context usage (0-100) |
+| `context_window.current_usage` | Token breakdown |
+| `cost.total_cost_usd` | Session cost |
+| `cost.total_lines_added/removed` | Code changes |
+| `workspace.current_dir` | Working directory |
+
+**NOT officially exposed:**
+
+- Rate limit utilization (5-hour, 7-day percentages)
+- Plan/subscription info
+- API quota remaining
+
+The bluera-base statusline preset includes rate limit display, but it uses an **undocumented API** (`api.anthropic.com/api/oauth/usage`) that requires macOS keychain access. This is fragile and may break.
+
+See [Claude Code statusline docs](https://code.claude.com/docs/en/statusline) for the official JSON schema.

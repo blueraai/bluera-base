@@ -163,3 +163,33 @@ DISPLAY_MODE="normal"
 ### bluera
 
 Advanced with rate limits, context bar, ANSI colors. See preset-scripts.md for full implementation.
+
+---
+
+## Known Limitations
+
+### Rate Limit Display (bluera preset)
+
+The 5-hour/7-day rate limit utilization in the bluera preset uses an **undocumented API**:
+
+| Aspect | Detail |
+|--------|--------|
+| Endpoint | `https://api.anthropic.com/api/oauth/usage` (not in official docs) |
+| Auth | OAuth token from macOS keychain (`Claude Code-credentials`) |
+| Header | `anthropic-beta: oauth-2025-04-20` (experimental) |
+| Platform | **macOS only** (uses `security` command) |
+
+**Risks:**
+
+- May break if Anthropic changes the endpoint or credential storage
+- No official replacement available (as of Feb 2026)
+- Cross-platform support not possible without official API
+
+**Officially supported statusline data:**
+
+- `model` (id, display_name)
+- `context_window` (tokens, percentages)
+- `cost` (total_cost_usd, lines_added/removed)
+- `workspace` (current_dir, project_dir)
+
+See [Claude Code statusline docs](https://code.claude.com/docs/en/statusline) for official JSON input fields.
