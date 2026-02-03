@@ -43,6 +43,10 @@ BLUERA_BASE_DEFAULT_CONFIG='{
     "enabled": false,
     "model": "haiku",
     "maxBudget": 0.02
+  },
+  "secretsCheck": {
+    "enabled": true,
+    "aiEnabled": false
   }
 }'
 

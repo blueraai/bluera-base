@@ -52,6 +52,11 @@
           },
           {
             "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/check-git-secrets.sh",
+            "timeout": 20
+          },
+          {
+            "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/observe-learning.sh",
             "timeout": 5,
             "async": true
