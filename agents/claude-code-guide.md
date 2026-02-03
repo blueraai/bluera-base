@@ -459,6 +459,4 @@ See `docs/advanced-patterns.md` for complete State Bus + Capsules implementation
 - Plan/subscription info
 - API quota remaining
 
-The bluera-base statusline preset includes rate limit display, but it uses an **undocumented API** (`api.anthropic.com/api/oauth/usage`) that requires macOS keychain access. This is fragile and may break.
-
-See [Claude Code statusline docs](https://code.claude.com/docs/en/statusline) for the official JSON schema.
+The bluera-base statusline preset includes rate limit display via an **undocumented API**. See `/bluera-base:statusline` skill for details and risks.

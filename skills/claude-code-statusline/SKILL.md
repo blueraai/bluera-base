@@ -182,7 +182,7 @@ The 5-hour/7-day rate limit utilization in the bluera preset uses an **undocumen
 **Risks:**
 
 - May break if Anthropic changes the endpoint or credential storage
-- No official replacement available (as of Feb 2026)
+- No official replacement available yet
 - Cross-platform support not possible without official API
 
 **Officially supported statusline data:**
