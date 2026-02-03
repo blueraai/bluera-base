@@ -49,7 +49,7 @@ Enable and configure via `/bluera-base:config`:
 
 | Mode | Behavior |
 |------|----------|
-| `suggest` | Shows learnings as systemMessage at session end. User runs `/bluera-base:claude-md learn` to apply. |
+| `suggest` | Shows learnings as systemMessage at session end. User runs `/bluera-base:claude-code-md learn` to apply. |
 | `auto` | Writes learnings directly to target file. Shows confirmation message. |
 
 ### Targets
@@ -167,7 +167,7 @@ See `skills/learn/SKILL.md` for full deep learning documentation.
 ## Related
 
 - `/bluera-base:config` - Enable and configure auto-learn
-- `/bluera-base:claude-md learn` - Manually add a learning
+- `/bluera-base:claude-code-md learn` - Manually add a learning
 - `/bluera-base:learn` - Manage deep learnings
 - `skills/learn` - Deep learning skill
-- `skills/claude-md-maintainer` - Full CLAUDE.md management skill
+- `skills/claude-code-md-maintainer` - Full CLAUDE.md management skill

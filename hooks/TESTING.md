@@ -4,7 +4,7 @@ This document describes how hooks are tested and which require manual verificati
 
 ## Hooks Tested by /test-plugin
 
-The following hooks are automatically validated by `/bluera-base:test-plugin`:
+The following hooks are automatically validated by `/bluera-base:claude-code-test-plugin`:
 
 | Hook | Test Coverage |
 |------|---------------|

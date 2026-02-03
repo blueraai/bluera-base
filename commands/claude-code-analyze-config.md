@@ -4,4 +4,4 @@ argument-hint: [--cleanup]
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See skills/analyze-config/SKILL.md
+See skills/claude-code-analyze-config/SKILL.md

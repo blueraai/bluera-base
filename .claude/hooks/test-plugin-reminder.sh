@@ -15,9 +15,9 @@ NEW_FILES=$(git ls-files --others --exclude-standard 2>/dev/null | grep -E '^(ho
 DELETED_FILES=$(git diff --name-only --diff-filter=D HEAD 2>/dev/null | grep -E '^(hooks/|commands/|skills/)' || true)
 
 if [[ -n "$NEW_FILES" || -n "$DELETED_FILES" ]]; then
-  echo "[bluera-base] Plugin files added/removed. Update commands/test-plugin.md if needed, then run /bluera-base:test-plugin"
+  echo "[bluera-base] Plugin files added/removed. Update commands/test-plugin.md if needed, then run /bluera-base:claude-code-test-plugin"
 elif [[ -n "$PLUGIN_CHANGES" || -n "$STAGED_CHANGES" ]]; then
-  echo "[bluera-base] Plugin files modified. Consider running /bluera-base:test-plugin"
+  echo "[bluera-base] Plugin files modified. Consider running /bluera-base:claude-code-test-plugin"
 fi
 
 exit 0

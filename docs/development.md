@@ -45,10 +45,10 @@ bluera-base/
 ├── assets/
 │   └── claude.png                # Plugin icon/assets
 ├── commands/
-│   ├── analyze-config.md         # /bluera-base:analyze-config command
-│   ├── audit-plugin.md           # /bluera-base:audit-plugin command
-│   ├── cancel-milhouse.md        # /bluera-base:cancel-milhouse command
-│   ├── claude-md.md              # /bluera-base:claude-md command
+│   ├── claude-code-analyze-config.md  # /bluera-base:claude-code-analyze-config command
+│   ├── claude-code-audit-plugin.md    # /bluera-base:claude-code-audit-plugin command
+│   ├── cancel-milhouse.md             # /bluera-base:cancel-milhouse command
+│   ├── claude-code-md.md              # /bluera-base:claude-code-md command
 │   ├── clean.md                  # /bluera-base:clean command
 │   ├── code-review.md            # /bluera-base:code-review command
 │   ├── commit.md                 # /bluera-base:commit command
@@ -63,7 +63,7 @@ bluera-base/
 │   ├── readme.md                 # /bluera-base:readme command
 │   ├── release.md                # /bluera-base:release command
 │   ├── statusline.md             # /bluera-base:statusline command
-│   ├── test-plugin.md            # /bluera-base:test-plugin command
+│   ├── claude-code-test-plugin.md     # /bluera-base:claude-code-test-plugin command
 │   ├── todo.md                   # /bluera-base:todo command
 │   └── worktree.md               # /bluera-base:worktree command
 ├── hooks/

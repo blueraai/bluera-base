@@ -1,5 +1,5 @@
 ---
-name: audit-plugin
+name: claude-code-audit-plugin
 description: Audit a Claude Code plugin against best practices and suggest improvements
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---

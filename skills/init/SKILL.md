@@ -119,7 +119,7 @@ If CLAUDE.md missing or needs @include:
 2. If exists without @include: add @include at top
 3. Audit structure
 
-See `/bluera-base:claude-md` for full workflow.
+See `/bluera-base:claude-code-md` for full workflow.
 
 #### 4. Harden Repo (if selected)
 

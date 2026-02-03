@@ -122,7 +122,7 @@ if [[ -n "$SUGGESTIONS" ]]; then
     # Suggest mode: show suggestions and command to run
     MSG="[bluera-base] Session patterns detected. Consider adding to CLAUDE.md:${SUGGESTIONS}
 
-Run \`/bluera-base:claude-md learn \"<learning>\"\` to add any of these."
+Run \`/bluera-base:claude-code-md learn \"<learning>\"\` to add any of these."
 
     jq -n --arg msg "$MSG" '{
       "systemMessage": $msg

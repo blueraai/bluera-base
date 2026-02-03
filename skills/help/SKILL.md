@@ -94,15 +94,15 @@ Show only the Configuration section.
 
 | Command | Description |
 |---------|-------------|
-| `/bluera-base:claude-md` | Audit and maintain CLAUDE.md files |
+| `/bluera-base:claude-code-md` | Audit and maintain CLAUDE.md files |
 | `/bluera-base:readme` | Maintain README.md files |
 
 ### Analysis & Quality
 
 | Command | Description |
 |---------|-------------|
-| `/bluera-base:analyze-config` | Analyze repo's `.claude/**` for overlap |
-| `/bluera-base:audit-plugin` | Audit a Claude Code plugin against best practices |
+| `/bluera-base:claude-code-analyze-config` | Analyze repo's `.claude/**` for overlap |
+| `/bluera-base:claude-code-audit-plugin` | Audit a Claude Code plugin against best practices |
 | `/bluera-base:clean` | Diagnose slow Claude Code startup and guide cleanup |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
 | `/bluera-base:large-file-refactor` | Break apart files exceeding token limits |
@@ -113,7 +113,7 @@ Show only the Configuration section.
 |---------|-------------|
 | `/bluera-base:worktree` | Manage git worktrees for parallel development |
 | `/bluera-base:statusline` | Configure Claude Code terminal status line |
-| `/bluera-base:test-plugin` | Run plugin validation test suite |
+| `/bluera-base:claude-code-test-plugin` | Run plugin validation test suite |
 
 ### Help & Guidance
 
@@ -132,15 +132,15 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 
 | Skill | Description |
 |-------|-------------|
-| `@analyze-config` | Analyze .claude/** overlap with bluera-base |
+| `@claude-code-analyze-config` | Analyze .claude/** overlap with bluera-base |
 | `@atomic-commits` | Atomic commit creation with grouping rules |
-| `@audit-plugin` | Audit plugins against best practices |
+| `@claude-code-audit-plugin` | Audit plugins against best practices |
 | `@claude-code-guide` | Claude Code and plugin expert guidance |
 | `@create` | Create plugin components interactively |
 | `@auto-learn` | Automatic learning from session patterns |
 | `@checklist` | Project checklist management |
 | `@claude-cleaner` | Diagnose slow startup and guide cleanup |
-| `@claude-md-maintainer` | CLAUDE.md structure and validation |
+| `@claude-code-md-maintainer` | CLAUDE.md structure and validation |
 | `@code-review-repo` | Multi-agent code review patterns |
 | `@config` | Plugin configuration management |
 | `@dry` | Duplicate code detection with jscpd |
@@ -156,7 +156,7 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 | `@release` | Release workflow with CI monitoring |
 | `@repo-hardening` | Security and quality tool setup |
 | `@statusline` | Status line configuration with presets |
-| `@test-plugin` | Plugin validation test suite |
+| `@claude-code-test-plugin` | Plugin validation test suite |
 | `@todo` | Project TODO task management |
 | `@worktree` | Git worktree management |
 

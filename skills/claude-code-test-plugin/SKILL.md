@@ -1,5 +1,5 @@
 ---
-name: test-plugin
+name: claude-code-test-plugin
 description: Run comprehensive plugin validation test suite
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
@@ -408,11 +408,11 @@ Execute each test in order. Mark each as PASS or FAIL.
    - Expected: Shows presets or current config
    - PASS if command executes without error
 
-9. **/analyze-config**: Run `/bluera-base:analyze-config`
+9. **/claude-code-analyze-config**: Run `/bluera-base:claude-code-analyze-config`
    - Expected: Shows analysis or "No .claude config"
    - PASS if command executes without error
 
-10. **/claude-md audit**: Run `/bluera-base:claude-md audit`
+10. **/claude-code-md audit**: Run `/bluera-base:claude-code-md audit`
     - Expected: Shows audit results
     - PASS if command executes without error
 

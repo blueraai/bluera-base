@@ -54,7 +54,7 @@ Run from this directory to dogfood the plugin:
 claude --plugin-dir .
 ```
 
-Use `/bluera-base:test-plugin` to run the validation test suite.
+Use `/bluera-base:claude-code-test-plugin` to run the validation test suite.
 
 ---
 

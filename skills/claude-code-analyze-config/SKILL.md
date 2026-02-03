@@ -1,5 +1,5 @@
 ---
-name: analyze-config
+name: claude-code-analyze-config
 description: Analyze repo's .claude/** for overlap with bluera-base and suggest cleanup
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
@@ -18,10 +18,10 @@ This plugin provides:
 
 ### Commands (21 total)
 
-- `/bluera-base:analyze-config` - analyze .claude/ for overlap with bluera-base
-- `/bluera-base:audit-plugin` - audit a Claude Code plugin against best practices
+- `/bluera-base:claude-code-analyze-config` - analyze .claude/ for overlap with bluera-base
+- `/bluera-base:claude-code-audit-plugin` - audit a Claude Code plugin against best practices
 - `/bluera-base:cancel-milhouse` - cancel active milhouse loop
-- `/bluera-base:claude-md` - CLAUDE.md maintenance
+- `/bluera-base:claude-code-md` - CLAUDE.md maintenance
 - `/bluera-base:clean` - diagnose slow startup and guide cleanup
 - `/bluera-base:code-review` - multi-agent code review
 - `/bluera-base:commit` - atomic commits with documentation awareness
@@ -36,7 +36,7 @@ This plugin provides:
 - `/bluera-base:readme` - README.md maintenance
 - `/bluera-base:release` - version bumping and release workflow
 - `/bluera-base:statusline` - configure status line display
-- `/bluera-base:test-plugin` - plugin validation test suite
+- `/bluera-base:claude-code-test-plugin` - plugin validation test suite
 - `/bluera-base:todo` - manage project TODO tasks
 - `/bluera-base:worktree` - manage git worktrees
 

@@ -4,4 +4,4 @@ context: fork
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See skills/test-plugin/SKILL.md
+See skills/claude-code-test-plugin/SKILL.md

@@ -4,4 +4,4 @@ argument-hint: [path/to/plugin] [--fix]
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
 ---
 
-See skills/audit-plugin/SKILL.md
+See skills/claude-code-audit-plugin/SKILL.md
