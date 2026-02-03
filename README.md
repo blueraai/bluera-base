@@ -62,6 +62,7 @@ flowchart LR
   - [Auto-Validation](#auto-validation)
   - [Repo Hardening](#repo-hardening)
   - [Package Manager Auto-Detection](#package-manager-auto-detection)
+- [Learning System](#learning-system)
 - [Documentation](#documentation)
 - [License](#license)
 - [Support](#support)
@@ -250,6 +251,39 @@ See [Configuration](docs/configuration.md) for feature toggles and [Usage](docs/
 
 ---
 
+## Learning System
+
+Bluera Base can learn from your sessions and incorporate insights back into Claude's context.
+
+```mermaid
+flowchart LR
+    A[Session] -->|observe| B[Signals]
+    B -->|synthesize| C[Learnings]
+    C -->|write| D[CLAUDE.local.md]
+    D -->|load| E[Future Sessions]
+
+    style A fill:#6366f1,color:#fff
+    style E fill:#16a34a,color:#fff
+```
+
+| Feature | What It Does | Enable |
+|---------|--------------|--------|
+| **Auto-Learn** | Tracks recurring commands, suggests CLAUDE.md edits | `/config enable auto-learn` |
+| **Deep-Learn** | AI analysis of sessions via Claude CLI (~$0.001/session) | `/config enable deep-learn` |
+
+Learnings are stored in a marked section of `CLAUDE.local.md`:
+
+```markdown
+<!-- AUTO:bluera-base:learned -->
+- Check git status before commits
+- Run tests before pushing
+<!-- END:bluera-base:learned -->
+```
+
+See [Learning System](docs/learning.md) for the full flow and configuration.
+
+---
+
 ## Documentation
 
 | Guide | Description |
@@ -258,6 +292,7 @@ See [Configuration](docs/configuration.md) for feature toggles and [Usage](docs/
 | [Configuration](docs/configuration.md) | Feature toggles, config schema |
 | [Hooks](docs/hooks.md) | Hook details, flow diagrams, configuration |
 | [Skills](docs/skills.md) | Skill workflows, usage examples |
+| [Learning System](docs/learning.md) | Auto-learn and deep-learn flow |
 | [Usage](docs/usage.md) | @includes, overriding skills, settings templates |
 | [Customization](docs/customization.md) | Trigger files, hooks, rules |
 | [Development](docs/development.md) | Setup, dogfooding, project structure |
