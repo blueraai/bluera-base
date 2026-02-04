@@ -75,6 +75,8 @@ options:
     description: "Block any/as (TS), Any/cast (Python)"
   - label: "standards-review"
     description: "Review code against CLAUDE.md before commit"
+  - label: "coverage"
+    description: "Enforce minimum test coverage threshold"
 ```
 
 **Phase 3: Apply Changes with Dependency Handling**
@@ -124,6 +126,8 @@ No changes made. Current configuration unchanged.
 | `dry-auto` | `.dryCheck.onStop` |
 | `strict-typing` | `.strictTyping.enabled` |
 | `standards-review` | `.standardsReview.enabled` |
+| `coverage` | `.coverage.enabled` |
+| `coverage-enforce` | `.coverage.enforce` |
 
 ### Init
 
@@ -281,7 +285,55 @@ Use AskUserQuestion:
 
 ---
 
-#### 6. Strict Typing
+#### 6. Coverage
+
+```text
+## Coverage
+
+Enforce minimum test coverage threshold.
+
+Technical details:
+- threshold: minimum coverage % (default: 80%)
+- enforce: when to check (none, pre-commit, pre-push, ci)
+- Uses language-specific tools (c8, pytest-cov, cargo-tarpaulin, etc.)
+- failOnDecrease: fail if coverage drops from previous run
+```
+
+Use AskUserQuestion:
+
+- Header: "Coverage"
+- Question: "Enable code coverage enforcement?"
+- Options:
+  1. **No (default)** - Manual coverage checks only
+  2. **Yes - 80% threshold** - Standard threshold, no automatic enforcement
+  3. **Yes - 90% threshold** - Higher threshold, no automatic enforcement
+  4. **Custom** - Choose threshold and enforcement
+
+If "Custom" selected, follow-up questions:
+
+**Threshold:**
+
+- Header: "Threshold"
+- Question: "Minimum coverage threshold?"
+- Options:
+  1. **60%** - Minimum viable (legacy codebases)
+  2. **70%** - Reasonable starting point
+  3. **80% (Recommended)** - Industry standard
+  4. **90%** - High coverage (mature projects)
+
+**Enforcement:**
+
+- Header: "Enforcement"
+- Question: "When should coverage be checked?"
+- Options:
+  1. **None (default)** - Manual `npm run test:coverage` only
+  2. **Pre-commit** - Check before each commit
+  3. **Pre-push** - Check before pushing
+  4. **CI only** - Check in CI workflow only
+
+---
+
+#### 7. Strict Typing
 
 ```text
 ## Strict Typing
@@ -360,6 +412,8 @@ Toggle features by name. If the feature name is not recognized, list available f
 | `strict-typing` | `.strictTyping.enabled` | Block `any`/`as` (TS), `Any`/`cast` (Python) |
 | `standards-review` | `.standardsReview.enabled` | Review code against CLAUDE.md before commit |
 | `deep-learn` | `.deepLearn.enabled` | Semantic session analysis using Claude CLI |
+| `coverage` | `.coverage.enabled` | Enforce minimum test coverage threshold |
+| `coverage-enforce` | `.coverage.enforce` | Enforcement point (none/pre-commit/pre-push/ci) |
 
 **If unrecognized feature name:**
 
@@ -376,6 +430,8 @@ Available features:
   strict-typing    Block any/as (TS), Any/cast (Python)
   standards-review Review code against CLAUDE.md on commit
   deep-learn       Semantic session analysis via Claude CLI
+  coverage         Enforce minimum test coverage threshold
+  coverage-enforce Set enforcement point (none/pre-commit/pre-push/ci)
 ```
 
 ### Reset
@@ -455,6 +511,12 @@ Env (from CLAUDE_ENV_FILE):
     "enabled": false,    // opt-in: semantic session analysis
     "model": "haiku",    // haiku | sonnet
     "maxBudget": 0.02    // max USD per analysis
+  },
+  "coverage": {
+    "enabled": false,    // opt-in: enforce coverage threshold
+    "threshold": 80,     // minimum coverage % (default: 80)
+    "enforce": "none",   // none | pre-commit | pre-push | ci
+    "failOnDecrease": false  // fail if coverage drops from previous run
   }
 }
 ```

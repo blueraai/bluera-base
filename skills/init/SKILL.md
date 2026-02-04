@@ -142,7 +142,7 @@ After setup, offer to enable features using 3 grouped questions.
 |-------|----------|
 | Learning | `auto-learn`, `deep-learn` |
 | Workflow | `auto-commit`, `auto-push`, `notifications` |
-| Quality | `dry-check`, `dry-auto`, `strict-typing`, `standards-review` |
+| Quality | `dry-check`, `dry-auto`, `strict-typing`, `standards-review`, `coverage` |
 
 For each group, use AskUserQuestion with multiSelect=true. Pull feature labels and descriptions from the config skill's feature table.
 
