@@ -630,11 +630,6 @@ def main() -> None:
             "set-cleanup-period",
             "list-backups",
             "restore-backup",
-            # Old action names (kept for compatibility)
-            "reset-claude-json",
-            "clear-plugin-cache",
-            "prune-sessions",
-            "prune-debug-logs",
         ],
         help="Action to execute",
     )
@@ -694,16 +689,7 @@ def main() -> None:
             print(result.get("message", ""))
         return
 
-    # Map old action names to new explicit DELETE-* names
-    action_aliases = {
-        "reset-claude-json": "DELETE-auth-config",
-        "clear-plugin-cache": "DELETE-plugin-cache",
-        "prune-sessions": "DELETE-old-sessions",
-        "prune-debug-logs": "DELETE-debug-logs",
-    }
-    # args.action is required by argparse
-    action_arg: str = args.action
-    action = action_aliases.get(action_arg, action_arg)
+    action = args.action
 
     executor = ActionExecutor(
         preview=not args.confirm, confirm=args.confirm, verbose=args.verbose
