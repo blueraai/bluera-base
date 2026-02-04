@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.32.1](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.32.1) (2026-02-04)
+
+### Features
+
+* **claude-code-graph:** add terminal-friendly default output with descriptions ([fcaf556](https://github.com/blueraai/bluera-base/commit/fcaf55620c7cd322e20e7bd16ef6b510dec146bd))
+* **config:** enable all features by default (opt-out instead of opt-in) ([28a2773](https://github.com/blueraai/bluera-base/commit/28a2773f9357b0dbc75c10e4195d8fbcf5ed6488))
+* **create:** add entity scan phase for conflict detection ([4d2ac8d](https://github.com/blueraai/bluera-base/commit/4d2ac8d69db87c5e9c81c1f8122f875b8c2a44d9))
+* **hooks:** add secrets check hook for git add/commit ([befa1ac](https://github.com/blueraai/bluera-base/commit/befa1acdd9e2cc1f20f9d46944cceebd3d76d5cd))
+
+### Bug Fixes
+
+* **cc-cleaner:** remove backward compatibility shims ([68c644f](https://github.com/blueraai/bluera-base/commit/68c644f0585b718471dfdd4f2869b51ac0434fb1))
+* **config:** add missing !.bluera/ gitignore negation ([bb12b43](https://github.com/blueraai/bluera-base/commit/bb12b439ca9c86d3c53479ccf2c97cf5e669a327))
+* **release:** require polling loop to wait for ALL workflows ([6de5d33](https://github.com/blueraai/bluera-base/commit/6de5d33b99e2ffbee01cdcf77d7a22fbc05ffdff))
+* **secrets-hook:** add HTML comment bypass for markdown files ([b357517](https://github.com/blueraai/bluera-base/commit/b35751780ef8df3c7ddd79026c10aa815d9c1664))
+* **secrets-hook:** exclude .bluera/ config from secret scanning ([b5ef1e9](https://github.com/blueraai/bluera-base/commit/b5ef1e9fdb7643fa4eb872ec2b1b3c98db60a4a3))
+* **secrets-hook:** exclude dist/, build/, and test files from scanning ([0a62430](https://github.com/blueraai/bluera-base/commit/0a624300a4f134818e3dffcbeaa0e996b3c5bf66))
+
 ## [0.32.0](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.32.0) (2026-02-03)
 
 ### Features
