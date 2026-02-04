@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
-"""Claude Code Cleaner - Fix Actions
+"""Claude Code Disk - Fix Actions
 
-Executes remediation actions with safety guarantees:
+Executes cleanup actions with safety guarantees:
 - Always creates timestamped backups in ~/.claude-backups/
 - Supports preview mode (default) - shows what WOULD happen
 - Requires --confirm to execute destructive actions
 - Fails fast on permission errors (no silent skipping)
 
 Usage:
-    python3 cc-cleaner-fix.py <action> [--preview] [--confirm] [--days N]
+    python3 cc-disk-fix.py <action> [--preview] [--confirm] [--days N]
 
 Actions:
-    DELETE-auth-config        Backup and move aside ~/.claude.json (requires re-login)
-    DELETE-plugin-cache       Remove plugin cache directories
-    DELETE-old-sessions       Delete old session files (--days N, default 30)
+    DELETE-cache-dirs         Clear debug, shell-snapshots, paste-cache, etc.
     DELETE-debug-logs         Delete old debug logs (--days N, default 14)
+    DELETE-old-plugin-versions Keep only latest version of each plugin
+    DELETE-plugin-cache       Remove all plugin cache directories
+    DELETE-orphaned-projects  Remove project data for paths that no longer exist
+    DELETE-old-sessions       Delete old session files (--days N, default 30)
+    DELETE-auth-config        Backup and move aside ~/.claude.json (requires re-login)
     disable-nonessential      Set CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
     set-cleanup-period        Set cleanupPeriodDays in settings.json
     list-backups              List available backups
@@ -30,7 +33,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 # Type alias for result dictionaries - flexible to handle various return shapes
 ResultDict = Dict[str, object]
@@ -614,18 +617,294 @@ class ActionExecutor:
             "message": f"Set cleanupPeriodDays={days}. Old sessions deleted at startup.",
         }
 
+    def delete_cache_dirs(self) -> ResultDict:
+        """DELETE-cache-dirs: Clear cache directories."""
+        cache_dirs = [
+            ("debug", self.claude_dir / "debug"),
+            ("shell-snapshots", self.claude_dir / "shell-snapshots"),
+            ("paste-cache", self.claude_dir / "paste-cache"),
+            ("todos", self.claude_dir / "todos"),
+            ("session-env", self.claude_dir / "session-env"),
+        ]
+
+        files_info: List[Dict[str, Union[str, int]]] = []
+        total_size = 0
+
+        for name, path in cache_dirs:
+            if path.exists() and path.is_dir():
+                size = get_dir_size(path)
+                if size > 0:
+                    files_info.append({
+                        "path": str(path),
+                        "name": name,
+                        "size": size,
+                        "size_human": format_size(size),
+                    })
+                    total_size += size
+
+        if not files_info:
+            return {"status": "skip", "reason": "No cache directories with content found"}
+
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-cache-dirs",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
+
+        # Execute
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir, "DELETE-cache-dirs", f"Cleared {len(files_info)} cache dirs"
+        )
+
+        # Save list of what was deleted
+        with open(backup_dir / "deleted-cache-dirs.json", "w") as f:
+            json.dump(files_info, f, indent=2)
+
+        deleted = 0
+        for info in files_info:
+            path = Path(str(info["path"]))
+            try:
+                shutil.rmtree(path)
+                path.mkdir(parents=True, exist_ok=True)  # Recreate empty
+                deleted += 1
+            except (PermissionError, OSError) as e:
+                self.permission_errors.append(f"{path}: {e}")
+
+        if self.permission_errors:
+            return {
+                "status": "partial",
+                "deleted": deleted,
+                "failed": len(self.permission_errors),
+                "errors": self.permission_errors,
+                "backup": str(backup_dir),
+                "message": f"Cleared {deleted}/{len(files_info)} cache dirs.",
+            }
+
+        return {
+            "status": "success",
+            "size_freed": total_size,
+            "size_freed_human": format_size(total_size),
+            "dirs_cleared": deleted,
+            "backup": str(backup_dir),
+            "message": f"Cleared {deleted} cache directories ({format_size(total_size)})",
+        }
+
+    def delete_orphaned_projects(self) -> ResultDict:
+        """DELETE-orphaned-projects: Remove project data for paths that no longer exist."""
+        projects_dir = self.claude_dir / "projects"
+
+        if not projects_dir.exists():
+            return {"status": "skip", "reason": "Projects directory not found"}
+
+        self._check_permission(projects_dir, "read")
+
+        files_info: List[Dict[str, Union[str, int]]] = []
+        total_size = 0
+
+        try:
+            for project_dir in projects_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+                # Convert -Users-chris-repos-foo → /Users/chris/repos/foo
+                original_path = "/" + project_dir.name.lstrip("-").replace("-", "/")
+                if not Path(original_path).is_dir():
+                    size = get_dir_size(project_dir)
+                    files_info.append({
+                        "path": str(project_dir),
+                        "original_path": original_path,
+                        "size": size,
+                        "size_human": format_size(size),
+                    })
+                    total_size += size
+        except (PermissionError, OSError):
+            pass
+
+        if not files_info:
+            return {"status": "skip", "reason": "No orphaned projects found"}
+
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-orphaned-projects",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "warning": "This will delete project history for paths that no longer exist",
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
+
+        # Execute with backup
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir,
+            "DELETE-orphaned-projects",
+            f"{len(files_info)} orphaned project dirs ({format_size(total_size)})",
+        )
+
+        # Backup orphaned projects as tarball
+        orphaned_tar = backup_dir / "orphaned-projects.tgz"
+        orphaned_paths = [info["path"] for info in files_info]
+        subprocess.run(
+            ["tar", "-czf", str(orphaned_tar), "-C", str(projects_dir)] +
+            [Path(p).name for p in orphaned_paths],
+            check=True,
+        )
+
+        # Delete orphaned directories
+        deleted = 0
+        for info in files_info:
+            path = Path(str(info["path"]))
+            try:
+                shutil.rmtree(path)
+                deleted += 1
+            except (PermissionError, OSError) as e:
+                self.permission_errors.append(f"{path}: {e}")
+
+        if self.permission_errors:
+            return {
+                "status": "partial",
+                "deleted": deleted,
+                "failed": len(self.permission_errors),
+                "errors": self.permission_errors,
+                "backup": str(backup_dir),
+                "message": f"Deleted {deleted}/{len(files_info)} orphaned projects.",
+            }
+
+        return {
+            "status": "success",
+            "size_freed": total_size,
+            "size_freed_human": format_size(total_size),
+            "dirs_removed": deleted,
+            "backup": str(backup_dir),
+            "message": f"Deleted {deleted} orphaned project directories ({format_size(total_size)})",
+            "restore_cmd": f"python3 {__file__} restore-backup --timestamp {backup_dir.name}",
+        }
+
+    def _semver_key(self, version: str) -> Tuple[int, int, int]:
+        """Convert version string to sortable tuple."""
+        parts = version.lstrip("v").split(".")
+        try:
+            return (
+                int(parts[0]) if len(parts) > 0 else 0,
+                int(parts[1]) if len(parts) > 1 else 0,
+                int(parts[2].split("-")[0]) if len(parts) > 2 else 0,
+            )
+        except (ValueError, IndexError):
+            return (0, 0, 0)
+
+    def delete_old_plugin_versions(self) -> ResultDict:
+        """DELETE-old-plugin-versions: Keep only latest version of each plugin."""
+        cache_dir = self.claude_dir / "plugins" / "cache"
+
+        if not cache_dir.exists():
+            return {"status": "skip", "reason": "Plugin cache not found"}
+
+        self._check_permission(cache_dir, "read")
+
+        files_info: List[Dict[str, Union[str, int]]] = []
+        total_size = 0
+
+        try:
+            for marketplace in cache_dir.iterdir():
+                if not marketplace.is_dir():
+                    continue
+                for plugin in marketplace.iterdir():
+                    if not plugin.is_dir():
+                        continue
+                    versions = [v for v in plugin.iterdir() if v.is_dir()]
+                    if len(versions) <= 1:
+                        continue
+                    # Sort by semver, keep latest
+                    versions.sort(key=lambda v: self._semver_key(v.name), reverse=True)
+                    latest = versions[0].name
+                    for old_ver in versions[1:]:
+                        size = get_dir_size(old_ver)
+                        files_info.append({
+                            "path": str(old_ver),
+                            "plugin": plugin.name,
+                            "version": old_ver.name,
+                            "latest": latest,
+                            "size": size,
+                            "size_human": format_size(size),
+                        })
+                        total_size += size
+        except (PermissionError, OSError):
+            pass
+
+        if not files_info:
+            return {"status": "skip", "reason": "No old plugin versions found"}
+
+        if self.preview or not self.confirm:
+            return {
+                "status": "preview",
+                "action": "DELETE-old-plugin-versions",
+                "files": files_info,
+                "total_size": total_size,
+                "total_size_human": format_size(total_size),
+                "warning": "Running plugins may break! Restart Claude Code after cleanup.",
+                "backup_location": str(BACKUP_ROOT / "<timestamp>"),
+            }
+
+        # Execute
+        backup_dir = self.backup_mgr.create_backup_dir()
+        self.backup_mgr.create_manifest(
+            backup_dir,
+            "DELETE-old-plugin-versions",
+            f"{len(files_info)} old plugin versions ({format_size(total_size)})",
+        )
+
+        # Save list of what was deleted
+        with open(backup_dir / "deleted-plugin-versions.json", "w") as f:
+            json.dump(files_info, f, indent=2)
+
+        deleted = 0
+        for info in files_info:
+            path = Path(str(info["path"]))
+            try:
+                shutil.rmtree(path)
+                deleted += 1
+            except (PermissionError, OSError) as e:
+                self.permission_errors.append(f"{path}: {e}")
+
+        if self.permission_errors:
+            return {
+                "status": "partial",
+                "deleted": deleted,
+                "failed": len(self.permission_errors),
+                "errors": self.permission_errors,
+                "backup": str(backup_dir),
+                "message": f"Deleted {deleted}/{len(files_info)} old plugin versions.",
+            }
+
+        return {
+            "status": "success",
+            "size_freed": total_size,
+            "size_freed_human": format_size(total_size),
+            "versions_removed": deleted,
+            "backup": str(backup_dir),
+            "message": f"Deleted {deleted} old plugin versions ({format_size(total_size)})",
+        }
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Execute Claude Code Cleaner remediation actions"
+        description="Execute Claude Code Disk cleanup actions"
     )
     parser.add_argument(
         "action",
         choices=[
-            "DELETE-auth-config",
-            "DELETE-plugin-cache",
-            "DELETE-old-sessions",
+            "DELETE-cache-dirs",
             "DELETE-debug-logs",
+            "DELETE-old-plugin-versions",
+            "DELETE-plugin-cache",
+            "DELETE-orphaned-projects",
+            "DELETE-old-sessions",
+            "DELETE-auth-config",
             "disable-nonessential",
             "set-cleanup-period",
             "list-backups",
@@ -696,10 +975,13 @@ def main() -> None:
     )
 
     action_map = {
-        "DELETE-auth-config": executor.delete_auth_config,
-        "DELETE-plugin-cache": executor.delete_plugin_cache,
-        "DELETE-old-sessions": lambda: executor.delete_old_sessions(args.days),
+        "DELETE-cache-dirs": executor.delete_cache_dirs,
         "DELETE-debug-logs": lambda: executor.delete_debug_logs(args.days),
+        "DELETE-old-plugin-versions": executor.delete_old_plugin_versions,
+        "DELETE-plugin-cache": executor.delete_plugin_cache,
+        "DELETE-orphaned-projects": executor.delete_orphaned_projects,
+        "DELETE-old-sessions": lambda: executor.delete_old_sessions(args.days),
+        "DELETE-auth-config": executor.delete_auth_config,
         "disable-nonessential": executor.disable_nonessential_traffic,
         "set-cleanup-period": lambda: executor.set_cleanup_period(args.days),
     }

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Claude Code Cleaner - Scanner
+"""Claude Code Disk - Scanner
 
-Analyzes ~/.claude/ and ~/.claude.json for common startup issues.
-Outputs JSON-formatted scan report.
+Analyzes ~/.claude/ disk usage and identifies cleanup opportunities.
+Shows visual disk usage chart by default, or JSON for scripting.
 
 Usage:
-    python3 cc-cleaner-scan.py [--verbose] [--json]
+    python3 cc-disk-scan.py [--verbose] [--json]
 """
 
 import argparse
@@ -17,7 +17,7 @@ import sys
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Tuple
 
 # Type aliases for structured data
 JsonPrimitive = Union[str, int, float, bool, None]
@@ -424,6 +424,155 @@ class ClaudeCodeScanner:
             references=[],
         )
 
+    def detect_orphaned_projects(self) -> Optional[Finding]:
+        """Detector: Projects whose original paths no longer exist."""
+        self._log("Checking for orphaned projects...")
+
+        projects_dir = self.claude_dir / "projects"
+        if not projects_dir.exists():
+            return None
+
+        orphaned = []
+        total_size = 0
+
+        try:
+            for project_dir in projects_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+                # Convert -Users-chris-repos-foo → /Users/chris/repos/foo
+                original_path = "/" + project_dir.name.lstrip("-").replace("-", "/")
+                if not Path(original_path).is_dir():
+                    size = get_dir_size(project_dir)
+                    orphaned.append((str(project_dir), size))
+                    total_size += size
+        except (PermissionError, OSError):
+            return None
+
+        if not orphaned:
+            return None
+
+        risk = "medium"
+        if total_size > 1024 * 1024 * 1024:  # 1GB
+            risk = "high"
+
+        return Finding(
+            id="ORPHANED_PROJECTS",
+            title=f"Orphaned projects: {len(orphaned)} dirs, {format_size(total_size)}",
+            risk=risk,
+            evidence=[
+                Evidence("count", len(orphaned)),
+                Evidence("size_bytes", total_size),
+                Evidence("size_human", format_size(total_size)),
+            ],
+            why_it_matters="Project data for paths that no longer exist wastes disk space",
+            recommended_actions=["DELETE-orphaned-projects"],
+            references=[],
+        )
+
+    def detect_old_plugin_versions(self) -> Optional[Finding]:
+        """Detector: Multiple versions of plugins in cache."""
+        self._log("Checking for old plugin versions...")
+
+        cache_dir = self.claude_dir / "plugins" / "cache"
+        if not cache_dir.exists():
+            return None
+
+        old_versions: List[Tuple[str, str, int]] = []  # (plugin_name, version, size)
+        total_size = 0
+
+        try:
+            for marketplace in cache_dir.iterdir():
+                if not marketplace.is_dir():
+                    continue
+                for plugin in marketplace.iterdir():
+                    if not plugin.is_dir():
+                        continue
+                    versions = [v for v in plugin.iterdir() if v.is_dir()]
+                    if len(versions) <= 1:
+                        continue
+                    # Sort by semver (best effort)
+                    versions.sort(key=lambda v: self._semver_key(v.name), reverse=True)
+                    # Mark all but the latest for deletion
+                    for old_ver in versions[1:]:
+                        size = get_dir_size(old_ver)
+                        old_versions.append((plugin.name, old_ver.name, size))
+                        total_size += size
+        except (PermissionError, OSError):
+            return None
+
+        if not old_versions:
+            return None
+
+        risk = "medium"
+        if total_size > 5 * 1024 * 1024 * 1024:  # 5GB
+            risk = "high"
+
+        return Finding(
+            id="OLD_PLUGIN_VERSIONS",
+            title=f"Old plugin versions: {len(old_versions)} versions, {format_size(total_size)}",
+            risk=risk,
+            evidence=[
+                Evidence("count", len(old_versions)),
+                Evidence("size_bytes", total_size),
+                Evidence("size_human", format_size(total_size)),
+            ],
+            why_it_matters="Old plugin versions accumulate and waste disk space",
+            recommended_actions=["DELETE-old-plugin-versions"],
+            references=[],
+        )
+
+    def _semver_key(self, version: str) -> Tuple[int, int, int]:
+        """Convert version string to sortable tuple."""
+        parts = version.lstrip("v").split(".")
+        try:
+            return (
+                int(parts[0]) if len(parts) > 0 else 0,
+                int(parts[1]) if len(parts) > 1 else 0,
+                int(parts[2].split("-")[0]) if len(parts) > 2 else 0,
+            )
+        except (ValueError, IndexError):
+            return (0, 0, 0)
+
+    def detect_cache_dirs(self) -> Optional[Finding]:
+        """Detector: Cache directories that can be safely cleaned."""
+        self._log("Checking cache directories...")
+
+        cache_dirs = [
+            ("debug", self.claude_dir / "debug"),
+            ("shell-snapshots", self.claude_dir / "shell-snapshots"),
+            ("paste-cache", self.claude_dir / "paste-cache"),
+            ("todos", self.claude_dir / "todos"),
+            ("session-env", self.claude_dir / "session-env"),
+        ]
+
+        found = []
+        total_size = 0
+
+        for name, path in cache_dirs:
+            if path.exists() and path.is_dir():
+                size = get_dir_size(path)
+                if size > 0:
+                    found.append((name, size))
+                    total_size += size
+
+        if not found or total_size < 1024 * 1024:  # 1MB threshold
+            return None
+
+        return Finding(
+            id="CACHE_DIRS",
+            title=f"Cache directories: {len(found)} dirs, {format_size(total_size)}",
+            risk="info",
+            evidence=[
+                Evidence("count", len(found)),
+                Evidence("size_bytes", total_size),
+                Evidence("size_human", format_size(total_size)),
+                Evidence("dirs", [d[0] for d in found]),
+            ],
+            why_it_matters="Cache directories can be safely cleaned to free disk space",
+            recommended_actions=["DELETE-cache-dirs"],
+            references=[],
+        )
+
     def _get_file_age_days(self, path: Path) -> int:
         """Get file age in days."""
         if not path.exists():
@@ -499,6 +648,86 @@ class ClaudeCodeScanner:
         except (PermissionError, OSError):
             pass
         return sorted(previews, key=lambda p: p.age_days, reverse=True)
+
+    def _collect_orphaned_projects(self) -> List[FilePreview]:
+        """Collect orphaned project directories."""
+        projects_dir = self.claude_dir / "projects"
+        if not projects_dir.exists():
+            return []
+
+        previews = []
+        try:
+            for project_dir in projects_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+                # Convert -Users-chris-repos-foo → /Users/chris/repos/foo
+                original_path = "/" + project_dir.name.lstrip("-").replace("-", "/")
+                if not Path(original_path).is_dir():
+                    size = get_dir_size(project_dir)
+                    previews.append(FilePreview(
+                        path=str(project_dir),
+                        size=size,
+                        size_human=format_size(size),
+                        age_days=self._get_file_age_days(project_dir),
+                    ))
+        except (PermissionError, OSError):
+            pass
+        return sorted(previews, key=lambda p: p.size, reverse=True)
+
+    def _collect_old_plugin_versions(self) -> List[FilePreview]:
+        """Collect old plugin version directories."""
+        cache_dir = self.claude_dir / "plugins" / "cache"
+        if not cache_dir.exists():
+            return []
+
+        previews = []
+        try:
+            for marketplace in cache_dir.iterdir():
+                if not marketplace.is_dir():
+                    continue
+                for plugin in marketplace.iterdir():
+                    if not plugin.is_dir():
+                        continue
+                    versions = [v for v in plugin.iterdir() if v.is_dir()]
+                    if len(versions) <= 1:
+                        continue
+                    # Sort by semver (best effort)
+                    versions.sort(key=lambda v: self._semver_key(v.name), reverse=True)
+                    # Mark all but the latest for deletion
+                    for old_ver in versions[1:]:
+                        size = get_dir_size(old_ver)
+                        previews.append(FilePreview(
+                            path=str(old_ver),
+                            size=size,
+                            size_human=format_size(size),
+                            age_days=self._get_file_age_days(old_ver),
+                        ))
+        except (PermissionError, OSError):
+            pass
+        return sorted(previews, key=lambda p: p.size, reverse=True)
+
+    def _collect_cache_dirs(self) -> List[FilePreview]:
+        """Collect cache directories that can be cleaned."""
+        cache_dirs = [
+            self.claude_dir / "debug",
+            self.claude_dir / "shell-snapshots",
+            self.claude_dir / "paste-cache",
+            self.claude_dir / "todos",
+            self.claude_dir / "session-env",
+        ]
+
+        previews = []
+        for path in cache_dirs:
+            if path.exists() and path.is_dir():
+                size = get_dir_size(path)
+                if size > 0:
+                    previews.append(FilePreview(
+                        path=str(path),
+                        size=size,
+                        size_human=format_size(size),
+                        age_days=self._get_file_age_days(path),
+                    ))
+        return sorted(previews, key=lambda p: p.size, reverse=True)
 
     def generate_actions(self, findings: List[Finding], metrics: MetricsInfo) -> List[RemediationAction]:
         """Generate action list from findings with file previews."""
@@ -615,6 +844,51 @@ class ClaudeCodeScanner:
                 notes="Informational - review ~/.claude/CLAUDE.md size and content",
             ))
 
+        if "DELETE-orphaned-projects" in action_ids:
+            previews = self._collect_orphaned_projects()
+            total = sum(p.size for p in previews)
+            actions.append(RemediationAction(
+                id="DELETE-orphaned-projects",
+                title=f"Delete orphaned projects ({len(previews)} dirs)",
+                safety="destructive",
+                affects=["orphaned_projects"],
+                fix_command="DELETE-orphaned-projects",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Creates backup in ~/.claude-backups/ before deletion",
+            ))
+
+        if "DELETE-old-plugin-versions" in action_ids:
+            previews = self._collect_old_plugin_versions()
+            total = sum(p.size for p in previews)
+            actions.append(RemediationAction(
+                id="DELETE-old-plugin-versions",
+                title=f"Delete old plugin versions ({len(previews)} versions)",
+                safety="caution",
+                affects=["old_plugin_versions"],
+                fix_command="DELETE-old-plugin-versions",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Keeps latest version of each plugin. Running plugins may break!",
+            ))
+
+        if "DELETE-cache-dirs" in action_ids:
+            previews = self._collect_cache_dirs()
+            total = sum(p.size for p in previews)
+            actions.append(RemediationAction(
+                id="DELETE-cache-dirs",
+                title=f"Clear cache directories ({len(previews)} dirs)",
+                safety="safe",
+                affects=["cache_dirs"],
+                fix_command="DELETE-cache-dirs",
+                file_preview=previews,
+                total_size=total,
+                total_size_human=format_size(total),
+                notes="Directories will be recreated empty on next use",
+            ))
+
         return actions
 
     def scan(self) -> ScanReport:
@@ -632,6 +906,9 @@ class ClaudeCodeScanner:
             self.detect_wsl_powershell,
             lambda: self.detect_projects_bloat(metrics),
             lambda: self.detect_oversized_memory(metrics),
+            self.detect_orphaned_projects,
+            self.detect_old_plugin_versions,
+            self.detect_cache_dirs,
         ]
 
         for detector in detectors:
@@ -670,60 +947,149 @@ def to_dict(obj: object) -> JsonValue:
     return obj
 
 
+def generate_bar(fraction: float, width: int = 36) -> str:
+    """Generate ASCII progress bar."""
+    filled = int(fraction * width)
+    return "█" * filled + "░" * (width - filled)
+
+
+def print_disk_chart(scanner: "ClaudeCodeScanner") -> None:
+    """Print visual disk usage chart."""
+    # Collect sizes for each category
+    total_size = get_dir_size(scanner.claude_dir)
+
+    # Plugin cache breakdown
+    cache_dir = scanner.claude_dir / "plugins" / "cache"
+    plugin_sizes: Dict[str, Tuple[int, int]] = {}  # plugin_name: (size, version_count)
+    plugin_cache_total = 0
+
+    if cache_dir.exists():
+        try:
+            for marketplace in cache_dir.iterdir():
+                if not marketplace.is_dir():
+                    continue
+                for plugin in marketplace.iterdir():
+                    if not plugin.is_dir():
+                        continue
+                    versions = [v for v in plugin.iterdir() if v.is_dir()]
+                    size = get_dir_size(plugin)
+                    plugin_sizes[plugin.name] = (size, len(versions))
+                    plugin_cache_total += size
+        except (PermissionError, OSError):
+            pass
+
+    # Projects breakdown
+    projects_dir = scanner.claude_dir / "projects"
+    active_projects = 0
+    orphaned_projects = 0
+    active_size = 0
+    orphaned_size = 0
+
+    if projects_dir.exists():
+        try:
+            for project_dir in projects_dir.iterdir():
+                if not project_dir.is_dir():
+                    continue
+                original_path = "/" + project_dir.name.lstrip("-").replace("-", "/")
+                size = get_dir_size(project_dir)
+                if Path(original_path).is_dir():
+                    active_projects += 1
+                    active_size += size
+                else:
+                    orphaned_projects += 1
+                    orphaned_size += size
+        except (PermissionError, OSError):
+            pass
+
+    projects_total = active_size + orphaned_size
+
+    # Other directories
+    other_size = total_size - plugin_cache_total - projects_total
+
+    # Print chart
+    print(f"\n~/.claude/ Disk Usage ({format_size(total_size)})")
+    print("═" * 62)
+    print()
+
+    # Plugin cache section
+    if plugin_cache_total > 0:
+        pct = (plugin_cache_total / total_size * 100) if total_size > 0 else 0
+        bar = generate_bar(plugin_cache_total / total_size if total_size > 0 else 0)
+        print(f"plugins/cache     {bar}  {format_size(plugin_cache_total):>8} ({pct:.0f}%)")
+
+        # Top plugins by size
+        sorted_plugins = sorted(plugin_sizes.items(), key=lambda x: x[1][0], reverse=True)
+        for plugin_name, (size, version_count) in sorted_plugins[:3]:
+            version_note = f"({version_count} versions)" if version_count > 1 else ""
+            print(f"  └─ {plugin_name} {version_note}".ljust(50) + f"{format_size(size):>10}")
+        if len(sorted_plugins) > 3:
+            other_plugins_size = sum(s for _, (s, _) in sorted_plugins[3:])
+            print(f"  └─ other".ljust(50) + f"{format_size(other_plugins_size):>10}")
+        print()
+
+    # Projects section
+    if projects_total > 0:
+        pct = (projects_total / total_size * 100) if total_size > 0 else 0
+        bar = generate_bar(projects_total / total_size if total_size > 0 else 0)
+        print(f"projects/         {bar}  {format_size(projects_total):>8} ({pct:.0f}%)")
+        print(f"  └─ active ({active_projects} dirs)".ljust(50) + f"{format_size(active_size):>10}")
+        print(f"  └─ orphaned ({orphaned_projects} dirs)".ljust(50) + f"{format_size(orphaned_size):>10}")
+        print()
+
+    # Other section
+    if other_size > 0:
+        pct = (other_size / total_size * 100) if total_size > 0 else 0
+        bar = generate_bar(other_size / total_size if total_size > 0 else 0)
+        print(f"other/            {bar}  {format_size(other_size):>8} ({pct:.0f}%)")
+        print(f"  └─ telemetry, debug, cache, plans, tasks")
+        print()
+
+    print("═" * 62)
+
+    # Recommendations
+    recommendations = []
+    if orphaned_size > 10 * 1024 * 1024:  # 10MB
+        recommendations.append(f"DELETE-orphaned-projects: Remove {orphaned_projects} dirs, free ~{format_size(orphaned_size)}")
+
+    old_versions_size = 0
+    for plugin_name, (size, version_count) in plugin_sizes.items():
+        if version_count > 1:
+            # Estimate size of old versions (all but latest)
+            old_versions_size += size * (version_count - 1) // version_count
+
+    if old_versions_size > 100 * 1024 * 1024:  # 100MB
+        recommendations.append(f"DELETE-old-plugin-versions: Keep only latest, free ~{format_size(old_versions_size)}")
+
+    if recommendations:
+        print("Recommendations:")
+        for rec in recommendations:
+            print(f"  • {rec}")
+        print(f"  • Run `/disk --clean` for interactive cleanup")
+    else:
+        print("No cleanup recommendations. Disk usage looks healthy!")
+
+    print()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Scan ~/.claude for common startup issues"
+        description="Analyze ~/.claude disk usage and identify cleanup opportunities"
     )
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Enable verbose output")
     parser.add_argument("--json", action="store_true",
-                        help="Output raw JSON (default: formatted)")
+                        help="Output raw JSON (for scripting)")
     args = parser.parse_args()
 
     scanner = ClaudeCodeScanner(verbose=args.verbose)
-    report = scanner.scan()
-
-    # Convert to dict for JSON output
-    report_dict = to_dict(report)
 
     if args.json:
+        report = scanner.scan()
+        report_dict = to_dict(report)
         print(json.dumps(report_dict, indent=2))
     else:
-        # Formatted output
-        print(f"\n{'='*60}")
-        print("Claude Code Cleaner - Scan Report")
-        print(f"{'='*60}\n")
-
-        # Summary
-        sizes = report.metrics["sizes"]
-        print(f"Total ~/.claude size: {format_size(sizes.get('claude_dir', 0))}")
-        print(f"~/.claude.json size:  {format_size(sizes.get('claude_json', 0))}")
-        print()
-
-        # Findings
-        if report.findings:
-            print("Findings:")
-            print("-" * 40)
-            for finding in report.findings:
-                risk_label = f"[{finding.risk.upper()}]".ljust(10)
-                print(f"  {risk_label} {finding.title}")
-            print()
-
-            # Actions
-            print("Recommended Actions:")
-            print("-" * 40)
-            for action in report.actions:
-                safety_label = f"[{action.safety.upper()}]".ljust(14)
-                print(f"  {safety_label} {action.title}")
-                if action.notes:
-                    print(f"                 {action.notes}")
-            print()
-        else:
-            print("No issues found. Your Claude Code installation looks healthy!")
-            print()
-
-        print(f"Run with --json for machine-readable output")
-        print()
+        # Default: show disk usage chart
+        print_disk_chart(scanner)
 
 
 if __name__ == "__main__":
