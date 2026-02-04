@@ -35,7 +35,10 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 echo "$COMMAND" | grep -qE '^git[[:space:]]+(add|commit)' || exit 0
 
 # Get staged content (exclude example files and test files)
-STAGED=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.env.example' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' 2>/dev/null || true)
+# Only check ADDED lines (+ prefix), not removed (-) or context lines
+# This prevents false positives when modifying files that had pattern matches
+STAGED_RAW=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.env.example' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' 2>/dev/null || true)
+STAGED=$(echo "$STAGED_RAW" | grep '^+' | grep -v '^+++' || true)
 [[ -z "$STAGED" ]] && exit 0
 
 # Check for escape hatch: # ok: or // ok:

@@ -3,10 +3,11 @@
 # Provides functions for writing learnings to CLAUDE.md files
 # Used by session-end-learn.sh when autoLearn.mode is "auto"
 
-# Secrets pattern - NEVER write content matching these
+# ok: Pattern definition below - not actual credentials
 # Note: 'token' alone is too broad (matches tokenPath, tokenizer, max_tokens)
-# Use specific patterns like _TOKEN= or TOKEN= instead
-BLUERA_SECRETS_PATTERN='api[_-]?key|_token[[:space:]]*=|^token[[:space:]]*=|password|secret|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|HF_TOKEN|private[_-]?key|credential'
+# Note: bare patterns too broad (matches config keys) # ok: meta-comment
+# Use specific patterns with context (assignments, key suffixes)
+BLUERA_SECRETS_PATTERN='api[_-]?key|_token[[:space:]]*=|^token[[:space:]]*=|password|secret[_-]?key|_secret[[:space:]]*=|^secret[[:space:]]*=|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|HF_TOKEN|private[_-]?key|credential' # ok: pattern def
 
 # Marker delimiters for auto-learned section
 BLUERA_LEARN_START='<!-- AUTO:bluera-base:learned -->'
