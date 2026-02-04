@@ -34,12 +34,18 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 # Only trigger on git add/commit
 echo "$COMMAND" | grep -qE '^git[[:space:]]+(add|commit)' || exit 0
 
-# Get staged content
-STAGED=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' 2>/dev/null || true)
+# Get staged content (exclude example files and test files)
+STAGED=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.env.example' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' 2>/dev/null || true)
 [[ -z "$STAGED" ]] && exit 0
 
 # Check for escape hatch: # ok: or // ok:
 STAGED_NO_ESCAPES=$(echo "$STAGED" | grep -v '# ok:' | grep -v '// ok:' | grep -v '<!-- ok:' || true)
+
+# Filter known false positive placeholders
+STAGED_NO_ESCAPES=$(echo "$STAGED_NO_ESCAPES" | \
+  grep -vi 'your_.*_here' | \
+  grep -vi 'placeholder' | \
+  grep -vi 'example' || true)
 
 # Phase 1: Static check for secrets
 if echo "$STAGED_NO_ESCAPES" | grep -qiE "$BLUERA_SECRETS_PATTERN"; then
