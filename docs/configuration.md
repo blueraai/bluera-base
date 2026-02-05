@@ -4,12 +4,30 @@ Bluera Base uses a hierarchical configuration system supporting both shared (tea
 
 ## File Locations
 
+### Project-Local (per-project)
+
 | File | Purpose | Git |
 |------|---------|-----|
 | `.bluera/bluera-base/config.json` | Shared team config | Committed |
 | `.bluera/bluera-base/config.local.json` | Personal overrides | Ignored |
 | `.bluera/bluera-base/state/` | Runtime state (loops, signals) | Ignored |
 | `.bluera/bluera-knowledge/` | Bluera Knowledge plugin data | Ignored |
+
+### Global (user-wide)
+
+| File | Purpose |
+|------|---------|
+| `~/.claude/.bluera/bluera-base/config.json` | Global plugin settings |
+| `~/.claude/.bluera/bluera-base/memories/` | Global memories (cross-project knowledge) |
+
+**Dual Scope Architecture:**
+
+| Scope | Location | Purpose |
+|-------|----------|---------|
+| **Global memories** | `~/.claude/.bluera/bluera-base/memories/` | Cross-project knowledge, user-wide |
+| **Project learnings** | `CLAUDE.local.md` | Project-specific auto-learn |
+
+These systems are 100% independent. No automatic sync - use `/bluera-base:memory import` to manually migrate.
 
 ## Config Priority
 

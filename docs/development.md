@@ -49,7 +49,7 @@ bluera-base/
 │   ├── claude-code-audit-plugin.md    # /bluera-base:claude-code-audit-plugin command
 │   ├── cancel-milhouse.md             # /bluera-base:cancel-milhouse command
 │   ├── claude-code-md.md              # /bluera-base:claude-code-md command
-│   ├── claude-code-clean.md      # /bluera-base:claude-code-clean command
+│   ├── claude-code-disk.md       # /bluera-base:claude-code-disk command
 │   ├── code-review.md            # /bluera-base:code-review command
 │   ├── commit.md                 # /bluera-base:commit command
 │   ├── config.md                 # /bluera-base:config command
@@ -59,6 +59,7 @@ bluera-base/
 │   ├── help.md                   # /bluera-base:help command
 │   ├── init.md                   # /bluera-base:init command
 │   ├── install-rules.md          # /bluera-base:install-rules command
+│   ├── memory.md                 # /bluera-base:memory command
 │   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
 │   ├── readme.md                 # /bluera-base:readme command
 │   ├── release.md                # /bluera-base:release command
@@ -83,15 +84,15 @@ bluera-base/
 │   ├── session-setup.sh          # SessionStart dependency check
 │   └── session-start-inject.sh   # SessionStart context injection
 ├── scripts/
-│   ├── cc-cleaner-fix.py         # Claude Code cleaner fix script
-│   └── cc-cleaner-scan.py        # Claude Code cleaner scan script
+│   ├── cc-disk-fix.py            # Claude Code disk cleanup script
+│   └── cc-disk-scan.py           # Claude Code disk scan script
 ├── skills/
 │   ├── auto-learn/
 │   │   └── SKILL.md              # Automatic learning from sessions
 │   ├── atomic-commits/
 │   │   └── SKILL.md              # Commit guidelines
-│   ├── claude-cleaner/
-│   │   └── SKILL.md              # Diagnose slow startup
+│   ├── claude-code-disk/
+│   │   └── SKILL.md              # Disk usage and cleanup
 │   ├── claude-md-maintainer/
 │   │   ├── SKILL.md              # CLAUDE.md validation skill
 │   │   ├── docs/                 # Invariants and heuristics
@@ -102,6 +103,8 @@ bluera-base/
 │   │   └── SKILL.md              # DRY refactoring guidance
 │   ├── large-file-refactor/
 │   │   └── SKILL.md              # Large file splitting guidance
+│   ├── memory/
+│   │   └── SKILL.md              # Global memory management
 │   ├── milhouse/
 │   │   └── SKILL.md              # Iterative development loop
 │   ├── readme-maintainer/

@@ -10,7 +10,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `analyze-config` | Analyze .claude/** for overlap with bluera-base |
 | `cancel-milhouse` | Cancel active milhouse loop |
 | `claude-md` | Audit and maintain CLAUDE.md files |
-| `clean` | Diagnose slow Claude Code startup |
+| `claude-code-disk` | View disk usage and clean up ~/.claude/ |
 | `code-review` | Multi-agent codebase review |
 | `commit` | Create atomic commits with doc awareness |
 | `config` | Manage plugin configuration |
@@ -28,6 +28,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `todo` | Manage project TODO tasks |
 | `worktree` | Manage git worktrees |
 | `learn` | Manage semantic learnings from session analysis |
+| `memory` | Manage global memories stored in ~/.claude/.bluera/bluera-base/ |
 | `large-file-refactor` | Break apart files that exceed token limits |
 | `claude-code-audit` | Audit Claude Code configuration against best practices |
 | `claude-code-guide` | Expert guidance for Claude Code plugins |
@@ -51,7 +52,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `claude-code-audit` | Audit any project's Claude Code configuration |
 | `test-plugin` | Run comprehensive plugin test suite |
 | `dry` | Detect duplicate code |
-| `clean` | Diagnose startup performance |
+| `claude-code-disk` | View disk usage and clean up ~/.claude/ |
 | `large-file-refactor` | Break apart files that exceed token limits |
 
 ### Documentation
@@ -77,6 +78,7 @@ All commands are invoked with `/bluera-base:<command>`.
 | `config` | Manage plugin settings (enable/disable features) |
 | `statusline` | Configure terminal status line display |
 | `learn` | Manage semantic learnings from session analysis |
+| `memory` | Manage global memories (cross-project knowledge) |
 | `help` | Show features and usage |
 | `explain` | Explain all plugin functionality |
 | `todo` | Manage project TODO tasks |

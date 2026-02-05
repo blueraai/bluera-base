@@ -238,8 +238,23 @@ These learnings persist across sessions and help Claude:
 
 ---
 
+## Related: Global Memories
+
+The learning system described above stores **project-local** learnings in `CLAUDE.local.md` or `CLAUDE.md`. For **cross-project** knowledge that applies globally, use the separate memory system:
+
+| System | Location | Purpose | Command |
+|--------|----------|---------|---------|
+| **Project Learnings** | `CLAUDE.local.md` | Project-specific patterns | `/bluera-base:learn` |
+| **Global Memories** | `~/.claude/.bluera/bluera-base/memories/` | Cross-project knowledge | `/bluera-base:memory` |
+
+These systems are **100% independent** - no automatic sync between them. You can manually import project learnings into global memories with `/bluera-base:memory import` (coming in P2).
+
+See [Skills > memory](skills.md#memory) for global memory documentation.
+
+---
+
 ## See Also
 
 - [Configuration](configuration.md) - Feature toggles and config schema
 - [Hooks](hooks.md) - Hook details for observe-learning and session-end-learn
-- [Skills](skills.md) - auto-learn and learn skill documentation
+- [Skills](skills.md) - auto-learn, learn, and memory skill documentation

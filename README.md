@@ -124,7 +124,7 @@ claude --plugin-dir /path/to/bluera-base
 | `/config` | `[show\|init\|set\|enable\|disable\|reset\|status] [key] [value]` | Manage plugin configuration |
 | `/milhouse-loop` | `<prompt-file> [--inline TEXT] [--max-iterations N] [--promise TEXT] [--gate CMD] [--stuck-limit N] [--init-harness]` | Start iterative development loop |
 | `/cancel-milhouse` | | Cancel active milhouse loop |
-| `/clean` | `[scan\|fix <action>\|backups <list\|restore>] [--confirm] [--days N]` | Diagnose slow startup and guide cleanup |
+| `/claude-code-disk` | `[--clean] [--json] [--backups] [--restore <ts>]` | View disk usage and clean up ~/.claude/ |
 | `/install-rules` | | Install rule templates to `.claude/rules/` |
 | `/claude-md` | `<audit\|init\|learn> [options]` | Audit and maintain CLAUDE.md files |
 | `/readme` | `<beautify\|breakout> [instructions]` | Maintain README.md with GitHub formatting |
@@ -139,6 +139,7 @@ claude --plugin-dir /path/to/bluera-base
 | `/todo` | | Manage project TODO tasks |
 | `/worktree` | `[list\|add\|remove\|prune\|status] [args]` | Manage Git worktrees for parallel development |
 | `/learn` | `[show\|apply\|dismiss\|clear]` | Manage semantic learnings from session analysis |
+| `/memory` | `[add\|get\|search\|tag\|edit\|delete]` | Manage global memories (cross-project knowledge) |
 | `/large-file-refactor` | `<file>` | Break apart files that exceed token limits |
 | `/claude-code-audit` | `[path] [instructions]` | Audit Claude Code configuration against best practices |
 | `/claude-code-guide` | `<question\|review\|audit>` | Expert guidance for Claude Code plugins |
@@ -153,7 +154,7 @@ claude --plugin-dir /path/to/bluera-base
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `audit-plugin` | Audit Claude Code plugins against best practices |
 | `auto-learn` | Auto-learning pattern detection and consolidation |
-| `claude-cleaner` | Diagnose slow startup and guide cleanup |
+| `claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
 | `code-review-repo` | Multi-agent codebase review with confidence scoring |
 | `config` | Manage bluera-base plugin configuration |
@@ -165,6 +166,7 @@ claude --plugin-dir /path/to/bluera-base
 | `install-rules` | Install rule templates into .claude/rules/ |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
 | `learn` | Deep learning management (show, apply, dismiss learnings) |
+| `memory` | Global memory management (cross-project knowledge) |
 | `milhouse` | Iterative development loop documentation |
 | `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
 | `release` | Release workflow with multi-language version bumping |

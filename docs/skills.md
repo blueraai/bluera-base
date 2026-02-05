@@ -8,8 +8,9 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 |-------|---------|
 | `auto-learn` | Automatic learning from session patterns |
 | `learn` | Deep learning management (show, apply, dismiss learnings) |
+| `memory` | Global memory management (cross-project knowledge) |
 | `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
-| `claude-cleaner` | Diagnose slow Claude Code startup and guide cleanup |
+| `claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
 | `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
 | `code-review-repo` | Multi-agent codebase review with confidence scoring |
 | `dry` | Scan for code duplication using jscpd |
@@ -97,20 +98,61 @@ See `skills/learn/SKILL.md` for full documentation.
 
 ---
 
-## claude-code-cleaner
+## memory
 
-Diagnoses slow Claude Code startup by scanning for excessive files in `.claude/` directories.
+Manage global memories stored at `~/.claude/.bluera/bluera-base/memories/`. Unlike project-local learnings in CLAUDE.local.md, global memories apply across all projects.
+
+### Dual Scope Architecture
+
+| Scope | Location | Purpose |
+|-------|----------|---------|
+| **Global memories** | `~/.claude/.bluera/bluera-base/memories/` | Cross-project knowledge |
+| **Project learnings** | `CLAUDE.local.md` | Project-specific auto-learn |
+
+These systems are 100% independent. No automatic sync.
 
 ### Usage
 
 ```bash
-/bluera-base:claude-code-clean scan              # Scan for issues
-/bluera-base:claude-code-clean fix <action>      # Fix specific issue
-/bluera-base:claude-code-clean backups list      # List available backups
-/bluera-base:claude-code-clean backups restore   # Restore from backup
+/bluera-base:memory                          # List recent memories
+/bluera-base:memory add "Always run tests"   # Create memory
+/bluera-base:memory add "Use bun" --tags bun,workflow  # With tags
+/bluera-base:memory get abc12345             # View full memory
+/bluera-base:memory search "tests"           # Search by content/tags
+/bluera-base:memory tag abc12345 important   # Add tags
+/bluera-base:memory delete abc12345          # Delete memory
 ```
 
-See `skills/claude-code-cleaner/SKILL.md` for full documentation.
+### Configuration
+
+Memory system is enabled by default. Configure in `~/.claude/.bluera/bluera-base/config.json`:
+
+```json
+{
+  "memory": {
+    "enabled": true
+  }
+}
+```
+
+See `skills/memory/SKILL.md` for full documentation.
+
+---
+
+## claude-code-disk
+
+View disk usage and clean up `~/.claude/` storage. Shows a visual breakdown by default.
+
+### Usage
+
+```bash
+/bluera-base:claude-code-disk                    # Show disk usage chart
+/bluera-base:claude-code-disk --clean            # Interactive cleanup wizard
+/bluera-base:claude-code-disk --backups          # List available backups
+/bluera-base:claude-code-disk --restore <ts>     # Restore from backup
+```
+
+See `skills/claude-code-disk/SKILL.md` for full documentation.
 
 ---
 
