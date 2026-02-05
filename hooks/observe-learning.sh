@@ -6,20 +6,18 @@
 
 set -euo pipefail
 
-# Require jq for JSON parsing
-if ! command -v jq &>/dev/null; then
-  exit 0  # Skip gracefully if jq missing
-fi
-
-# Read hook input
-INPUT=$(cat 2>/dev/null || true)
-
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
 # Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
 source "$SCRIPT_DIR/lib/signals.sh"
+
+# Require jq for JSON parsing (optional hook: warn + skip)
+bluera_require_jq || exit 0
+
+# Read hook input
+INPUT=$(cat 2>/dev/null || true)
 
 # Check if auto-learn is enabled (opt-in)
 if ! bluera_config_enabled ".autoLearn.enabled"; then

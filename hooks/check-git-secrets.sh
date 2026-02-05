@@ -12,21 +12,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/autolearn.sh"
 
 # Load config for AI check setting
-if [[ -f "$SCRIPT_DIR/lib/config.sh" ]]; then
-  source "$SCRIPT_DIR/lib/config.sh"
-  AI_SECRETS_CHECK=$(bluera_get_config ".secretsCheck.aiEnabled" "false" 2>/dev/null || echo "false")
-else
-  AI_SECRETS_CHECK="false"
-fi
+source "$SCRIPT_DIR/lib/config.sh"
+
+# Require jq for JSON parsing (MANDATORY: block commit if unavailable)
+bluera_require_jq || exit 2
+
+AI_SECRETS_CHECK=$(bluera_get_config ".secretsCheck.aiEnabled" "false" 2>/dev/null || echo "false") # ok: config key
 
 # Read hook input from stdin
 INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
-
-# Parse command - need jq
-if ! command -v jq &>/dev/null; then
-  exit 0  # Can't parse, allow through
-fi
 
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty' 2>/dev/null)
 [[ -z "$COMMAND" ]] && exit 0

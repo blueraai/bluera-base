@@ -5,20 +5,19 @@
 
 set -euo pipefail
 
-# Require dependencies
-if ! command -v jq &>/dev/null; then
-  exit 0  # Skip gracefully if jq missing
-fi
-
-if ! command -v claude &>/dev/null; then
-  exit 0  # Skip gracefully if Claude CLI not installed
-fi
-
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
 # Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
+
+# Require dependencies (optional hook: warn + skip)
+bluera_require_jq || exit 0
+
+if ! command -v claude &>/dev/null; then
+  echo "[bluera-base] Skipping $(basename "$0"): claude CLI not installed" >&2
+  exit 0
+fi
 
 # Check if deep learning is enabled (opt-in)
 if ! bluera_config_enabled ".deepLearn.enabled"; then

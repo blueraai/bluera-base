@@ -6,12 +6,6 @@
 
 set -euo pipefail
 
-# Require jq for JSON parsing
-if ! command -v jq &>/dev/null; then
-  exit 0  # Skip gracefully if jq missing
-fi
-
-HOOK_INPUT=$(cat 2>/dev/null || true)
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 
@@ -23,6 +17,11 @@ else
   # Config library not available, skip
   exit 0
 fi
+
+# Require jq for JSON parsing (optional hook: warn + skip)
+bluera_require_jq || exit 0
+
+HOOK_INPUT=$(cat 2>/dev/null || true)
 
 # Check if dry check is enabled
 if ! bluera_config_enabled ".dryCheck.enabled"; then

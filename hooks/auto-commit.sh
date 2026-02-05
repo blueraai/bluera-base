@@ -5,16 +5,14 @@
 
 set -euo pipefail
 
-# Require jq for JSON parsing
-if ! command -v jq &>/dev/null; then
-  exit 0  # Skip gracefully if jq missing
-fi
-
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
 # Source config library
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
+
+# Require jq for JSON parsing (optional hook: warn + skip)
+bluera_require_jq || exit 0
 
 # Read hook input
 HOOK_INPUT=$(cat 2>/dev/null || true)

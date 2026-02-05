@@ -5,10 +5,13 @@
 
 set -euo pipefail
 
-# Require jq for JSON parsing
-if ! command -v jq &>/dev/null; then
-  exit 0  # Skip gracefully if jq missing
-fi
+# Source libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/config.sh"
+source "$SCRIPT_DIR/lib/state.sh"
+
+# Require jq for JSON parsing (optional hook: warn + skip)
+bluera_require_jq || exit 0
 
 # Read hook input from stdin (advanced stop hook API)
 HOOK_INPUT=$(cat 2>/dev/null || true)
@@ -19,11 +22,6 @@ STOP_HOOK_ACTIVE=$(echo "$HOOK_INPUT" | jq -r '.stop_hook_active // false')
 if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
   exit 0
 fi
-
-# Source libraries
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/lib/config.sh"
-source "$SCRIPT_DIR/lib/state.sh"
 
 # Check if milhouse-loop is active
 STATE_FILE="$(bluera_state_dir)/milhouse-loop.md"

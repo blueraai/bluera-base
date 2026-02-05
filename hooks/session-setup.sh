@@ -98,6 +98,12 @@ if [[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]; then
         echo "export BLUERA_STATE_DIR=\"$STATE_DIR\""
         echo "export BLUERA_CONFIG=\"$CONFIG_FILE\""
         echo "export BLUERA_PROJECT_DIR=\"$PROJECT_DIR\""
+        # Export jq availability flag for downstream hooks
+        if command -v jq &>/dev/null; then
+            echo "export BLUERA_JQ_AVAILABLE=1"
+        else
+            echo "export BLUERA_JQ_AVAILABLE=0"
+        fi
     } >> "$CLAUDE_ENV_FILE"
 fi
 
