@@ -31,13 +31,18 @@ fail() {
 # Helper Functions (mirror check-git-secrets.sh behavior)
 # =============================================================================
 
-# Simulate real pipeline: strip escape hatches, then match pattern
+# Simulate real pipeline: strip escape hatches + placeholders, then match pattern
 # Returns 0 if content would be blocked, 1 otherwise
 would_be_blocked() {
   local content="$1"
-  # Strip lines with escape hatches (like the real hook does)
   local filtered
+  # Strip lines with escape hatches (like the real hook does)
   filtered=$(echo "$content" | grep -vE '(# ok:|// ok:|<!-- ok:)' || true)
+  # Strip placeholder patterns (like the real hook does)
+  filtered=$(echo "$filtered" | \
+    grep -vi 'your_.*_here' | \
+    grep -vi 'placeholder' | \
+    grep -vi 'example' || true)
   # Check if remaining content matches pattern (case insensitive)
   echo "$filtered" | grep -qiE "$BLUERA_SECRETS_PATTERN"
 }
@@ -226,6 +231,32 @@ test_escape_ok_colon_variations() {
 }
 
 # =============================================================================
+# PLACEHOLDER FILTERS - Must be allowed (mirrors check-git-secrets.sh)
+# =============================================================================
+
+test_allows_your_key_here() {
+  ! would_be_blocked 'api_key = "your_api_key_here"' || { fail "your_*_here should be allowed"; return; }
+  pass "your_*_here placeholder allowed"
+}
+
+test_allows_placeholder_value() {
+  ! would_be_blocked 'token = "placeholder_token_value"' || { fail "placeholder should be allowed"; return; }
+  pass "placeholder value allowed"
+}
+
+test_allows_example_secret() {
+  ! would_be_blocked 'secret_key = "example_key_12345"' || { fail "example should be allowed"; return; }
+  pass "example value allowed"
+}
+
+test_added_line_pattern() {
+  # The hook extracts lines starting with + from git diff
+  # Verify pattern still matches when content has + prefix
+  would_be_blocked '+api_key = "sk-secret123"' || { fail "+line pattern should match"; return; }
+  pass "+line pattern matches"
+}
+
+# =============================================================================
 # EDGE CASES
 # =============================================================================
 
@@ -295,6 +326,13 @@ test_escape_bash_ok
 test_escape_js_ok
 test_escape_html_ok
 test_escape_ok_colon_variations
+
+echo ""
+echo "--- Placeholder Filters (must allow) ---"
+test_allows_your_key_here
+test_allows_placeholder_value
+test_allows_example_secret
+test_added_line_pattern
 
 echo ""
 echo "--- Edge Cases ---"
