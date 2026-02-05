@@ -190,6 +190,12 @@ test_allows_key_without_api_prefix() {
   pass "key without api prefix allowed"
 }
 
+test_allows_api_key_method_call() {
+  # Method names like get_pinecone_api_key() should not trigger
+  ! would_be_blocked 'result = app_state.get_pinecone_api_key()' || { fail "api_key method call should be allowed"; return; }
+  pass "api_key method call allowed"
+}
+
 test_allows_token_in_middle_of_word() {
   # 'tokens' as part of larger word without assignment context
   ! would_be_blocked 'total_tokens: 100' || { fail "tokens in word should be allowed"; return; }
@@ -319,6 +325,7 @@ test_allows_file_path_with_secrets
 test_allows_url_with_secret
 test_allows_key_without_api_prefix
 test_allows_token_in_middle_of_word
+test_allows_api_key_method_call
 
 echo ""
 echo "--- Escape Hatches (must bypass) ---"

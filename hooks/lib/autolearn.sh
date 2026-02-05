@@ -7,7 +7,7 @@
 # Note: 'token' alone is too broad (matches tokenPath, tokenizer, max_tokens)
 # Note: bare patterns too broad (matches config keys) # ok: meta-comment
 # Use specific patterns with context (assignments, key suffixes)
-BLUERA_SECRETS_PATTERN='api[_-]?key|_token[[:space:]]*=|^token[[:space:]]*=|password|secret[_-]?key|_secret[[:space:]]*=|^secret[[:space:]]*=|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|HF_TOKEN|private[_-]?key|credential' # ok: pattern def
+BLUERA_SECRETS_PATTERN='api[_-]?key[[:space:]]*=|_token[[:space:]]*=|^token[[:space:]]*=|password|secret[_-]?key|_secret[[:space:]]*=|^secret[[:space:]]*=|-----BEGIN|AWS_|GITHUB_TOKEN|ANTHROPIC_API_KEY|OPENAI_API_KEY|HF_TOKEN|private[_-]?key|credential' # ok: pattern def
 
 # Marker delimiters for auto-learned section
 BLUERA_LEARN_START='<!-- AUTO:bluera-base:learned -->'
