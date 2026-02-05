@@ -252,3 +252,99 @@ bluera_reset_config() {
     echo "Removed local config overrides"
   fi
 }
+
+# =============================================================================
+# Global Config Functions (for user-wide settings like memory)
+# =============================================================================
+# Global config is stored at ~/.claude/.bluera/bluera-base/
+# This is separate from project-local config in .bluera/bluera-base/
+
+# Get the global config directory path
+# Usage: global_dir=$(bluera_global_config_dir)
+bluera_global_config_dir() {
+  echo "${HOME}/.claude/.bluera/bluera-base"
+}
+
+# Ensure global config directory exists
+# Usage: bluera_ensure_global_config_dir
+bluera_ensure_global_config_dir() {
+  local global_dir
+  global_dir=$(bluera_global_config_dir)
+  if ! mkdir -p "$global_dir" 2>/dev/null; then
+    echo "Error: Cannot create global config directory: $global_dir" >&2
+    return 1
+  fi
+}
+
+# Load global configuration
+# Usage: config=$(bluera_load_global_config)
+bluera_load_global_config() {
+  local global_dir global_config
+  global_dir=$(bluera_global_config_dir)
+  global_config="$global_dir/config.json"
+
+  if [[ -f "$global_config" ]]; then
+    cat "$global_config"
+  else
+    echo "{}"
+  fi
+}
+
+# Get a global config value by JSON path
+# Usage: value=$(bluera_get_global_config ".memory.enabled" "default_value")
+bluera_get_global_config() {
+  local path="$1"
+  local default="${2:-}"
+  local config value
+
+  config=$(bluera_load_global_config)
+  value=$(echo "$config" | jq -r "$path // empty")
+
+  if [[ -z "$value" ]] && [[ -n "$default" ]]; then
+    echo "$default"
+  else
+    echo "$value"
+  fi
+}
+
+# Set a global config value
+# Usage: bluera_set_global_config ".memory.enabled" "true"
+bluera_set_global_config() {
+  local path="$1"
+  local value="$2"
+  local global_dir config_file current
+
+  global_dir=$(bluera_global_config_dir)
+  config_file="$global_dir/config.json"
+
+  bluera_ensure_global_config_dir || return 1
+
+  # Load existing or start with empty object
+  if [[ -f "$config_file" ]]; then
+    current=$(cat "$config_file")
+  else
+    current="{}"
+  fi
+
+  # Set the value using jq (handle different value types)
+  if [[ "$value" == "true" ]] || [[ "$value" == "false" ]]; then
+    current=$(echo "$current" | jq "$path = $value")
+  elif [[ "$value" =~ ^[0-9]+$ ]]; then
+    current=$(echo "$current" | jq "$path = $value")
+  elif [[ "$value" =~ ^\[.*\]$ ]] || [[ "$value" =~ ^\{.*\}$ ]]; then
+    current=$(echo "$current" | jq --argjson val "$value" "$path = \$val")
+  else
+    current=$(echo "$current" | jq --arg val "$value" "$path = \$val")
+  fi
+
+  echo "$current" > "$config_file"
+}
+
+# Check if memory system is enabled (defaults to true)
+# Usage: if bluera_memory_enabled; then ...
+bluera_memory_enabled() {
+  local enabled
+  enabled=$(bluera_get_global_config '.memory.enabled')
+  # Default to true if not set or empty
+  [[ "$enabled" != "false" ]]
+}
