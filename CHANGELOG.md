@@ -1,6 +1,35 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [0.34.0](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.34.0) (2026-02-05)
+
+
+### Features
+
+* **claude-code-graph:** add terminal-friendly default output with descriptions ([fcaf556](https://github.com/blueraai/bluera-base/commit/fcaf55620c7cd322e20e7bd16ef6b510dec146bd))
+* **config:** add coverage enforcement feature ([a05f96d](https://github.com/blueraai/bluera-base/commit/a05f96dd3aa43a785e22b3d7ae47669535fd956b))
+* **config:** enable all features by default (opt-out instead of opt-in) ([28a2773](https://github.com/blueraai/bluera-base/commit/28a2773f9357b0dbc75c10e4195d8fbcf5ed6488))
+* **create:** add entity scan phase for conflict detection ([4d2ac8d](https://github.com/blueraai/bluera-base/commit/4d2ac8d69db87c5e9c81c1f8122f875b8c2a44d9))
+* **disk:** rename claude-code-clean to claude-code-disk with enhanced features ([06a1182](https://github.com/blueraai/bluera-base/commit/06a1182034bab7127f76a3c3ac9745d5a3f8d558))
+* **hooks:** add secrets check hook for git add/commit ([befa1ac](https://github.com/blueraai/bluera-base/commit/befa1acdd9e2cc1f20f9d46944cceebd3d76d5cd))
+* **memory:** add global memory system ([d3c6528](https://github.com/blueraai/bluera-base/commit/d3c6528e2f3321eb8394a6e434315fd3076cc595))
+
+
+### Bug Fixes
+
+* **cc-cleaner:** remove backward compatibility shims ([68c644f](https://github.com/blueraai/bluera-base/commit/68c644f0585b718471dfdd4f2869b51ac0434fb1))
+* **config:** add missing !.bluera/ gitignore negation ([bb12b43](https://github.com/blueraai/bluera-base/commit/bb12b439ca9c86d3c53479ccf2c97cf5e669a327))
+* **hooks:** centralize jq check with stderr warnings ([52de1f8](https://github.com/blueraai/bluera-base/commit/52de1f84c583961c74cc5b125b5e9889bb63af35))
+* **hooks:** use explicit skip/block helpers for jq check ([c3bf487](https://github.com/blueraai/bluera-base/commit/c3bf48710a1144e7d12086e70e20c14e7d19242a))
+* **memory:** add collision protection to ID generation ([8d16427](https://github.com/blueraai/bluera-base/commit/8d164274da1fd8362ef80090e9cc7b13525304ac))
+* **release:** require polling loop to wait for ALL workflows ([6de5d33](https://github.com/blueraai/bluera-base/commit/6de5d33b99e2ffbee01cdcf77d7a22fbc05ffdff))
+* **secrets-hook:** add HTML comment bypass for markdown files ([b357517](https://github.com/blueraai/bluera-base/commit/b35751780ef8df3c7ddd79026c10aa815d9c1664))
+* **secrets-hook:** exclude .bluera/ config from secret scanning ([b5ef1e9](https://github.com/blueraai/bluera-base/commit/b5ef1e9fdb7643fa4eb872ec2b1b3c98db60a4a3))
+* **secrets-hook:** exclude dist/, build/, and test files from scanning ([0a62430](https://github.com/blueraai/bluera-base/commit/0a624300a4f134818e3dffcbeaa0e996b3c5bf66))
+* **secrets-hook:** only scan added lines, refine patterns ([86f04e5](https://github.com/blueraai/bluera-base/commit/86f04e588074465a90399d89b3de0fed11e4415e))
+* **secrets-hook:** reduce false positives on token patterns ([360f8f7](https://github.com/blueraai/bluera-base/commit/360f8f7ea3d9a1c80af77769ef13757e41011370))
+* **secrets:** require assignment for api_key pattern ([5497585](https://github.com/blueraai/bluera-base/commit/549758555a4e26cf76a46f727aadffa95fd920f8))
 
 ## [0.33.0](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.33.0) (2026-02-04)
 
