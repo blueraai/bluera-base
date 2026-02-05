@@ -197,6 +197,91 @@ bluera_memory_escape_grep() {
 }
 
 # =============================================================================
+# Deduplication (hash-based, cross-platform)
+# =============================================================================
+
+# Normalize content for comparison (lowercase, strip punct, collapse whitespace)
+# Usage: normalized=$(bluera_memory_normalize "$text")
+bluera_memory_normalize() {
+  local text="$1"
+  echo "$text" | tr '[:upper:]' '[:lower:]' | sed 's/[[:punct:]]//g' | tr -s ' ' | xargs
+}
+
+# Generate content hash for dedup (cross-platform: Linux + macOS)
+# Usage: hash=$(bluera_memory_content_hash "$text")
+bluera_memory_content_hash() {
+  local text="$1"
+  local normalized
+  normalized=$(bluera_memory_normalize "$text")
+
+  # Fallback chain: md5sum (Linux) → md5 (macOS) → openssl md5 → base64
+  if command -v md5sum &>/dev/null; then
+    echo -n "$normalized" | md5sum | cut -d' ' -f1
+  elif command -v md5 &>/dev/null; then
+    echo -n "$normalized" | md5 -q
+  elif command -v openssl &>/dev/null; then
+    echo -n "$normalized" | openssl md5 | awk '{print $NF}'
+  else
+    # Last resort: base64 with URL-safe chars (replace +/ with AZ)
+    echo -n "$normalized" | base64 | tr '+/' 'AZ' | head -c 32
+  fi
+}
+
+# Check if similar memory exists by comparing hashes of TITLES
+# Returns 0 if duplicate found, 1 if unique
+# Usage: bluera_memory_is_duplicate "$content" && echo "duplicate"
+bluera_memory_is_duplicate() {
+  local content="$1"
+  local new_hash
+  new_hash=$(bluera_memory_content_hash "$content")
+
+  local mem_dir
+  mem_dir=$(bluera_memory_dir)
+  [[ ! -d "$mem_dir" ]] && return 1
+
+  for file in "$mem_dir"/*.md; do
+    [[ -f "$file" ]] || continue
+    # Skip temp/lock files
+    [[ "$(basename "$file")" == .* ]] && continue
+
+    # Extract title from the file (first H1 heading after frontmatter)
+    local title
+    title=$(grep '^# ' "$file" | head -1 | sed 's/^# //')
+    [[ -z "$title" ]] && continue
+
+    # Hash the title and compare
+    local existing_hash
+    existing_hash=$(bluera_memory_content_hash "$title")
+    [[ "$new_hash" == "$existing_hash" ]] && return 0
+  done
+  return 1
+}
+
+# =============================================================================
+# Auto-Tagging (word-boundary matching)
+# =============================================================================
+
+# Auto-generate tags from content using word boundaries
+# Usage: tags=$(bluera_memory_auto_tags "$content" "$source")
+bluera_memory_auto_tags() {
+  local content="$1"
+  local source="${2:-manual}"
+  local project
+  project=$(basename "${CLAUDE_PROJECT_DIR:-$PWD}" | tr '[:upper:]' '[:lower:]')
+
+  local tags="$source,$project"
+
+  # Word-boundary matching to avoid false positives (contest != test)
+  echo "$content" | grep -qiw "test\|testing\|tests" && tags="$tags,testing"
+  echo "$content" | grep -qiw "git\|commit\|branch" && tags="$tags,git"
+  echo "$content" | grep -qiw "build\|compile" && tags="$tags,build"
+  echo "$content" | grep -qiw "error\|fix\|bug" && tags="$tags,error"
+  echo "$content" | grep -qiw "api\|endpoint\|rest" && tags="$tags,api"
+
+  echo "$tags"
+}
+
+# =============================================================================
 # CRUD Operations
 # =============================================================================
 
@@ -226,7 +311,7 @@ bluera_memory_create() {
     return 1
   fi
 
-  local id mem_dir file timestamp tmp_file
+  local id mem_dir file timestamp tmp_file content_hash
 
   bluera_memory_init || return 1
 
@@ -236,12 +321,16 @@ bluera_memory_create() {
   tmp_file="$mem_dir/.tmp-${id}.md"
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+  # Hash the title for deduplication (title-only for consistency with is_duplicate)
+  content_hash=$(bluera_memory_content_hash "$title")
+
   # Build frontmatter
   {
     echo "---"
     echo "id: \"$id\""
     echo "created: \"$timestamp\""
     echo "updated: \"$timestamp\""
+    echo "content_hash: \"$content_hash\""
     echo "tags:"
     if [[ -n "$tags" ]]; then
       # Split comma-separated tags (portable approach)
@@ -591,4 +680,78 @@ bluera_memory_get_body() {
 
   # Skip frontmatter, return rest
   sed -n '/^---$/,/^---$/!p' "$file" | sed '1{/^$/d}'
+}
+
+# =============================================================================
+# Import Function (from project learnings)
+# =============================================================================
+
+# Import learnings from CLAUDE.local.md to global memory
+# Usage: bluera_memory_import_learnings [--dry-run]
+bluera_memory_import_learnings() {
+  local dry_run=""
+  [[ "${1:-}" == "--dry-run" ]] && dry_run="1"
+
+  # Check if memory system is enabled
+  local mem_enabled
+  mem_enabled=$(bluera_get_config ".memory.enabled" "false")
+  if [[ "$mem_enabled" != "true" ]]; then
+    echo "Global memory is disabled. Enable with: /bluera-base:config set .memory.enabled true"
+    return 1
+  fi
+
+  # Source autolearn for markers
+  local script_dir="${BASH_SOURCE%/*}"
+  local start_marker end_marker
+  if [[ -f "$script_dir/autolearn.sh" ]]; then
+    # shellcheck source=./autolearn.sh
+    source "$script_dir/autolearn.sh"
+    start_marker="${BLUERA_LEARN_START:-<!-- AUTO:bluera-base:learned -->}"
+    end_marker="${BLUERA_LEARN_END:-<!-- END:bluera-base:learned -->}"
+  else
+    start_marker="<!-- AUTO:bluera-base:learned -->"
+    end_marker="<!-- END:bluera-base:learned -->"
+  fi
+
+  # Find target file
+  local target_file="CLAUDE.local.md"
+  if type bluera_autolearn_target_file &>/dev/null; then
+    target_file=$(bluera_autolearn_target_file 2>/dev/null || echo "CLAUDE.local.md")
+  fi
+
+  [[ ! -f "$target_file" ]] && { echo "No learnings file found: $target_file"; return 1; }
+
+  # Escape markers for sed (handle < > ! / characters)
+  local start_escaped end_escaped
+  start_escaped=$(printf '%s' "$start_marker" | sed 's/[<>!/]/\\&/g')
+  end_escaped=$(printf '%s' "$end_marker" | sed 's/[<>!/]/\\&/g')
+
+  local learnings
+  learnings=$(sed -n "/${start_escaped}/,/${end_escaped}/p" "$target_file" | grep '^-' | sed 's/^- //')
+
+  local imported=0 skipped=0
+  local project
+  project=$(basename "$PWD" | tr '[:upper:]' '[:lower:]')
+
+  while IFS= read -r learning; do
+    [[ -z "$learning" ]] && continue
+
+    if bluera_memory_is_duplicate "$learning"; then
+      ((skipped++))
+      [[ -n "$dry_run" ]] && echo "Skip (duplicate): $learning"
+      continue
+    fi
+
+    if [[ -n "$dry_run" ]]; then
+      echo "Would import: $learning"
+      ((imported++))
+    else
+      local tags
+      tags=$(bluera_memory_auto_tags "$learning" "imported")
+      bluera_memory_create "$learning" --tags "$tags"
+      ((imported++))
+    fi
+  done <<< "$learnings"
+
+  echo "Imported: $imported, Skipped (duplicates): $skipped"
 }
