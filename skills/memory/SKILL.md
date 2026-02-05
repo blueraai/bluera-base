@@ -98,6 +98,23 @@ Permanently remove a memory:
 /bluera-base:memory delete abc12345
 ```
 
+### Import Project Learnings
+
+Move learnings from CLAUDE.local.md to global memory:
+
+```bash
+# Preview what would be imported
+/bluera-base:memory import --dry-run
+
+# Import all learnings
+/bluera-base:memory import
+```
+
+Duplicates are detected via content hash and skipped.
+
+**Cross-Project Warning**: Imported memories become visible in ALL projects.
+Review carefully before importing project-specific or sensitive learnings.
+
 ## Memory Format
 
 Each memory is stored as a markdown file with YAML frontmatter:
@@ -133,15 +150,25 @@ Tags are free-form but here are suggested categories:
 
 ## Configuration
 
-Memory system is enabled by default. To disable:
+Memory system is **disabled by default** (opt-in). To enable:
 
 ```bash
-# Create/edit ~/.claude/.bluera/bluera-base/config.json
-{
-  "memory": {
-    "enabled": false
-  }
-}
+/bluera-base:config set .memory.enabled true
+```
+
+**Available options:**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `memory.enabled` | `false` | Enable global memory system |
+| `memory.surfaceOnStart` | `false` | Show relevant memories at session start |
+| `memory.contextBudget` | `500` | Max characters to inject at session start |
+
+**Enable context surfacing:**
+
+```bash
+/bluera-base:config set .memory.enabled true
+/bluera-base:config set .memory.surfaceOnStart true
 ```
 
 ## Implementation
@@ -174,6 +201,4 @@ bluera_memory_delete "$id"
 ## P2 Features (Coming Later)
 
 - Session-scoped memories
-- Context surfacing on session start
-- Import/export with CLAUDE.local.md
 - Statistics and cleanup
