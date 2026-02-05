@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.35.1](https://github.com/blueraai/bluera-base/compare/v0.34.0...v0.35.1) (2026-02-05)
+
+### Features
+
+* **hooks:** add opt-in session-start memory surfacing ([69c858f](https://github.com/blueraai/bluera-base/commit/69c858f358fa92f552a4454bb023d9a3be1077c1))
+* **learn:** add opt-in auto-promotion to global memory ([fe76943](https://github.com/blueraai/bluera-base/commit/fe769432daf3d7d6b4cdc177d24502a690fadb5b))
+* **memory:** add hash-based deduplication and word-boundary auto-tagging ([f8b1fa5](https://github.com/blueraai/bluera-base/commit/f8b1fa5843f3c3c91f6c5345dd6e4b3506fc8aeb))
+
+### Bug Fixes
+
+* **memory:** anchor tag matching to frontmatter and clarify hash naming ([7a9118c](https://github.com/blueraai/bluera-base/commit/7a9118c745aa0b498bbda399f76a2aa02fad892e))
+
 ## [0.35.0](https://github.com/blueraai/bluera-base/compare/v0.34.0...v0.35.0) (2026-02-05)
 
 ### Features

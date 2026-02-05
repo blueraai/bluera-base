@@ -1,6 +1,6 @@
 {
   "name": "bluera-base",
-  "version": "0.35.0",
+  "version": "0.35.1",
   "description": "Shared development conventions for Bluera projects - hooks, skills, CLAUDE.md patterns",
   "author": {
     "name": "Bluera Inc",
