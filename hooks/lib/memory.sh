@@ -46,29 +46,43 @@ bluera_memory_init() {
 # UUID Generation (Portable)
 # =============================================================================
 
-# Generate a unique ID for a memory
+# Generate a unique ID for a memory (with collision protection)
 # Usage: id=$(bluera_memory_generate_id)
 bluera_memory_generate_id() {
-  local uuid
+  local uuid mem_dir short_id max_attempts=5 attempt=0
 
-  # Try uuidgen (macOS, some Linux)
-  if command -v uuidgen &>/dev/null; then
-    uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
-  # Try /proc/sys/kernel/random/uuid (Linux)
-  elif [[ -r /proc/sys/kernel/random/uuid ]]; then
-    uuid=$(cat /proc/sys/kernel/random/uuid)
-  # Fallback: generate from timestamp + random
-  else
-    uuid=$(printf '%08x-%04x-%04x-%04x-%012x' \
-      "$((RANDOM * RANDOM))" \
-      "$RANDOM" \
-      "$((RANDOM & 0x0fff | 0x4000))" \
-      "$((RANDOM & 0x3fff | 0x8000))" \
-      "$((RANDOM * RANDOM * RANDOM))")
-  fi
+  mem_dir=$(bluera_memory_dir)
 
-  # Return short form (first 8 chars) for readability
-  echo "${uuid:0:8}"
+  while ((attempt < max_attempts)); do
+    # Try uuidgen (macOS, some Linux)
+    if command -v uuidgen &>/dev/null; then
+      uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+    # Try /proc/sys/kernel/random/uuid (Linux)
+    elif [[ -r /proc/sys/kernel/random/uuid ]]; then
+      uuid=$(cat /proc/sys/kernel/random/uuid)
+    # Fallback: generate from timestamp + random
+    else
+      uuid=$(printf '%08x-%04x-%04x-%04x-%012x' \
+        "$((RANDOM * RANDOM))" \
+        "$RANDOM" \
+        "$((RANDOM & 0x0fff | 0x4000))" \
+        "$((RANDOM & 0x3fff | 0x8000))" \
+        "$((RANDOM * RANDOM * RANDOM))")
+    fi
+
+    short_id="${uuid:0:8}"
+
+    # Check for collision (file already exists)
+    if [[ ! -f "$mem_dir/${short_id}.md" ]]; then
+      echo "$short_id"
+      return 0
+    fi
+
+    ((attempt++))
+  done
+
+  echo "Error: Failed to generate unique ID after $max_attempts attempts" >&2
+  return 1
 }
 
 # =============================================================================
