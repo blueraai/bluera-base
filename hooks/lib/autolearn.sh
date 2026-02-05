@@ -153,3 +153,58 @@ $BLUERA_LEARN_END|" "$target_file" > "$tmp_file" && mv "$tmp_file" "$target_file
 
     return 0
 }
+
+# =============================================================================
+# Global Memory Promotion (opt-in feature)
+# =============================================================================
+
+# Promote learning to global memory
+# Usage: bluera_autolearn_promote_to_global "learning" "type" "confidence"
+# Only promotes when: memory.enabled=true AND autoPromoteEnabled=true AND confidence >= threshold
+bluera_autolearn_promote_to_global() {
+    local learning="$1"
+    local type="${2:-fact}"
+    local confidence="${3:-0}"
+
+    # Source memory library if not already loaded
+    local script_dir="${BASH_SOURCE%/*}"
+    if [[ -f "$script_dir/memory.sh" ]]; then
+        # shellcheck source=./memory.sh
+        source "$script_dir/memory.sh"
+    fi
+
+    # Skip if memory system not available
+    type bluera_memory_create &>/dev/null || return 0
+
+    # Check config: memory system must be enabled (default false)
+    local mem_enabled
+    mem_enabled=$(bluera_get_config ".memory.enabled" "false")
+    [[ "$mem_enabled" != "true" ]] && return 0
+
+    # Check config: auto-promote opt-in only (default false)
+    local enabled threshold
+    enabled=$(bluera_get_config ".deepLearn.autoPromoteEnabled" "false")
+    threshold=$(bluera_get_config ".deepLearn.autoPromoteThreshold" "0.9")
+
+    [[ "$enabled" != "true" ]] && return 0
+
+    # Check confidence threshold
+    if ! awk "BEGIN {exit !($confidence >= $threshold)}"; then
+        return 0
+    fi
+
+    # Check for duplicate in global memory
+    if bluera_memory_is_duplicate "$learning"; then
+        echo "[bluera-base] Memory already exists (skipping promotion)" >&2
+        return 0
+    fi
+
+    # Create with auto-generated tags
+    local tags
+    tags=$(bluera_memory_auto_tags "$learning" "promoted")
+    tags="$tags,$type"
+
+    local id
+    id=$(bluera_memory_create "$learning" --tags "$tags")
+    echo "[bluera-base] Promoted to global memory: $id" >&2
+}

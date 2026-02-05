@@ -42,7 +42,14 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   "deepLearn": {
     "enabled": true,
     "model": "haiku",
-    "maxBudget": 0.02
+    "maxBudget": 0.02,
+    "autoPromoteEnabled": false,
+    "autoPromoteThreshold": 0.9
+  },
+  "memory": {
+    "enabled": false,
+    "surfaceOnStart": false,
+    "contextBudget": 500
   },
   "secretsCheck": {
     "enabled": true,

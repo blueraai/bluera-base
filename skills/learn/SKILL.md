@@ -110,6 +110,22 @@ Configure model and budget:
 /bluera-base:config set .deepLearn.maxBudget 0.05 # USD per analysis
 ```
 
+### Auto-Promotion to Global Memory (Opt-In)
+
+When enabled, high-confidence learnings (>= 0.9) are automatically
+promoted to global memory when applied.
+
+**Enable via config:**
+
+```bash
+/bluera-base:config set .memory.enabled true
+/bluera-base:config set .deepLearn.autoPromoteEnabled true
+/bluera-base:config set .deepLearn.autoPromoteThreshold 0.9  # default
+```
+
+**Cross-Project Warning**: Promoted memories are visible across ALL projects.
+Only enable if your learnings are generally applicable, not project-specific.
+
 ## Cost
 
 - Haiku micro-analysis: ~$0.001 per session
@@ -122,12 +138,22 @@ When this skill is invoked:
 
 1. Read pending learnings from `.bluera/bluera-base/state/pending-learnings.jsonl`
 2. For `show`: Display learnings with type, content, confidence, and created date
-3. For `apply`: Use the autolearn library to write to CLAUDE.local.md, mark as applied
+3. For `apply`:
+   a. Parse the learning entry from JSONL (has type, content, confidence fields)
+   b. **IMPORTANT**: Call the helper script via Bash tool:
+
+      ```bash
+      bash "${CLAUDE_PLUGIN_ROOT}/hooks/lib/apply-learning.sh" "$content" "$type" "$confidence"
+      ```
+
+      This writes to CLAUDE.local.md AND handles auto-promotion if enabled.
+   c. Mark as applied in pending-learnings.jsonl (set "applied": true)
 4. For `dismiss`: Remove from pending file
 5. For `clear`: Remove all pending learnings
 6. For `extract`: Follow [references/extract-implementation.md](references/extract-implementation.md)
 
-Use the existing `bluera_autolearn_write` function from `hooks/lib/autolearn.sh` for writing learnings.
+**Critical**: The bash call to `apply-learning.sh` is required for auto-promotion to work.
+Simply calling `bluera_autolearn_write` directly will skip promotion.
 
 ## References
 
