@@ -41,10 +41,28 @@ jobs:
           # -x: follow source statements, -e SC1091: ignore "source not found" for lib/ files
           find hooks -name "*.sh" -type f -exec shellcheck -x -e SC1091 {} +
 
+  # Run hook library tests
+  hook-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Run all hook library tests
+        run: |
+          set -e
+          for test in hooks/lib/tests/test-*.sh; do
+            echo "=== Running $test ==="
+            bash "$test" || exit 1
+          done
+          echo "=== All tests passed ==="
+
   # Success job - only runs if all parallel jobs pass
   ci-success:
     runs-on: ubuntu-latest
-    needs: [shellcheck]
+    needs: [shellcheck, hook-tests]
     steps:
       - name: CI passed
         run: echo "All CI checks passed!"
