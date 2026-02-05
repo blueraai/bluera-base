@@ -15,7 +15,7 @@ source "$SCRIPT_DIR/lib/autolearn.sh"
 source "$SCRIPT_DIR/lib/config.sh"
 
 # Require jq for JSON parsing (MANDATORY: block commit if unavailable)
-bluera_require_jq || exit 2
+bluera_require_jq_mandatory || exit 2
 
 AI_SECRETS_CHECK=$(bluera_get_config ".secretsCheck.aiEnabled" "false" 2>/dev/null || echo "false") # ok: config key
 

@@ -11,7 +11,7 @@ source "$SCRIPT_DIR/lib/config.sh"
 source "$SCRIPT_DIR/lib/state.sh"
 
 # Require jq for JSON parsing (optional hook: warn + skip)
-bluera_require_jq || exit 0
+bluera_require_jq_optional || exit 0
 
 # Read hook input from stdin (advanced stop hook API)
 HOOK_INPUT=$(cat 2>/dev/null || true)

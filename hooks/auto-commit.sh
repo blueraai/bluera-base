@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
 
 # Require jq for JSON parsing (optional hook: warn + skip)
-bluera_require_jq || exit 0
+bluera_require_jq_optional || exit 0
 
 # Read hook input
 HOOK_INPUT=$(cat 2>/dev/null || true)

@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/config.sh"
 
 # Require dependencies (optional hook: warn + skip)
-bluera_require_jq || exit 0
+bluera_require_jq_optional || exit 0
 
 if ! command -v claude &>/dev/null; then
   echo "[bluera-base] Skipping $(basename "$0"): claude CLI not installed" >&2

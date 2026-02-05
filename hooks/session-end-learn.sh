@@ -14,7 +14,7 @@ source "$SCRIPT_DIR/lib/signals.sh"
 source "$SCRIPT_DIR/lib/autolearn.sh"
 
 # Require jq for JSON parsing (optional hook: warn + skip)
-bluera_require_jq || exit 0
+bluera_require_jq_optional || exit 0
 
 # Check if auto-learn is enabled (opt-in)
 if ! bluera_config_enabled ".autoLearn.enabled"; then

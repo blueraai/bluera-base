@@ -353,16 +353,22 @@ bluera_memory_enabled() {
 # Dependency Helpers
 # =============================================================================
 
-# Check if jq is available (with fallback when env flag unset)
-# Uses exported flag from session-setup.sh if available, else direct check
-# Logs warning to stderr if not available
-# Usage: bluera_require_jq || exit 0  # optional hook
-#        bluera_require_jq || exit 2  # mandatory hook
-bluera_require_jq() {
-  # Use exported flag if available, else fall back to direct check
+# Check if jq is available - for OPTIONAL hooks (warn + skip)
+# Usage: bluera_require_jq_optional || exit 0
+bluera_require_jq_optional() {
   if [[ "${BLUERA_JQ_AVAILABLE:-}" == "1" ]] || command -v jq &>/dev/null; then
     return 0
   fi
   echo "[bluera-base] Skipping $(basename "$0"): jq not available" >&2
+  return 1
+}
+
+# Check if jq is available - for MANDATORY hooks (warn + block)
+# Usage: bluera_require_jq_mandatory || exit 2
+bluera_require_jq_mandatory() {
+  if [[ "${BLUERA_JQ_AVAILABLE:-}" == "1" ]] || command -v jq &>/dev/null; then
+    return 0
+  fi
+  echo "[bluera-base] Blocking $(basename "$0"): jq required but not available" >&2
   return 1
 }

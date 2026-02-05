@@ -19,7 +19,7 @@ else
 fi
 
 # Require jq for JSON parsing (optional hook: warn + skip)
-bluera_require_jq || exit 0
+bluera_require_jq_optional || exit 0
 
 HOOK_INPUT=$(cat 2>/dev/null || true)
 
