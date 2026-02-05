@@ -311,7 +311,7 @@ bluera_memory_create() {
     return 1
   fi
 
-  local id mem_dir file timestamp tmp_file content_hash
+  local id mem_dir file timestamp tmp_file title_hash
 
   bluera_memory_init || return 1
 
@@ -322,7 +322,7 @@ bluera_memory_create() {
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
   # Hash the title for deduplication (title-only for consistency with is_duplicate)
-  content_hash=$(bluera_memory_content_hash "$title")
+  title_hash=$(bluera_memory_content_hash "$title")
 
   # Build frontmatter
   {
@@ -330,7 +330,7 @@ bluera_memory_create() {
     echo "id: \"$id\""
     echo "created: \"$timestamp\""
     echo "updated: \"$timestamp\""
-    echo "content_hash: \"$content_hash\""
+    echo "title_hash: \"$title_hash\""
     echo "tags:"
     if [[ -n "$tags" ]]; then
       # Split comma-separated tags (portable approach)

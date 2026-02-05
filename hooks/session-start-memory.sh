@@ -66,8 +66,9 @@ for tag in $PROJECT_TAGS; do
     # Skip if already processed
     [[ -n "${SEEN_FILES[$file]:-}" ]] && continue
 
-    # Check if file has this tag in frontmatter (case-insensitive, fixed string)
-    if ! grep -Fi "  - $tag" "$file" >/dev/null 2>&1; then
+    # Extract tags section from frontmatter (between "tags:" and closing "---")
+    # Then check for exact tag match (anchored: ^  - tag$)
+    if ! sed -n '/^tags:/,/^---$/p' "$file" | grep -qi "^  - ${tag}$"; then
       continue
     fi
 

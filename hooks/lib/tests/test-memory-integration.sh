@@ -88,7 +88,25 @@ test_dedup_allows_unique() {
   bluera_memory_delete "$id" >/dev/null 2>&1 || true
 }
 
-# Test 6: Auto-tagging word boundaries
+# Test 6: Dedup is title-only (same body, different title = NOT duplicate)
+test_dedup_title_only() {
+  bluera_memory_init
+  local id
+  id=$(bluera_memory_create "First Title" --tags test)
+  # Add identical body to existing memory
+  echo -e "\nShared body content here" >> "$(bluera_memory_dir)/$id.md"
+
+  # Different title with same body should NOT be flagged as duplicate
+  # (We dedup on TITLE only, not body)
+  if ! bluera_memory_is_duplicate "Different Title"; then
+    pass "dedup is title-only (same body, different title allowed)"
+  else
+    fail "dedup incorrectly flagged different title as duplicate"
+  fi
+  bluera_memory_delete "$id" >/dev/null 2>&1 || true
+}
+
+# Test 7: Auto-tagging word boundaries
 test_auto_tags_word_boundary() {
   local tags
   tags=$(bluera_memory_auto_tags "Run tests before commit" "manual")
@@ -99,7 +117,7 @@ test_auto_tags_word_boundary() {
   fi
 }
 
-# Test 7: Auto-tagging avoids false positives
+# Test 8: Auto-tagging avoids false positives
 test_auto_tags_no_false_positive() {
   local tags
   tags=$(bluera_memory_auto_tags "Contest results are in" "manual")
@@ -110,7 +128,7 @@ test_auto_tags_no_false_positive() {
   fi
 }
 
-# Test 8: Apply-learning helper writes to CLAUDE.local.md
+# Test 9: Apply-learning helper writes to CLAUDE.local.md
 test_apply_helper() {
   cd "$TEST_HOME"
   if bash "$SCRIPT_DIR/../apply-learning.sh" "Test via helper" "fact" "0.5" >/dev/null 2>&1; then
@@ -124,7 +142,7 @@ test_apply_helper() {
   fi
 }
 
-# Test 9: Import markers match autolearn.sh
+# Test 10: Import markers match autolearn.sh
 test_import_markers() {
   if [[ "$BLUERA_LEARN_START" == "<!-- AUTO:bluera-base:learned -->" ]]; then
     if [[ "$BLUERA_LEARN_END" == "<!-- END:bluera-base:learned -->" ]]; then
@@ -137,7 +155,7 @@ test_import_markers() {
   fi
 }
 
-# Test 10: Promotion stays off by default
+# Test 11: Promotion stays off by default
 test_promotion_disabled_by_default() {
   bluera_memory_init
   cd "$TEST_HOME"
@@ -161,17 +179,17 @@ test_promotion_disabled_by_default() {
   fi
 }
 
-# Test 11: Content hash stored in frontmatter
-test_content_hash_in_frontmatter() {
+# Test 12: Title hash stored in frontmatter
+test_title_hash_in_frontmatter() {
   bluera_memory_init
   local id
   id=$(bluera_memory_create "Hash Test Memory" --tags test)
   local file
   file="$(bluera_memory_dir)/${id}.md"
-  if grep -q "content_hash:" "$file"; then
-    pass "content_hash in frontmatter"
+  if grep -q "title_hash:" "$file"; then
+    pass "title_hash in frontmatter"
   else
-    fail "content_hash not in frontmatter"
+    fail "title_hash not in frontmatter"
   fi
   bluera_memory_delete "$id" >/dev/null 2>&1 || true
 }
@@ -186,6 +204,7 @@ echo "--- Deduplication Tests ---"
 test_dedup_same_title
 test_dedup_case_insensitive
 test_dedup_allows_unique
+test_dedup_title_only
 
 echo ""
 echo "--- Auto-Tagging Tests ---"
@@ -197,7 +216,7 @@ echo "--- Integration Tests ---"
 test_apply_helper
 test_import_markers
 test_promotion_disabled_by_default
-test_content_hash_in_frontmatter
+test_title_hash_in_frontmatter
 
 echo ""
 echo "=== Results: $PASS passed, $FAIL failed ==="
