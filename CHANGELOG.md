@@ -1,9 +1,16 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [0.35.0](https://github.com/blueraai/bluera-base/compare/v0.34.0...v0.35.0) (2026-02-05)
+
+### Features
+
+* **hooks:** add opt-in session-start memory surfacing ([69c858f](https://github.com/blueraai/bluera-base/commit/69c858f358fa92f552a4454bb023d9a3be1077c1))
+* **learn:** add opt-in auto-promotion to global memory ([fe76943](https://github.com/blueraai/bluera-base/commit/fe769432daf3d7d6b4cdc177d24502a690fadb5b))
+* **memory:** add hash-based deduplication and word-boundary auto-tagging ([f8b1fa5](https://github.com/blueraai/bluera-base/commit/f8b1fa5843f3c3c91f6c5345dd6e4b3506fc8aeb))
 
 ## [0.34.0](https://github.com/blueraai/bluera-base/compare/v0.29.2...v0.34.0) (2026-02-05)
-
 
 ### Features
 
@@ -14,7 +21,6 @@ All notable changes to this project will be documented in this file. See [standa
 * **disk:** rename claude-code-clean to claude-code-disk with enhanced features ([06a1182](https://github.com/blueraai/bluera-base/commit/06a1182034bab7127f76a3c3ac9745d5a3f8d558))
 * **hooks:** add secrets check hook for git add/commit ([befa1ac](https://github.com/blueraai/bluera-base/commit/befa1acdd9e2cc1f20f9d46944cceebd3d76d5cd))
 * **memory:** add global memory system ([d3c6528](https://github.com/blueraai/bluera-base/commit/d3c6528e2f3321eb8394a6e434315fd3076cc595))
-
 
 ### Bug Fixes
 
