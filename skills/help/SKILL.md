@@ -65,7 +65,7 @@ Show only the Configuration section.
 
 ---
 
-## Commands (27 total)
+## Commands (28 total)
 
 ### Development & Iteration
 
@@ -106,6 +106,7 @@ Show only the Configuration section.
 | `/bluera-base:claude-code-clean` | Diagnose slow Claude Code startup and guide cleanup |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
 | `/bluera-base:large-file-refactor` | Break apart files exceeding token limits |
+| `/bluera-base:tech-debt-and-refactor-scan` | Scan for refactor opportunities and tech debt |
 
 ### Git & Workflows
 
@@ -126,7 +127,7 @@ Show only the Configuration section.
 
 ---
 
-## Skills (27 total)
+## Skills (28 total)
 
 Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
 
@@ -154,6 +155,7 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 | `@milhouse` | Iterative development loop guidance |
 | `@readme-maintainer` | README.md formatting and structure |
 | `@release` | Release workflow with CI monitoring |
+| `@tech-debt-and-refactor-scan` | Tech debt detection and refactor analysis |
 | `@repo-hardening` | Security and quality tool setup |
 | `@statusline` | Status line configuration with presets |
 | `@claude-code-test-plugin` | Plugin validation test suite |

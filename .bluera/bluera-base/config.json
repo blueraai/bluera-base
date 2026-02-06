@@ -15,35 +15,24 @@
     "enabled": true
   },
   "autoCommit": {
-    "enabled": true,
+    "enabled": false,
     "onStop": true,
     "push": false,
     "remote": "origin"
   },
   "dryCheck": {
-    "enabled": true,
-    "onStop": true,
+    "enabled": false,
+    "onStop": false,
     "threshold": 5,
     "minTokens": 70,
     "minLines": 5
   },
   "strictTyping": {
-    "enabled": true
-  },
-  "standardsReview": {
-    "enabled": true,
-    "mode": "warn"
+    "enabled": false
   },
   "deepLearn": {
     "enabled": true,
     "model": "haiku",
-    "maxBudget": 0.02,
-    "autoPromoteEnabled": true,
-    "autoPromoteThreshold": 0.9
-  },
-  "memory": {
-    "enabled": true,
-    "surfaceOnStart": false,
-    "contextBudget": 500
+    "maxBudget": 0.02
   }
 }
