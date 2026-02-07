@@ -1,7 +1,7 @@
 ---
 name: tech-debt-and-refactor-scan
 description: Scan codebase for tech debt, refactor opportunities, and structural issues
-allowed-tools: [Read, Write, Glob, Grep, Task, Bash(git:*)]
+allowed-tools: [Read, Write, Glob, Grep, Task, Bash(git:*, mkdir:*)]
 ---
 
 # Tech Debt & Refactor Scanner
@@ -23,18 +23,18 @@ Does NOT overlap with code-review (no bugs/compliance) or dry (no jscpd duplicat
 | `--priority high\|all` | `high` = confidence >= 85 only; `all` = confidence >= 75 | `all` |
 | `--path <dir>` | Limit scan to a specific directory | `.` (project root) |
 
-### Parsing Rules
+### Parsing Rules (scan)
 
 - Parse arguments from the user's invocation text
 - If `--priority` value is not `high` or `all`, warn and default to `all`
 - If `--path` directory doesn't exist, error: `Directory not found: <path>`
 - Store the `path` and `priority` in the state file for `report` re-display
 
-### Flags with report
+### Parsing Rules (report)
 
-- `--priority` with `report`: Filter cached results by the specified threshold
-- `--path` with `report`: Ignored (report always shows all cached findings regardless of original path)
-- Invalid values (e.g., `--priority medium`): Warn and default to `all`
+- `--priority`: Filter cached results by the specified threshold (valid: `high`, `all`)
+- `--path`: Ignored entirely (no validation, no effect). Report always shows all cached findings.
+- Invalid `--priority` values: Warn and default to `all`
 
 ## Process
 
