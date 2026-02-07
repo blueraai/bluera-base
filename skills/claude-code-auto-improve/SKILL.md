@@ -1,6 +1,7 @@
 ---
 name: claude-code-auto-improve
 description: Fetch latest Claude Code updates, validate plugin, and apply improvements
+argument-hint: "[check|apply|config]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Task, WebFetch, AskUserQuestion, Bash]
 ---
 

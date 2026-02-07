@@ -1,6 +1,7 @@
 ---
 name: claude-code-guide
 description: Use when working on Claude Code plugins, hooks, skills, commands, agents, or MCP. Provides expert guidance and reviews implementations.
+argument-hint: "<question or 'review'>"
 allowed-tools: [Read, Glob, Grep, Task]
 ---
 

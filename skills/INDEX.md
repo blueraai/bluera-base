@@ -7,9 +7,9 @@ Categorized index of all bluera-base skills.
 | Skill | Description | Key Tools |
 |-------|-------------|-----------|
 | [milhouse](milhouse/SKILL.md) | Iterative development loop | Bash, Read |
-| [commit](atomic-commits/SKILL.md) | Atomic commits with README awareness | Bash, Read, Glob, Grep |
+| [commit](commit/SKILL.md) | Atomic commits with README awareness | Bash, Read, Glob, Grep |
 | [release](release/SKILL.md) | Release workflow with CI monitoring | Bash, Read, Glob, Grep |
-| [code-review-repo](code-review-repo/SKILL.md) | Multi-agent code review | Task, Read, Grep |
+| [code-review](code-review/SKILL.md) | Multi-agent code review | Task, Read, Grep |
 | [test-plugin](test-plugin/SKILL.md) | Plugin validation test suite | Bash, Read |
 
 ## Project Setup
@@ -18,7 +18,7 @@ Categorized index of all bluera-base skills.
 |-------|-------------|-----------|
 | [init](init/SKILL.md) | Initialize project with conventions | Write, Edit, Bash |
 | [install-rules](install-rules/SKILL.md) | Install rule templates | Write, Read |
-| [repo-hardening](repo-hardening/SKILL.md) | Set up linters, hooks, formatters | Bash, Write |
+| [harden-repo](harden-repo/SKILL.md) | Set up linters, hooks, formatters | Bash, Write |
 | [worktree](worktree/SKILL.md) | Git worktree management | Bash |
 
 ## Configuration
@@ -46,7 +46,7 @@ Categorized index of all bluera-base skills.
 | Skill | Description | Key Tools |
 |-------|-------------|-----------|
 | [claude-md-maintainer](claude-md-maintainer/SKILL.md) | Maintain CLAUDE.md files | Read, Write, Edit |
-| [readme-maintainer](readme-maintainer/SKILL.md) | Maintain README.md files | Read, Write, Edit |
+| [readme](readme/SKILL.md) | Maintain README.md files | Read, Write, Edit |
 | [explain](explain/SKILL.md) | Explain plugin functionality | Read |
 | [help](help/SKILL.md) | Show plugin features | Read |
 | [todo](todo/SKILL.md) | Manage TODO tasks | Read, Write, Edit |

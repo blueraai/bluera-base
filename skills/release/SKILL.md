@@ -1,6 +1,7 @@
 ---
 name: release
-description: Release workflow with conventional commits auto-detection and GitHub Actions monitoring. Use /bluera-base:release to cut releases.
+description: Release workflow with conventional commits auto-detection and GitHub Actions monitoring.
+argument-hint: "[patch|minor|major]"
 allowed-tools: [Read, Glob, Grep, Bash]
 ---
 

@@ -78,7 +78,7 @@ Create atomic commits.
 
 ## Workflow
 
-See @bluera-base/skills/atomic-commits/SKILL.md for criteria.
+See @bluera-base/skills/commit/SKILL.md for criteria.
 
 **Phases:** Analyze → Check docs → Group → Commit
 

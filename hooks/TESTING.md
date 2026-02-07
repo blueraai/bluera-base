@@ -108,7 +108,7 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Start a loop:
 
    ```bash
-   /bluera-base:milhouse-loop --inline "Count to 3" --max-iterations 3
+   /bluera-base:milhouse --inline "Count to 3" --max-iterations 3
    ```
 
 2. Verify loop continues until promise or max iterations

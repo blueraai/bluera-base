@@ -1,7 +1,7 @@
 ---
 name: memory
 description: Manage global memories stored in ~/.claude/.bluera/bluera-base/
-user-invocable: true
+argument-hint: "[add|get|search|tag|edit|delete] [--limit N] [--tags TAG]"
 allowed-tools: [Read, Write, Edit, Bash, AskUserQuestion]
 ---
 

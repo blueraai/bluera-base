@@ -62,8 +62,7 @@ You are an expert on Claude Code and Claude Code plugins. You help developers:
 plugin/
 ├─ .claude-plugin/
 │  └─ plugin.json          # Manifest ONLY here
-├─ commands/               # At root, NOT in .claude-plugin
-├─ skills/
+├─ skills/                 # Skills = slash commands (since 2.1.3)
 ├─ hooks/
 ├─ agents/
 └─ prompts/
@@ -72,7 +71,8 @@ plugin/
 **Key rules:**
 
 - `plugin.json` goes in `.claude-plugin/` only
-- Commands/skills/hooks/agents go at plugin root
+- Skills/hooks/agents go at plugin root
+- Skills auto-register as slash commands (no separate `commands/` needed)
 - Use `${CLAUDE_PLUGIN_ROOT}` for paths in hooks
 
 ### Hooks
@@ -233,13 +233,11 @@ First argument: $ARGUMENTS[0]
 All arguments: $ARGUMENTS
 ```
 
-### Commands
+### Commands (Deprecated)
 
-- Use frontmatter: `description`, `allowed-tools`, `argument-hint`
-- Thin command + thick skill pattern: command file just says "See skills/name/SKILL.md"
-- Use `context: fork` for isolated execution
+Since Claude Code 2.1.3, skills automatically register as slash commands. The old "thin command + thick skill" pattern is no longer needed - define everything in `skills/*/SKILL.md`.
 
-**Wildcard tool permissions:**
+**Wildcard tool permissions (in skill frontmatter):**
 
 ```yaml
 allowed-tools:

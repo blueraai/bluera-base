@@ -88,13 +88,13 @@ fi
 
 # Validate numeric fields before arithmetic operations
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse: iteration invalid ('$ITERATION'). Run /bluera-base:milhouse-loop again." >&2
+  echo "⚠️  Milhouse: iteration invalid ('$ITERATION'). Run /bluera-base:milhouse again." >&2
   rm "$STATE_FILE"
   exit 0
 fi
 
 if [[ ! "$MAX_ITERATIONS" =~ ^[0-9]+$ ]]; then
-  echo "⚠️  Milhouse: max_iterations invalid ('$MAX_ITERATIONS'). Run /bluera-base:milhouse-loop again." >&2
+  echo "⚠️  Milhouse: max_iterations invalid ('$MAX_ITERATIONS'). Run /bluera-base:milhouse again." >&2
   rm "$STATE_FILE"
   exit 0
 fi

@@ -1,6 +1,7 @@
 ---
-name: code-review-repo
+name: code-review
 description: Review local codebase for bugs and CLAUDE.md compliance using multi-agent analysis
+argument-hint: "[path]"
 allowed-tools: [Read, Glob, Grep, Task, Bash(git:*), Bash(gh:*)]
 ---
 

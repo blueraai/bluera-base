@@ -60,7 +60,7 @@ flowchart LR
   - [Skills](#skills)
 - [Supported Languages](#supported-languages)
   - [Auto-Validation](#auto-validation)
-  - [Repo Hardening](#repo-hardening)
+  - [Harden Repo](#harden-repo)
   - [Package Manager Auto-Detection](#package-manager-auto-detection)
 - [Learning System](#learning-system)
 - [Documentation](#documentation)
@@ -151,12 +151,12 @@ claude --plugin-dir /path/to/bluera-base
 | Skill | Purpose |
 |-------|---------|
 | `analyze-config` | Analyze repo's .claude/** for overlap with bluera-base |
-| `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
+| `commit` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `audit-plugin` | Audit Claude Code plugins against best practices |
 | `auto-learn` | Auto-learning pattern detection and consolidation |
 | `claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
-| `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
-| `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `claude-code-md` | CLAUDE.md validation with progressive disclosure templates |
+| `code-review` | Multi-agent codebase review with confidence scoring |
 | `config` | Manage bluera-base plugin configuration |
 | `dry` | Detect duplicate code using jscpd |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
@@ -168,9 +168,9 @@ claude --plugin-dir /path/to/bluera-base
 | `learn` | Deep learning management (show, apply, dismiss learnings) |
 | `memory` | Global memory management (cross-project knowledge) |
 | `milhouse` | Iterative development loop documentation |
-| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `readme` | README.md formatting with tables, badges, diagrams, collapsible sections |
 | `release` | Release workflow with multi-language version bumping |
-| `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
+| `harden-repo` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets |
 | `test-plugin` | Run comprehensive plugin validation test suite |
 | `todo` | Manage project TODO tasks |
@@ -205,7 +205,7 @@ The hook automatically detects and validates:
 
 > **Note:** Lint and typecheck failures are advisory (non-blocking). Checks run at most once per 30 seconds to avoid slowing down frequent edits.
 
-### Repo Hardening
+### Harden Repo
 
 *Via `/bluera-base:harden-repo` command*
 

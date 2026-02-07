@@ -18,7 +18,7 @@ Complete option reference for the milhouse loop.
 For long-running loops, use `--init-harness` to create tracking files:
 
 ```bash
-/bluera-base:milhouse-loop task.md --init-harness
+/bluera-base:milhouse task.md --init-harness
 ```
 
 Creates:
@@ -35,5 +35,5 @@ Each milhouse loop is tied to the terminal session that started it. If you have 
 ## Stopping Early
 
 - **Max iterations**: Use `--max-iterations N` to auto-stop after N iterations
-- **Manual cancel**: Run `/bluera-base:cancel-milhouse` to stop immediately
+- **Manual cancel**: Run `/bluera-base:milhouse cancel` to stop immediately
 - **Stuck detection**: Triggers after 3 identical gate failures (configurable)

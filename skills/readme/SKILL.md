@@ -1,7 +1,7 @@
 ---
-name: readme-maintainer
+name: readme
 description: Maintain README.md files with GitHub advanced formatting (tables, badges, diagrams, collapsible sections)
-user-invocable: false
+argument-hint: "<beautify|breakout|audit> [instructions]"
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
@@ -315,7 +315,7 @@ For large READMEs (> 400 lines) that should be split into modular documentation.
 5. Confirm with user before changes
 6. Execute and add Documentation links table
 
-**Details:** Read `${CLAUDE_PLUGIN_ROOT}/skills/readme-maintainer/templates/breakout.md` for:
+**Details:** Read `${CLAUDE_PLUGIN_ROOT}/skills/readme/templates/breakout.md` for:
 
 - GitHub special files (CONTRIBUTING.md, SECURITY.md, etc.)
 - Content type detection keywords

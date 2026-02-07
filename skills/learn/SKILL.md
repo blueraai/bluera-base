@@ -1,7 +1,7 @@
 ---
 name: learn
 description: Manage semantic learnings from session analysis
-user-invocable: true
+argument-hint: "[show|apply|dismiss|clear|extract]"
 allowed-tools: [Read, Write, Edit, Bash, AskUserQuestion]
 ---
 

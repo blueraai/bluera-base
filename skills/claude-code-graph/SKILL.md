@@ -1,6 +1,7 @@
 ---
 name: claude-code-graph
 description: Generate dependency graph and structural analysis of Claude Code plugins
+argument-hint: "[path] [--json|--mermaid] [--output FILE]"
 allowed-tools: [Read, Glob, Grep, Write]
 ---
 
@@ -133,7 +134,7 @@ Parse hooks.json structure:
       { "name": "commit", "file": "commands/commit.md", "description": "...", "allowedTools": [...] }
     ],
     "skills": [
-      { "name": "atomic-commits", "file": "skills/atomic-commits/SKILL.md", "description": "...", "allowedTools": [...] }
+      { "name": "commit", "file": "skills/commit/SKILL.md", "description": "...", "allowedTools": [...] }
     ],
     "hooks": [
       { "event": "PreToolUse", "matcher": "Bash", "script": "block-manual-release.sh" }
@@ -142,10 +143,10 @@ Parse hooks.json structure:
   },
   "dependencies": {
     "commandToSkill": {
-      "commit": "atomic-commits"
+      "commit": "commit"
     },
     "skillToTools": {
-      "atomic-commits": ["Read", "Write", "Bash", "Glob"]
+      "commit": ["Read", "Write", "Bash", "Glob"]
     },
     "skillToSkill": {
       "release": ["claude-code-guide"]
@@ -175,7 +176,7 @@ graph TD
     end
 
     subgraph Skills
-        skill_atomic["atomic-commits"]
+        skill_atomic["commit"]
         skill_release["release"]
     end
 

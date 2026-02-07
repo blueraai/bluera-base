@@ -5,7 +5,7 @@ Gates are commands that must pass AFTER the promise matches, before the loop exi
 ## Usage
 
 ```bash
-/bluera-base:milhouse-loop task.md --gate "npm test" --gate "npm run lint"
+/bluera-base:milhouse task.md --gate "npm test" --gate "npm run lint"
 ```
 
 ## Behavior
@@ -22,7 +22,7 @@ This ensures code is actually correct, not just claimed to be complete.
 Gates run in order. All must pass:
 
 ```bash
-/bluera-base:milhouse-loop task.md \
+/bluera-base:milhouse task.md \
   --gate "npm test" \
   --gate "npm run lint" \
   --gate "npm run typecheck"
@@ -34,10 +34,10 @@ If the same gate fails 3 times in a row (identical output), the loop auto-stops.
 
 ```bash
 # Disable stuck detection
-/bluera-base:milhouse-loop task.md --gate "npm test" --stuck-limit 0
+/bluera-base:milhouse task.md --gate "npm test" --stuck-limit 0
 
 # More lenient (5 identical failures)
-/bluera-base:milhouse-loop task.md --gate "npm test" --stuck-limit 5
+/bluera-base:milhouse task.md --gate "npm test" --stuck-limit 5
 ```
 
 ### How It Works

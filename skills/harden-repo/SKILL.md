@@ -1,6 +1,7 @@
 ---
-name: repo-hardening
+name: harden-repo
 description: Best practices for setting up quality tooling across different language stacks.
+argument-hint: "[--language <lang>] [--skip-hooks] [--coverage <threshold>]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
@@ -41,19 +42,19 @@ Per-language tooling configs (linting, formatting, type checking, hooks, coverag
 
 | Language | Reference |
 |----------|-----------|
-| JavaScript/TypeScript | skills/repo-hardening/references/javascript-typescript.md |
-| Python | skills/repo-hardening/references/python.md |
-| Rust | skills/repo-hardening/references/rust.md |
-| Go | skills/repo-hardening/references/go.md |
-| Java | skills/repo-hardening/references/java.md |
-| Kotlin | skills/repo-hardening/references/kotlin.md |
-| Ruby | skills/repo-hardening/references/ruby.md |
-| PHP | skills/repo-hardening/references/php.md |
-| C#/.NET | skills/repo-hardening/references/csharp-dotnet.md |
-| Swift | skills/repo-hardening/references/swift.md |
-| Elixir | skills/repo-hardening/references/elixir.md |
-| C/C++ | skills/repo-hardening/references/c-cpp.md |
-| Scala | skills/repo-hardening/references/scala.md |
+| JavaScript/TypeScript | skills/harden-repo/references/javascript-typescript.md |
+| Python | skills/harden-repo/references/python.md |
+| Rust | skills/harden-repo/references/rust.md |
+| Go | skills/harden-repo/references/go.md |
+| Java | skills/harden-repo/references/java.md |
+| Kotlin | skills/harden-repo/references/kotlin.md |
+| Ruby | skills/harden-repo/references/ruby.md |
+| PHP | skills/harden-repo/references/php.md |
+| C#/.NET | skills/harden-repo/references/csharp-dotnet.md |
+| Swift | skills/harden-repo/references/swift.md |
+| Elixir | skills/harden-repo/references/elixir.md |
+| C/C++ | skills/harden-repo/references/c-cpp.md |
+| Scala | skills/harden-repo/references/scala.md |
 
 ---
 

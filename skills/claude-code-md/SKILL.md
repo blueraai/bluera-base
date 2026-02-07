@@ -1,7 +1,7 @@
 ---
-name: claude-code-md-maintainer
+name: claude-code-md
 description: Validate/update/create CLAUDE.md memory files with progressive disclosure and context-optimized structure
-user-invocable: false
+argument-hint: "<audit|init|learn> [options]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls:*), Bash(wc:*), Bash(head:*), Bash(tail:*)
 ---
 
@@ -248,12 +248,12 @@ Commands with ≥threshold occurrences trigger learning suggestions.
 
 ## References
 
-- **Audit Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/templates/`
+- **Audit Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/templates/`
   - `root_CLAUDE.md` - Root project memory
   - `module_CLAUDE.md` - Directory-scoped memory
   - `local_CLAUDE.local.md` - Personal notes
 
-- **Init Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/templates/init/`
+- **Init Templates**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/templates/init/`
   - `js-ts.md` - JavaScript/TypeScript projects
   - `python.md` - Python projects
   - `rust.md` - Rust projects
@@ -261,13 +261,13 @@ Commands with ≥threshold occurrences trigger learning suggestions.
   - `ci-github.md` - GitHub Actions CI section
   - `ci-gitlab.md` - GitLab CI section
 
-- **Validation rules**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/docs/invariants.md`
+- **Validation rules**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/docs/invariants.md`
 
-- **Directory detection**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/docs/directory-heuristics.md`
+- **Directory detection**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/docs/directory-heuristics.md`
 
-- **Reliability guidance**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/docs/reliability.md`
+- **Reliability guidance**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/docs/reliability.md`
 
-- **Scope decision guide**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md-maintainer/docs/scope-guide.md`
+- **Scope decision guide**: `${CLAUDE_PLUGIN_ROOT}/skills/claude-code-md/docs/scope-guide.md`
 
 ## Key Rules
 

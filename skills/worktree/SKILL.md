@@ -1,6 +1,7 @@
 ---
 name: worktree
 description: Manage Git worktrees for parallel development workflows
+argument-hint: "[list|add|remove|prune|status] [args]"
 allowed-tools: [Bash, Read, AskUserQuestion]
 ---
 

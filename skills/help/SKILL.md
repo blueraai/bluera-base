@@ -1,6 +1,7 @@
 ---
 name: help
 description: Show bluera-base plugin features and usage
+argument-hint: "[commands|skills|hooks|config|all]"
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
 
@@ -13,8 +14,7 @@ Comprehensive guide to all bluera-base features.
 | Command | Description |
 |---------|-------------|
 | `/bluera-base:help` or `/bluera-base:help all` | Show all features |
-| `/bluera-base:help commands` | List all slash commands |
-| `/bluera-base:help skills` | List all skills |
+| `/bluera-base:help skills` | List all skills (slash commands) |
 | `/bluera-base:help hooks` | Explain automatic hooks |
 | `/bluera-base:help config` | Show configuration options |
 
@@ -26,13 +26,9 @@ Comprehensive guide to all bluera-base features.
 
 Display the complete feature reference below.
 
-### Commands
-
-Show only the Commands section.
-
 ### Skills
 
-Show only the Skills section.
+Show only the Skills section (all slash commands are skills).
 
 ### Hooks
 
@@ -54,7 +50,7 @@ Show only the Configuration section.
 /bluera-base:commit
 
 # Start iterative development loop
-/bluera-base:milhouse-loop --inline "implement feature X"
+/bluera-base:milhouse --inline "implement feature X"
 
 # Review code for issues
 /bluera-base:code-review
@@ -65,102 +61,74 @@ Show only the Configuration section.
 
 ---
 
-## Commands (28 total)
+## Skills (28 total)
+
+All skills are available as slash commands via `/bluera-base:<name>`.
 
 ### Development & Iteration
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:commit` | Create atomic commits with conventional format |
 | `/bluera-base:code-review` | Review codebase for bugs and CLAUDE.md compliance |
 | `/bluera-base:release` | Cut releases with conventional commits auto-detection |
-| `/bluera-base:milhouse-loop` | Start iterative development loop |
-| `/bluera-base:cancel-milhouse` | Cancel active milhouse loop |
+| `/bluera-base:milhouse` | Iterative development loop (`cancel` subcommand to stop) |
 | `/bluera-base:todo` | Manage project TODO tasks (show, add, complete) |
 | `/bluera-base:learn` | Manage semantic learnings from session analysis |
 | `/bluera-base:checklist` | Manage project checklist (view, add, check, edit) |
+| `/bluera-base:memory` | Manage global memories (cross-project knowledge) |
 
 ### Project Setup
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:config` | Manage plugin configuration |
-| `/bluera-base:create` | Create plugin components (commands, skills, hooks, agents, prompts) |
+| `/bluera-base:create` | Create plugin components (skills, hooks, agents, prompts) |
 | `/bluera-base:harden-repo` | Set up git hooks, linters, formatters |
 | `/bluera-base:init` | Initialize a project with bluera-base conventions |
 | `/bluera-base:install-rules` | Install rule templates to `.claude/rules/` |
 
 ### Documentation
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:claude-code-md` | Audit and maintain CLAUDE.md files |
 | `/bluera-base:readme` | Maintain README.md files |
 
 ### Analysis & Quality
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:claude-code-analyze-config` | Analyze repo's `.claude/**` for overlap |
 | `/bluera-base:claude-code-audit-plugin` | Audit a Claude Code plugin against best practices |
-| `/bluera-base:claude-code-clean` | Diagnose slow Claude Code startup and guide cleanup |
+| `/bluera-base:claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
 | `/bluera-base:dry` | Detect duplicate code with jscpd |
 | `/bluera-base:large-file-refactor` | Break apart files exceeding token limits |
 | `/bluera-base:tech-debt-and-refactor-scan` | Scan for refactor opportunities and tech debt |
 
 ### Git & Workflows
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:worktree` | Manage git worktrees for parallel development |
 | `/bluera-base:claude-code-statusline` | Configure Claude Code terminal status line |
 | `/bluera-base:claude-code-test-plugin` | Run plugin validation test suite |
+| `/bluera-base:claude-code-graph` | Generate dependency graph of plugin components |
 
 ### Help & Guidance
 
-| Command | Description |
-|---------|-------------|
-| `/bluera-base:claude-code-audit` | Audit a project's Claude Code configuration |
+| Skill | Description |
+|-------|-------------|
 | `/bluera-base:claude-code-guide` | Ask the Claude Code expert for guidance |
 | `/bluera-base:explain` | Explain all bluera-base plugin functionality |
 | `/bluera-base:help` | Show this help (you are here) |
 
----
-
-## Skills (28 total)
-
-Skills provide specialized guidance and workflows. Reference them with `@skill-name`.
+### Internal (not user-invocable)
 
 | Skill | Description |
 |-------|-------------|
-| `@claude-code-analyze-config` | Analyze .claude/** overlap with bluera-base |
-| `@atomic-commits` | Atomic commit creation with grouping rules |
-| `@claude-code-audit-plugin` | Audit plugins against best practices |
-| `@claude-code-guide` | Claude Code and plugin expert guidance |
-| `@create` | Create plugin components interactively |
-| `@auto-learn` | Automatic learning from session patterns |
-| `@checklist` | Project checklist management |
-| `@claude-cleaner` | Diagnose slow startup and guide cleanup |
-| `@claude-code-md-maintainer` | CLAUDE.md structure and validation |
-| `@code-review-repo` | Multi-agent code review patterns |
-| `@config` | Plugin configuration management |
-| `@dry` | Duplicate code detection with jscpd |
-| `@dry-refactor` | DRY refactoring patterns by language |
-| `@explain` | Plugin functionality documentation |
-| `@help` | Plugin features reference |
-| `@init` | Project initialization with conventions |
-| `@install-rules` | Rule template installation |
-| `@large-file-refactor` | Breaking apart files exceeding token limits |
-| `@learn` | Deep learning management |
-| `@milhouse` | Iterative development loop guidance |
-| `@readme-maintainer` | README.md formatting and structure |
-| `@release` | Release workflow with CI monitoring |
-| `@tech-debt-and-refactor-scan` | Tech debt detection and refactor analysis |
-| `@repo-hardening` | Security and quality tool setup |
-| `@statusline` | Status line configuration with presets |
-| `@claude-code-test-plugin` | Plugin validation test suite |
-| `@todo` | Project TODO task management |
-| `@worktree` | Git worktree management |
+| `auto-learn` | Automatic learning from session patterns |
+| `dry-refactor` | DRY refactoring patterns by language |
 
 ---
 

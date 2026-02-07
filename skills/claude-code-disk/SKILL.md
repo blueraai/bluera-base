@@ -1,6 +1,7 @@
 ---
 name: claude-code-disk
-description: View disk usage and clean up ~/.claude/ storage. Use /bluera-base:claude-code-disk to run.
+description: View disk usage and clean up ~/.claude/ storage
+argument-hint: "[--clean] [--json] [--days N] [--confirm] [--include|--exclude <action>] [--backups] [--restore <ts>]"
 ---
 
 # Claude Code Disk

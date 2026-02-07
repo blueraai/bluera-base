@@ -1,7 +1,7 @@
 ---
 name: claude-code-statusline
 description: Configure Claude Code's terminal status line display
-user-invocable: true
+argument-hint: "[show|preset [name]|custom|reset]"
 allowed-tools: [Read, Write, Edit, Bash]
 ---
 

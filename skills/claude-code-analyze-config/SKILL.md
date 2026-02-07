@@ -1,6 +1,7 @@
 ---
 name: claude-code-analyze-config
 description: Analyze repo's .claude/** for overlap with bluera-base and suggest cleanup
+argument-hint: "[--cleanup]"
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
 
@@ -20,7 +21,7 @@ This plugin provides:
 
 - `/bluera-base:claude-code-analyze-config` - analyze .claude/ for overlap with bluera-base
 - `/bluera-base:claude-code-audit-plugin` - audit a Claude Code plugin against best practices
-- `/bluera-base:cancel-milhouse` - cancel active milhouse loop
+- `/bluera-base:milhouse cancel` - cancel active milhouse loop
 - `/bluera-base:claude-code-md` - CLAUDE.md maintenance
 - `/bluera-base:claude-code-clean` - diagnose slow startup and guide cleanup
 - `/bluera-base:code-review` - multi-agent code review
@@ -32,7 +33,7 @@ This plugin provides:
 - `/bluera-base:help` - show plugin features and usage
 - `/bluera-base:init` - initialize project with conventions
 - `/bluera-base:install-rules` - install rule templates
-- `/bluera-base:milhouse-loop` - iterative development loop
+- `/bluera-base:milhouse` - iterative development loop
 - `/bluera-base:readme` - README.md maintenance
 - `/bluera-base:release` - version bumping and release workflow
 - `/bluera-base:claude-code-statusline` - configure status line display
@@ -42,17 +43,17 @@ This plugin provides:
 
 ### Skills (12 total)
 
-- `atomic-commits` - commit grouping and documentation checks
+- `commit` - commit grouping and documentation checks
 - `auto-learn` - command pattern learning
 - `claude-cleaner` - diagnose slow Claude Code startup
 - `claude-md-maintainer` - CLAUDE.md structure and validation
-- `code-review-repo` - code review guidelines
+- `code-review` - code review guidelines
 - `dry-refactor` - language-specific DRY refactoring guidance
 - `large-file-refactor` - break apart large files
 - `milhouse` - iterative loop patterns
-- `readme-maintainer` - README formatting
+- `readme` - README formatting
 - `release` - release workflow
-- `repo-hardening` - linter/hook setup per language
+- `harden-repo` - linter/hook setup per language
 - `statusline` - terminal status line configuration
 
 ### Hooks
@@ -114,10 +115,10 @@ Generate a report:
 
 ### Duplicates (recommend removal)
 - `.claude/commands/commit.md` - duplicates /bluera-base:commit
-- `.claude/rules/commit-style.md` - covered by atomic-commits skill
+- `.claude/rules/commit-style.md` - covered by commit skill
 
 ### Overlaps (review needed)
-- `.claude/skills/my-review/` - similar to code-review-repo
+- `.claude/skills/my-review/` - similar to code-review
   - Unique aspects: [list]
   - Consider: merge or keep both
 
@@ -137,7 +138,7 @@ For each duplicate/overlap, use AskUserQuestion:
    - Keep (disable bluera-base equivalent)
    - Keep both
 
-2. **Overlaps**: "`.claude/skills/my-review/` overlaps with code-review-repo. Action?"
+2. **Overlaps**: "`.claude/skills/my-review/` overlaps with code-review. Action?"
    - Remove (use bluera-base)
    - Merge unique parts into bluera-base skill
    - Keep separate

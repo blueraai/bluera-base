@@ -1,7 +1,7 @@
 ---
 name: large-file-refactor
 description: Use when Claude Code hits "File content exceeds maximum allowed tokens" error, or when files are too large to read. Helps analyze and break apart large files into smaller, focused modules.
-user-invocable: true
+argument-hint: "<file>"
 allowed-tools: Read, Glob, Grep, LSP, Edit, Write, Bash(wc:*)
 ---
 

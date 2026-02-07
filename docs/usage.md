@@ -40,7 +40,7 @@ The `@bluera-base/includes/CLAUDE-BASE.md` pulls in:
 
 To customize a skill for your project:
 
-1. Create `.claude/skills/atomic-commits/SKILL.md` in your project
+1. Create `.claude/skills/commit/SKILL.md` in your project
 2. Copy the base skill content
 3. Modify the "Trigger files" section for your project structure
 

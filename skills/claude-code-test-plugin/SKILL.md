@@ -1,6 +1,7 @@
 ---
 name: claude-code-test-plugin
 description: Run comprehensive plugin validation test suite
+context: fork
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
 
@@ -218,7 +219,7 @@ Execute each test in order. Mark each as PASS or FAIL.
     rm -rf /tmp/bluera-base-test/.bluera/bluera-base/state/milhouse-loop.md
     ```
 
-    Then run `/bluera-base:cancel-milhouse`
+    Then run `/bluera-base:milhouse cancel`
     - Expected: Message about no active loop
     - PASS if command executes
 
@@ -527,7 +528,7 @@ After running all tests, report results in this format:
 | 10 | Invalid Iteration Handling | ? |
 | 11 | Setup Creates State File | ? |
 | 12 | /bluera-base:commit Command | ? |
-| 13 | /bluera-base:cancel-milhouse Command | ? |
+| 13 | /bluera-base:milhouse cancel Command | ? |
 | 14 | All Skills Have SKILL.md | ? |
 | 15 | Skills Are Readable | ? |
 | 16 | Signals Library Tests | ? |

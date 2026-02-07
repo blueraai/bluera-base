@@ -1,6 +1,7 @@
 ---
 name: explain
 description: Explain all bluera-base plugin functionality in human-readable format
+argument-hint: "[overview|features|commands|behaviors|config|philosophy]"
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion]
 ---
 
@@ -259,8 +260,8 @@ brew install terminal-notifier
 **How to use:**
 
 ```bash
-/bluera-base:milhouse-loop prompt.md --promise "all tests pass" --gate "bun test"
-/bluera-base:cancel-milhouse  # Stop an active loop
+/bluera-base:milhouse prompt.md --promise "all tests pass" --gate "bun test"
+/bluera-base:milhouse cancel  # Stop an active loop
 ```
 
 **What you'll see:** Claude works through iterations, running gate commands between each. Stops when the promise is fulfilled or max iterations reached.
@@ -294,8 +295,7 @@ Commands are organized by category. All commands are prefixed with `/bluera-base
 | Command | Purpose |
 |---------|---------|
 | `/commit` | Create atomic commits with README/CLAUDE.md awareness |
-| `/milhouse-loop` | Start an iterative development loop |
-| `/cancel-milhouse` | Stop an active milhouse loop |
+| `/milhouse` | Iterative development loop (start, cancel subcommands) |
 | `/todo` | Manage project TODO tasks |
 | `/learn` | Manage learnings from session analysis |
 | `/checklist` | Manage project checklist |

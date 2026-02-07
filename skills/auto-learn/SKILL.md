@@ -170,4 +170,4 @@ See `skills/learn/SKILL.md` for full deep learning documentation.
 - `/bluera-base:claude-code-md learn` - Manually add a learning
 - `/bluera-base:learn` - Manage deep learnings
 - `skills/learn` - Deep learning skill
-- `skills/claude-code-md-maintainer` - Full CLAUDE.md management skill
+- `skills/claude-code-md` - Full CLAUDE.md management skill

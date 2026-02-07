@@ -4,10 +4,10 @@
 
 ## Project-specific trigger files
 
-The `atomic-commits` skill has generic trigger files. Override by creating your own:
+The `commit` skill has generic trigger files. Override by creating your own:
 
 ```markdown
-# .claude/skills/atomic-commits/SKILL.md
+# .claude/skills/commit/SKILL.md
 
 **Trigger files -> check README.md:**
 - `src/mcp/server.ts` - MCP tool surface

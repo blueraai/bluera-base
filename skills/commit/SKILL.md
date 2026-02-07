@@ -1,6 +1,8 @@
 ---
-name: atomic-commits
+name: commit
 description: Create atomic commits grouped by logical features with README.md and CLAUDE.md awareness.
+argument-hint: "[-m message]"
+allowed-tools: [Bash, Read, Glob, Grep]
 ---
 
 # Atomic Commits with Documentation Awareness

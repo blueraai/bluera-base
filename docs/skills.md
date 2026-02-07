@@ -9,17 +9,17 @@ Bluera Base provides reusable skill documentation that guides Claude Code throug
 | `auto-learn` | Automatic learning from session patterns |
 | `learn` | Deep learning management (show, apply, dismiss learnings) |
 | `memory` | Global memory management (cross-project knowledge) |
-| `atomic-commits` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
+| `commit` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
 | `claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
-| `claude-md-maintainer` | CLAUDE.md validation with progressive disclosure templates |
-| `code-review-repo` | Multi-agent codebase review with confidence scoring |
+| `claude-code-md` | CLAUDE.md validation with progressive disclosure templates |
+| `code-review` | Multi-agent codebase review with confidence scoring |
 | `dry` | Scan for code duplication using jscpd |
 | `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
 | `milhouse` | Iterative development loop documentation |
-| `readme-maintainer` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `readme` | README.md formatting with tables, badges, diagrams, collapsible sections |
 | `release` | Release workflow with multi-language version bumping |
-| `repo-hardening` | Language-specific tooling for linting, formatting, hooks, and coverage |
+| `harden-repo` | Language-specific tooling for linting, formatting, hooks, and coverage |
 | `statusline` | Status line configuration with presets |
 | `claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
 
@@ -156,7 +156,7 @@ See `skills/claude-code-disk/SKILL.md` for full documentation.
 
 ---
 
-## code-review-repo
+## code-review
 
 Launches 5 parallel agents to independently review your codebase:
 
@@ -248,10 +248,10 @@ flowchart LR
 
 ```bash
 # File-based prompt
-/bluera-base:milhouse-loop .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
+/bluera-base:milhouse .claude/prompts/task.md --max-iterations 10 --promise "FEATURE DONE"
 
 # Inline prompt
-/bluera-base:milhouse-loop --inline "Build the feature" --max-iterations 10
+/bluera-base:milhouse --inline "Build the feature" --max-iterations 10
 ```
 
 ### Options
@@ -271,11 +271,11 @@ flowchart LR
 |-----------|--------------|
 | `<promise>TEXT</promise>` as last line | Loop exits successfully |
 | Max iterations reached | Loop exits with warning |
-| `/bluera-base:cancel-milhouse` | Loop cancelled |
+| `/bluera-base:milhouse cancel` | Loop cancelled |
 
 ---
 
-## atomic-commits
+## commit
 
 Guidelines for creating well-organized commits:
 
@@ -286,7 +286,7 @@ Guidelines for creating well-organized commits:
 
 ---
 
-## claude-md-maintainer
+## claude-code-md
 
 Validates and maintains CLAUDE.md files with:
 
@@ -297,7 +297,7 @@ Validates and maintains CLAUDE.md files with:
 
 ---
 
-## readme-maintainer
+## readme
 
 Formats README.md files using GitHub advanced features:
 
@@ -328,7 +328,7 @@ Helps when files exceed Claude Code's token limits:
 
 ---
 
-## repo-hardening
+## harden-repo
 
 Sets up code quality tooling for 13 languages:
 
@@ -360,22 +360,19 @@ Expert guidance for Claude Code plugin development. Provides three modes:
 |------|-------|-------------|
 | Question | `/bluera-base:claude-code-guide how do I create a hook?` | Answer questions using expert knowledge |
 | Review | `/bluera-base:claude-code-guide review` | Review current plugin against best practices |
-| Audit | `/bluera-base:claude-code-audit [path] [instructions]` | Comprehensive audit against checklist |
+| Audit | `/bluera-base:claude-code-guide audit [path]` | Comprehensive audit against checklist |
 
-### Audit Command
+### Audit Mode
 
 ```bash
 # Full audit of current directory
-/bluera-base:claude-code-audit
+/bluera-base:claude-code-guide audit
 
 # Audit a specific plugin
-/bluera-base:claude-code-audit ~/repos/my-plugin
+/bluera-base:claude-code-guide audit ~/repos/my-plugin
 
 # Focused audit
-/bluera-base:claude-code-audit focus on hooks
-
-# Specific path + focus
-/bluera-base:claude-code-audit ~/repos/my-plugin check for security issues
+/bluera-base:claude-code-guide audit focus on hooks
 ```
 
 ### Audit Checklist

@@ -44,29 +44,6 @@ bluera-base/
 │   └── plugin.json               # Plugin manifest
 ├── assets/
 │   └── claude.png                # Plugin icon/assets
-├── commands/
-│   ├── claude-code-analyze-config.md  # /bluera-base:claude-code-analyze-config command
-│   ├── claude-code-audit-plugin.md    # /bluera-base:claude-code-audit-plugin command
-│   ├── cancel-milhouse.md             # /bluera-base:cancel-milhouse command
-│   ├── claude-code-md.md              # /bluera-base:claude-code-md command
-│   ├── claude-code-disk.md       # /bluera-base:claude-code-disk command
-│   ├── code-review.md            # /bluera-base:code-review command
-│   ├── commit.md                 # /bluera-base:commit command
-│   ├── config.md                 # /bluera-base:config command
-│   ├── dry.md                    # /bluera-base:dry command
-│   ├── explain.md                # /bluera-base:explain command
-│   ├── harden-repo.md            # /bluera-base:harden-repo command
-│   ├── help.md                   # /bluera-base:help command
-│   ├── init.md                   # /bluera-base:init command
-│   ├── install-rules.md          # /bluera-base:install-rules command
-│   ├── memory.md                 # /bluera-base:memory command
-│   ├── milhouse-loop.md          # /bluera-base:milhouse-loop command
-│   ├── readme.md                 # /bluera-base:readme command
-│   ├── release.md                # /bluera-base:release command
-│   ├── claude-code-statusline.md # /bluera-base:claude-code-statusline command
-│   ├── claude-code-test-plugin.md     # /bluera-base:claude-code-test-plugin command
-│   ├── todo.md                   # /bluera-base:todo command
-│   └── worktree.md               # /bluera-base:worktree command
 ├── hooks/
 │   ├── hooks.json                # Hook definitions
 │   ├── lib/                      # Shared hook libraries
@@ -89,15 +66,15 @@ bluera-base/
 ├── skills/
 │   ├── auto-learn/
 │   │   └── SKILL.md              # Automatic learning from sessions
-│   ├── atomic-commits/
+│   ├── commit/
 │   │   └── SKILL.md              # Commit guidelines
 │   ├── claude-code-disk/
 │   │   └── SKILL.md              # Disk usage and cleanup
-│   ├── claude-md-maintainer/
+│   ├── claude-code-md/
 │   │   ├── SKILL.md              # CLAUDE.md validation skill
 │   │   ├── docs/                 # Invariants and heuristics
 │   │   └── templates/            # CLAUDE.md templates
-│   ├── code-review-repo/
+│   ├── code-review/
 │   │   └── SKILL.md              # Multi-agent review
 │   ├── dry-refactor/
 │   │   └── SKILL.md              # DRY refactoring guidance
@@ -107,12 +84,12 @@ bluera-base/
 │   │   └── SKILL.md              # Global memory management
 │   ├── milhouse/
 │   │   └── SKILL.md              # Iterative development loop
-│   ├── readme-maintainer/
+│   ├── readme/
 │   │   ├── SKILL.md              # README formatting guidelines
 │   │   └── templates/            # Badge and structure templates
 │   ├── release/
 │   │   └── SKILL.md              # Release workflow
-│   ├── repo-hardening/
+│   ├── harden-repo/
 │   │   └── SKILL.md              # Repo hardening best practices
 │   └── statusline/
 │       └── SKILL.md              # Status line configuration

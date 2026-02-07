@@ -1,6 +1,7 @@
 ---
 name: milhouse
-description: Iterative development loop that feeds the same prompt back after each iteration until task completion. Use /bluera-base:milhouse-loop to start.
+description: Iterative development loop that feeds the same prompt back after each iteration until task completion.
+argument-hint: "<prompt-file> [--inline TEXT] [--max-iterations N] [--promise TEXT] [--gate CMD] [--stuck-limit N] [--init-harness]"
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
@@ -20,16 +21,16 @@ The milhouse loop is a powerful pattern for iterative development tasks. It work
 
 ```bash
 # Basic usage with a prompt file
-/bluera-base:milhouse-loop .claude/prompts/my-task.md
+/bluera-base:milhouse .claude/prompts/my-task.md
 
 # With max iterations and gates
-/bluera-base:milhouse-loop task.md --max-iterations 10 --gate "npm test"
+/bluera-base:milhouse task.md --max-iterations 10 --gate "npm test"
 
 # Inline prompt (for simple tasks)
-/bluera-base:milhouse-loop --inline "Refactor the auth module to use JWT tokens"
+/bluera-base:milhouse --inline "Refactor the auth module to use JWT tokens"
 
 # With context harness (creates plan.md and activity.md)
-/bluera-base:milhouse-loop task.md --init-harness
+/bluera-base:milhouse task.md --init-harness
 ```
 
 See [references/options.md](references/options.md) for all options.
@@ -58,7 +59,7 @@ Or with a custom promise:
 
 - **Gates**: Commands that must pass before exit. See [references/gates.md](references/gates.md).
 - **Max iterations**: Use `--max-iterations N` to auto-stop
-- **Manual cancel**: Run `/bluera-base:cancel-milhouse`
+- **Manual cancel**: Run `/bluera-base:milhouse cancel`
 - **Stuck detection**: Auto-stops after 3 identical gate failures
 
 ## Internals
@@ -75,7 +76,7 @@ For state file format and token-efficient continuation, see [references/internal
 ## Example: TDD Loop
 
 ```bash
-/bluera-base:milhouse-loop .claude/prompts/add-auth.md \
+/bluera-base:milhouse .claude/prompts/add-auth.md \
   --gate "npm test" \
   --gate "npm run lint" \
   --max-iterations 20 \

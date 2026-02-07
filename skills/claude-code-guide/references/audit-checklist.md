@@ -48,29 +48,14 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ### Directory Layout
 
-- [ ] Commands at `commands/*.md` (not nested in `.claude-plugin/`)
-- [ ] Skills at `skills/*/SKILL.md`
+- [ ] Skills at `skills/*/SKILL.md` (auto-register as slash commands)
+- [ ] No legacy `commands/*.md` wrappers (use skills directly since 2.1.3)
 - [ ] Hooks at `hooks/hooks.json` + `hooks/*.sh`
 - [ ] Agents at `agents/*.md` (if used)
 
-## 3. Commands
+## 3. Skills (Slash Commands)
 
-> Reference: [Claude Code Commands](https://code.claude.com/docs/en/plugins#commands)
-
-### Frontmatter
-
-- [ ] All commands have `description` frontmatter
-- [ ] `allowed-tools` are explicit (no wildcards like `Bash(*)`)
-- [ ] `argument-hint` present where arguments are expected
-- [ ] No deprecated frontmatter fields
-
-### Structure
-
-- [ ] Thin command + thick skill pattern used
-- [ ] Command body is minimal (references skill)
-- [ ] No duplicate logic across commands
-
-## 4. Skills
+Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `commands/` files needed.
 
 > Reference: [Claude Code Skills](https://code.claude.com/docs/en/skills)
 
