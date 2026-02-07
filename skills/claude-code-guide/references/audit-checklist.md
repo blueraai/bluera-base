@@ -107,19 +107,29 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 
 - [ ] `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set in settings.json `env` block
 - [ ] `teammateMode` configured (`in-process`, `tmux`, or `auto`)
-- [ ] tmux installed if using split-pane mode
+- [ ] tmux or iTerm2 with `it2` CLI installed if using split-pane mode
+- [ ] Split-pane mode NOT used in VS Code terminal, Windows Terminal, or Ghostty
 
 ### Hooks
 
 - [ ] TeammateIdle hooks enforce quality gates (exit 2 keeps teammate working)
 - [ ] TaskCompleted hooks enforce completion criteria (exit 2 blocks completion)
+- [ ] Both registered as `async` in hooks.json (no matcher support)
 - [ ] Both use exit-code-only control (no JSON decision support)
 
 ### Architecture
 
 - [ ] Agent `memory` frontmatter set where appropriate (`user`, `project`, `local`)
 - [ ] Task dependencies defined for sequential work
-- [ ] File ownership clear (no two teammates editing same files)
+- [ ] File ownership clear (no two teammates editing same files — last write wins)
+- [ ] Plan approval gates used for risky teammate work
+- [ ] Tasks sized appropriately (5-6 per teammate for steady throughput)
+
+### Limitations Acknowledged
+
+- [ ] No `/resume` or `/rewind` support for teammates
+- [ ] One team per session, no nested teams, fixed lead
+- [ ] Spawn prompts include full context (teammates don't inherit lead history)
 
 ## 6. Token Efficiency
 

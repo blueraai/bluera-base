@@ -451,14 +451,93 @@ Register as async in hooks.json (no matcher support - always fires):
 
 Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json `env` block.
 
-Key points:
+Key concepts:
 
-- One lead session coordinates, teammates work independently
-- Teammates can message each other directly (unlike subagents)
-- Shared task list with dependency tracking
-- Display modes: `in-process` (any terminal) or `tmux`/`iTerm2` split panes
-- Use delegate mode (`Shift+Tab`) to prevent lead from implementing
-- All teammates inherit lead's permission mode
+- **Lead** session creates team, spawns teammates, coordinates work
+- **Teammates** are independent Claude Code instances with own context windows
+- Teammates message each other directly (unlike subagents which only report back)
+- Shared task list with dependency tracking and file locking
+- All teammates inherit lead's permission mode at spawn time
+- Storage: `~/.claude/teams/{name}/config.json`, `~/.claude/tasks/{name}/`
+
+Display modes (set via `teammateMode` in settings.json or `--teammate-mode` flag):
+
+| Mode | Value | Requires |
+|------|-------|----------|
+| In-process (default) | `in-process` | Any terminal |
+| Split-pane | `tmux` | tmux or iTerm2 with `it2` CLI |
+| Auto-detect | `auto` | Uses split panes if already in tmux |
+
+Split-pane NOT supported in: VS Code terminal, Windows Terminal, Ghostty.
+
+Keyboard shortcuts (in-process mode):
+
+| Shortcut | Action |
+|----------|--------|
+| Shift+Up/Down | Navigate between teammates |
+| Shift+Tab | Toggle delegate mode (lead coordinates only, no coding) |
+| Ctrl+T | Toggle task list visibility |
+| Enter | View selected teammate's full session |
+| Escape | Interrupt teammate, return to lead view |
+
+### "How do agent team lifecycles work?"
+
+**Spawning**: Ask lead to create a team or Claude proposes one. Specify composition:
+
+```text
+Create a team with 3 teammates: one for backend API, one for frontend UI,
+one for integration tests. Use Sonnet for each.
+```
+
+**Task coordination**:
+
+- Lead assigns tasks, or teammates self-claim next unassigned/unblocked task
+- Task dependencies auto-managed: blocked tasks can't be claimed until deps complete
+- Create 5-6 tasks per teammate for steady throughput
+
+**Plan approval gate**: Require review before risky implementation:
+
+```text
+Spawn an architect teammate to refactor auth. Require plan approval
+before they make any changes.
+```
+
+Teammate enters read-only plan mode, submits plan, lead approves/rejects.
+
+**Shutdown**: Ask specific teammate to shut down (they can approve/reject). Clean up entire team when done — always use lead for cleanup, not teammates.
+
+**Limitations**:
+
+- No `/resume` or `/rewind` for teammates (spawn new ones after resume)
+- One team per session, no nested teams
+- Fixed lead (can't transfer leadership)
+- File conflicts: last write wins — design work so teammates own different files
+- Permissions set at spawn (can change individual teammate modes after)
+- Token cost scales linearly (~5x per teammate)
+
+### "When should I use agent teams vs subagents?"
+
+| Aspect | Subagents | Agent Teams |
+|--------|-----------|-------------|
+| Communication | Report to parent only | Direct peer messaging |
+| Coordination | Parent orchestrates | Self-organize via task list |
+| Context | Shared parent context | Independent context windows |
+| Token cost | Lower | ~5x per teammate |
+| Best for | Focused research/queries | Parallel exploration + collaboration |
+
+**Use agent teams for**: parallel code reviews, competing hypotheses debugging, multi-layer feature dev, cross-cutting research.
+
+**Use subagents for**: single focused queries, noisy search tasks, protecting parent context.
+
+### "What are best practices for agent teams?"
+
+- Start with read-only tasks (reviews, research) before parallel implementation
+- Size tasks: not too small (coordination overhead), not too large (wasted effort)
+- Give teammates full context in spawn prompts (they don't inherit lead history)
+- Design file ownership so no two teammates edit the same files
+- Use delegate mode (Shift+Tab) when lead should only coordinate
+- Monitor and steer actively — don't let team run unattended too long
+- Use CLAUDE.md for global guidance all teammates will read
 
 ### "How do I add memory to an agent?"
 
