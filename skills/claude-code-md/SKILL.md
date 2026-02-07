@@ -2,7 +2,7 @@
 name: claude-code-md
 description: Validate/update/create CLAUDE.md memory files with progressive disclosure and context-optimized structure
 argument-hint: "<audit|init|learn> [options]"
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(find:*), Bash(git:*), Bash(ls:*), Bash(wc:*), Bash(head:*), Bash(tail:*)
+allowed-tools: [Read, Write, Edit, Glob, Grep, "Bash(find:*)", "Bash(git:*)", "Bash(ls:*)", "Bash(wc:*)", "Bash(head:*)", "Bash(tail:*)"]
 ---
 
 # CLAUDE.md Maintainer

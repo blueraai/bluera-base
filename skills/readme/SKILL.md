@@ -2,7 +2,7 @@
 name: readme
 description: Maintain README.md files with GitHub advanced formatting (tables, badges, diagrams, collapsible sections)
 argument-hint: "<beautify|breakout|audit> [instructions]"
-allowed-tools: Read, Write, Edit, Glob, Grep
+allowed-tools: [Read, Write, Edit, Glob, Grep]
 ---
 
 # README Maintainer

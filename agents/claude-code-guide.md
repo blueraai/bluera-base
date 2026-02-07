@@ -241,10 +241,21 @@ Since Claude Code 2.1.3, skills automatically register as slash commands. The ol
 
 ```yaml
 allowed-tools:
-  - Bash(npm *)      # npm with any subcommand
-  - Bash(* install)  # Any command ending with install
-  - Task(*)          # All agents
-  - Task(my-agent)   # Specific agent only
+  - "Bash(npm *)"      # npm with any subcommand
+  - "Bash(* install)"  # Any command ending with install
+  - "Task(*)"          # All agents
+  - Task(my-agent)     # No special chars, quoting optional
+```
+
+**IMPORTANT**: Quote `allowed-tools` entries containing `*`, `,`, `:`, or parentheses to prevent YAML mis-parsing. Use YAML list syntax `[...]` not comma-separated strings.
+
+```yaml
+# WRONG - comma splits into two broken entries
+allowed-tools: [Bash(git:*, mkdir:*)]
+# Result: ["Bash(git:*", "mkdir:*)"]
+
+# RIGHT - separate quoted entries
+allowed-tools: [Read, "Bash(git:*)", "Bash(mkdir:*)"]
 ```
 
 **Restricting agents:**

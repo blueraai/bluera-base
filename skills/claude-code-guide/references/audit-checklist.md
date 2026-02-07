@@ -69,6 +69,8 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 ### Syntax
 
 - [ ] No deprecated argument syntax (`$ARGUMENTS.0` should be `$ARGUMENTS[0]`)
+- [ ] `allowed-tools` uses YAML list syntax, not comma-separated strings
+- [ ] `allowed-tools` entries with `*`, `,`, `:` or parens are quoted (e.g., `"Bash(git:*)"`)
 - [ ] Workflow sections are clear and actionable
 - [ ] Quick reference sections for common patterns
 
