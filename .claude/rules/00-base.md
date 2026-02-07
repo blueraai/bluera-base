@@ -40,6 +40,8 @@ These hooks enhance sessions and may exit 0 with a stderr warning when deps are 
 - `milhouse-stop.sh` - Iteration loop
 - `session-end-learn.sh` - Learning consolidation
 - `session-end-analyze.sh` - Session analysis
+- `teammate-idle.sh` - Agent team coordination
+- `task-completed.sh` - Agent task result handling
 
 ### Requirements for Optional Hooks
 

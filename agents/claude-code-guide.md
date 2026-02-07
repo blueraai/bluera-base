@@ -2,6 +2,7 @@
 name: claude-code-guide
 description: Claude Code and plugin expert - answers questions, reviews implementations, provides best practices guidance for hooks, skills, commands, agents, and MCP
 model: sonnet
+memory: project
 allowed-tools: [Read, Glob, Grep, WebFetch, WebSearch, mcp__plugin_bluera-knowledge_bluera-knowledge__search, mcp__plugin_bluera-knowledge_bluera-knowledge__get_full_context]
 skills: [bluera-knowledge:knowledge-search, bluera-knowledge:when-to-query]
 ---

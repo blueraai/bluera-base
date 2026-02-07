@@ -164,7 +164,7 @@ Skills provide specialized guidance and workflows. Reference them with `@skill-n
 
 ---
 
-## Hooks (13 total)
+## Hooks (18 total)
 
 Hooks run automatically on specific events. No action required.
 
@@ -175,6 +175,7 @@ Hooks run automatically on specific events. No action required.
 | `session-setup.sh` | SessionStart | Check jq, fix hook permissions, update .gitignore |
 | `session-start-inject.sh` | SessionStart | Inject context into session |
 | `checklist-remind.sh` | SessionStart | Remind about pending checklist items |
+| `session-start-memory.sh` | SessionStart | Surface relevant global memories (opt-in) |
 | `pre-compact.sh` | PreCompact | Preserve state before context compaction |
 | `session-end-learn.sh` | Stop | Process learning observations |
 | `session-end-analyze.sh` | Stop | Deep learning session analysis |
@@ -184,6 +185,7 @@ Hooks run automatically on specific events. No action required.
 | Hook | Event | Description |
 |------|-------|-------------|
 | `block-manual-release.sh` | PreToolUse:Bash | Block manual version bumps (use /bluera-base:release) |
+| `check-git-secrets.sh` | PreToolUse:Bash | Block git commits when secrets check unavailable |
 | `post-edit-check.sh` | PostToolUse:Write\|Edit | Validate file changes |
 | `observe-learning.sh` | PreToolUse:Bash | Track commands for learning |
 | `standards-review.sh` | PreToolUse:Bash | Review code against CLAUDE.md standards |
@@ -193,6 +195,13 @@ Hooks run automatically on specific events. No action required.
 | Hook | Event | Description |
 |------|-------|-------------|
 | `notify.sh` | Notification | Send desktop notifications |
+
+### Agent Teams
+
+| Hook | Event | Description |
+|------|-------|-------------|
+| `teammate-idle.sh` | TeammateIdle | Coordinate when agent teammates are idle |
+| `task-completed.sh` | TaskCompleted | Handle delegated agent task completion |
 
 ### Automation
 
@@ -285,4 +294,9 @@ bluera-base works with any language Claude Code supports. Language-specific feat
 - `/bluera-base:help <topic>` - Specific topic help
 - `@skill-name` - Reference skill documentation
 - `/bluera-base:config status` - Debug configuration issues
+
+### Skill Budget
+
+Claude Code limits skill loading to 2% of context window. If skills are excluded, check `/context` and increase with `SLASH_COMMAND_TOOL_CHAR_BUDGET`.
+
 - GitHub: <https://github.com/blueraai/bluera-base>

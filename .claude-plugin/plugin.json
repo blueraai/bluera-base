@@ -7,7 +7,14 @@
     "url": "https://bluera.ai"
   },
   "repository": "https://github.com/blueraai/bluera-base",
+  "homepage": "https://github.com/blueraai/bluera-base#readme",
+  "bugs": "https://github.com/blueraai/bluera-base/issues",
   "license": "MIT",
+  "categories": [
+    "development",
+    "quality",
+    "automation"
+  ],
   "keywords": [
     "conventions",
     "hooks",
