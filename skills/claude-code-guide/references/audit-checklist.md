@@ -4,15 +4,15 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 **Official Documentation:**
 
-- [Claude Code Plugins](https://docs.anthropic.com/en/docs/claude-code/plugins)
-- [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
-- [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
-- [Claude Code MCP](https://docs.anthropic.com/en/docs/claude-code/mcp)
-- [CLAUDE.md Memory Files](https://docs.anthropic.com/en/docs/claude-code/memory)
+- [Claude Code Plugins](https://code.claude.com/docs/en/plugins)
+- [Claude Code Hooks](https://code.claude.com/docs/en/hooks)
+- [Claude Code Skills](https://code.claude.com/docs/en/skills)
+- [Claude Code MCP](https://code.claude.com/docs/en/mcp)
+- [CLAUDE.md Memory Files](https://code.claude.com/docs/en/memory)
 
 ## 1. Project Configuration
 
-> Reference: [CLAUDE.md Memory Files](https://docs.anthropic.com/en/docs/claude-code/memory)
+> Reference: [CLAUDE.md Memory Files](https://code.claude.com/docs/en/memory)
 
 ### CLAUDE.md Files
 
@@ -37,7 +37,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 2. Plugin Structure (if applicable)
 
-> Reference: [Claude Code Plugins](https://docs.anthropic.com/en/docs/claude-code/plugins)
+> Reference: [Claude Code Plugins](https://code.claude.com/docs/en/plugins)
 
 ### Manifest
 
@@ -55,7 +55,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 3. Commands
 
-> Reference: [Claude Code Commands](https://docs.anthropic.com/en/docs/claude-code/plugins#commands)
+> Reference: [Claude Code Commands](https://code.claude.com/docs/en/plugins#commands)
 
 ### Frontmatter
 
@@ -72,7 +72,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 4. Skills
 
-> Reference: [Claude Code Skills](https://docs.anthropic.com/en/docs/claude-code/skills)
+> Reference: [Claude Code Skills](https://code.claude.com/docs/en/skills)
 
 ### Organization
 
@@ -89,13 +89,14 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 5. Hooks
 
-> Reference: [Claude Code Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
+> Reference: [Claude Code Hooks](https://code.claude.com/docs/en/hooks)
 
 ### Configuration
 
 - [ ] `hooks.json` has valid structure
 - [ ] Matchers use correct regex syntax
-- [ ] Event types are valid
+- [ ] Event types are valid (SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop, Stop, TeammateIdle, TaskCompleted, PreCompact, SessionEnd)
+- [ ] TeammateIdle/TaskCompleted hooks registered if agent teams used
 
 ### Scripts
 
@@ -113,9 +114,31 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 - [ ] Setup hooks use `once: true` where appropriate
 - [ ] No infinite loops in Stop hooks
 
+## 5a. Agent Teams (if applicable)
+
+> Reference: [Agent Teams](https://code.claude.com/docs/en/agent-teams)
+
+### Setup
+
+- [ ] `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set in settings.json `env` block
+- [ ] `teammateMode` configured (`in-process`, `tmux`, or `auto`)
+- [ ] tmux installed if using split-pane mode
+
+### Hooks
+
+- [ ] TeammateIdle hooks enforce quality gates (exit 2 keeps teammate working)
+- [ ] TaskCompleted hooks enforce completion criteria (exit 2 blocks completion)
+- [ ] Both use exit-code-only control (no JSON decision support)
+
+### Architecture
+
+- [ ] Agent `memory` frontmatter set where appropriate (`user`, `project`, `local`)
+- [ ] Task dependencies defined for sequential work
+- [ ] File ownership clear (no two teammates editing same files)
+
 ## 6. Token Efficiency
 
-> Reference: [Claude Code Best Practices](https://docs.anthropic.com/en/docs/claude-code/best-practices)
+> Reference: [Claude Code Best Practices](https://code.claude.com/docs/en/best-practices)
 
 ### State Management
 
@@ -131,7 +154,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 7. Security
 
-> Reference: [Claude Code Security](https://docs.anthropic.com/en/docs/claude-code/security)
+> Reference: [Claude Code Security](https://code.claude.com/docs/en/security)
 
 ### Secrets
 
@@ -152,7 +175,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ## 8. MCP Configuration (if applicable)
 
-> Reference: [Claude Code MCP](https://docs.anthropic.com/en/docs/claude-code/mcp)
+> Reference: [Claude Code MCP](https://code.claude.com/docs/en/mcp)
 
 ### Configuration
 

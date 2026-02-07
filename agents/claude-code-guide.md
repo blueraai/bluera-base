@@ -49,6 +49,7 @@ You are an expert on Claude Code and Claude Code plugins. You help developers:
 | User-invoked workflows (`/review`) | Slash commands (`.claude/commands/*.md`) |
 | Reusable playbook Claude applies automatically | Skills (`.claude/skills/*/SKILL.md`) |
 | Isolate noisy operations, parallel work | Subagents (`.claude/agents/*.md`) |
+| Coordinate multiple agents with shared tasks | Agent teams (experimental, `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`) |
 | Guarantee something always happens | Hooks (`settings.json` or `hooks/hooks.json`) |
 | Connect to external systems | MCP servers (`.mcp.json`) |
 | Package for cross-repo reuse | Plugins (+ marketplaces) |
@@ -145,7 +146,7 @@ log_debug() {
 }
 ```
 
-**Event types:** SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, SessionEnd, Notification, SubagentStart, SubagentStop, PreCompact, PermissionRequest, UserPromptSubmit
+**Event types:** SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop, Stop, TeammateIdle, TaskCompleted, PreCompact, SessionEnd
 
 **PreToolUse hook output fields:**
 
@@ -205,6 +206,7 @@ Now all subsequent Bash commands have `$MY_STATE_DIR` and `$MY_CONFIG` available
 - Put deep content in `references/` subdirectory
 - Progressive disclosure: scannable summary first, details on demand
 - Use `disable-model-invocation: true` for user-only skills
+- Character budget: 2% of context window. Set `SLASH_COMMAND_TOOL_CHAR_BUDGET` to increase. Check `/context` to see if skills are excluded
 
 **Advanced frontmatter:**
 
@@ -345,10 +347,11 @@ When asked to review:
 }
 ```
 
-### "Should I use a skill or subagent?"
+### "Should I use a skill, subagent, or agent team?"
 
 - **Skill**: Reusable content/workflow that runs in current context
 - **Subagent**: Isolated context for noisy/parallel work, returns summary
+- **Agent team**: Multiple independent agents that message each other, share tasks, and self-coordinate. Use for parallel research, competing hypotheses, or cross-layer changes. Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 
 ### "Why isn't my hook firing?"
 
@@ -420,6 +423,54 @@ Use `once: true`:
 
 ```json
 {"type": "command", "command": "setup.sh", "once": true}
+```
+
+### "How do I use TeammateIdle and TaskCompleted hooks?"
+
+These are exit-code-only hooks (no JSON decision control):
+
+```bash
+#!/bin/bash
+# TeammateIdle - exit 2 keeps teammate working
+INPUT=$(cat 2>/dev/null || true)
+if [ ! -f "./dist/output.js" ]; then
+  echo "Build artifact missing. Run build first." >&2
+  exit 2  # Teammate continues working
+fi
+exit 0  # Teammate goes idle
+
+# TaskCompleted stdin includes:
+# teammate_name, team_name, task_id, task_subject, task_description
+```
+
+Register as async in hooks.json (no matcher support - always fires):
+
+```json
+"TeammateIdle": [{"hooks": [{"type": "command", "command": "...", "async": true}]}]
+```
+
+### "How do I set up agent teams?"
+
+Enable: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json `env` block.
+
+Key points:
+
+- One lead session coordinates, teammates work independently
+- Teammates can message each other directly (unlike subagents)
+- Shared task list with dependency tracking
+- Display modes: `in-process` (any terminal) or `tmux`/`iTerm2` split panes
+- Use delegate mode (`Shift+Tab`) to prevent lead from implementing
+- All teammates inherit lead's permission mode
+
+### "How do I add memory to an agent?"
+
+Add `memory` to agent frontmatter:
+
+```yaml
+---
+name: my-agent
+memory: project  # or: user, local
+---
 ```
 
 ### "How do I pass state between hooks efficiently?"
