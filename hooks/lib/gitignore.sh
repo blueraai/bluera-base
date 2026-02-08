@@ -8,12 +8,9 @@ BLUERA_GITIGNORE_PATTERNS=(
   "# Bluera plugins - shared config committed, local/state ignored"
   ".bluera/"
   "!.bluera/bluera-base/"
-  "!.bluera/bluera-knowledge/"
   ".bluera/bluera-base/*"
-  ".bluera/bluera-knowledge/*"
   "!.bluera/bluera-base/config.json"
   "!.bluera/bluera-base/TODO.txt"
-  "!.bluera/bluera-knowledge/stores.config.json"
   "# Claude Code local files (not committed)"
   "*.local.md"
 )
