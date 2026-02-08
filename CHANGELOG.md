@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.37.4](https://github.com/blueraai/bluera-base/compare/v0.34.0...v0.37.4) (2026-02-08)
+
+### ⚠ BREAKING CHANGES
+
+* **plugin:** Old skill-based slash command names changed:
+* /bluera-base:atomic-commits -> /bluera-base:commit
+* /bluera-base:code-review-repo -> /bluera-base:code-review
+* /bluera-base:repo-hardening -> /bluera-base:harden-repo
+* /bluera-base:readme-maintainer -> /bluera-base:readme
+* /bluera-base:claude-code-md-maintainer -> /bluera-base:claude-code-md
+* /bluera-base:milhouse-loop -> /bluera-base:milhouse
+* /bluera-base:cancel-milhouse -> /bluera-base:milhouse cancel
+* /bluera-base:claude-code-audit -> removed (use /claude-code-guide)
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+* **plugin:** retire command wrappers, skills are primary slash commands ([259235a](https://github.com/blueraai/bluera-base/commit/259235a22cf85c24e9eaa5b4cc36432ca0cf0e7b))
+
+### Features
+
+* **hooks:** add opt-in session-start memory surfacing ([69c858f](https://github.com/blueraai/bluera-base/commit/69c858f358fa92f552a4454bb023d9a3be1077c1))
+* **learn:** add opt-in auto-promotion to global memory ([fe76943](https://github.com/blueraai/bluera-base/commit/fe769432daf3d7d6b4cdc177d24502a690fadb5b))
+* **memory:** add hash-based deduplication and word-boundary auto-tagging ([f8b1fa5](https://github.com/blueraai/bluera-base/commit/f8b1fa5843f3c3c91f6c5345dd6e4b3506fc8aeb))
+* **skills:** add tech-debt-and-refactor-scan skill ([3c6dd44](https://github.com/blueraai/bluera-base/commit/3c6dd44dfdbcc2054c03985381afd47fbb7ca54f))
+
+### Bug Fixes
+
+* **hooks:** remove bluera-knowledge entries from gitignore service ([6f2ace9](https://github.com/blueraai/bluera-base/commit/6f2ace91ae8d5fe2a9f3c56d4a1feaa7c4afa391))
+* **memory:** anchor tag matching to frontmatter and clarify hash naming ([7a9118c](https://github.com/blueraai/bluera-base/commit/7a9118c745aa0b498bbda399f76a2aa02fad892e))
+* **plugin:** remove unrecognized manifest keys (bugs, categories) ([6398c72](https://github.com/blueraai/bluera-base/commit/6398c72e44c69b299dd35abc1f7aa5ca828142bb))
+* **skills:** add mkdir permission and clarify report parsing rules ([5cca052](https://github.com/blueraai/bluera-base/commit/5cca052a60728fcc20331f9856099fa28fe52bc9))
+* **skills:** complete tech-debt-and-refactor-scan spec and revert config ([0102467](https://github.com/blueraai/bluera-base/commit/0102467560037378250e36ed3ad234dd645fbf01))
+* **skills:** quote allowed-tools entries with YAML special chars ([f7b0485](https://github.com/blueraai/bluera-base/commit/f7b0485c5cc02f11c357aeeb5529329ed542d8a7))
+
 ## [0.37.3](https://github.com/blueraai/bluera-base/compare/v0.34.0...v0.37.3) (2026-02-08)
 
 ### ⚠ BREAKING CHANGES
