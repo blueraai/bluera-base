@@ -34,7 +34,7 @@ Does NOT overlap with code-review (no bugs/compliance) or dry (no jscpd duplicat
 ### Parsing Rules (report)
 
 - `--priority`: Filter cached results by the specified threshold (valid: `high`, `all`)
-- `--path`: Ignored entirely (no validation, no effect). Report always shows all cached findings.
+- `--path`: Not accepted. If provided, warn: `--path is only valid for scan, ignoring.`
 - Invalid `--priority` values: Warn and default to `all`
 
 ## Process
