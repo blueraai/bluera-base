@@ -75,6 +75,23 @@ plugin/
 - Skills auto-register as slash commands (no separate `commands/` needed)
 - Use `${CLAUDE_PLUGIN_ROOT}` for paths in hooks
 
+**Manifest schema** (`.claude-plugin/plugin.json`) — only these fields are accepted:
+
+```json
+{
+  "name": "string (required)",
+  "version": "string (required)",
+  "description": "string",
+  "author": { "name": "string", "url": "string" },
+  "repository": "string (URL)",
+  "homepage": "string (URL)",
+  "license": "string",
+  "keywords": ["string"]
+}
+```
+
+Unrecognized keys (e.g., `bugs`, `categories`) cause validation failure and the plugin will not load.
+
 ### Hooks
 
 **Exit codes:**

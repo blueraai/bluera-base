@@ -43,8 +43,9 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 - [ ] `.claude-plugin/plugin.json` in correct location (not nested)
 - [ ] Has required fields: `name`, `version`, `description`
+- [ ] Only recognized keys: `name`, `version`, `description`, `author`, `repository`, `homepage`, `license`, `keywords`
+- [ ] No unrecognized keys (e.g., `bugs`, `categories` cause load failure)
 - [ ] Version follows semver
-- [ ] No deprecated fields
 
 ### Directory Layout
 
