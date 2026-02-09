@@ -102,7 +102,7 @@ test_blocks_aws_access_key() {
 }
 
 test_blocks_password_literal() {
-  would_be_blocked 'password: admin123' || { fail "password literal"; return; }
+  would_be_blocked 'password = admin123' || { fail "password literal"; return; }
   pass "password literal"
 }
 
@@ -132,7 +132,7 @@ test_blocks_private_key() {
 }
 
 test_blocks_credential() {
-  would_be_blocked 'credential: xyz123' || { fail "credential"; return; }
+  would_be_blocked 'credential = xyz123' || { fail "credential"; return; }
   pass "credential"
 }
 
@@ -200,6 +200,26 @@ test_allows_token_in_middle_of_word() {
   # 'tokens' as part of larger word without assignment context
   ! would_be_blocked 'total_tokens: 100' || { fail "tokens in word should be allowed"; return; }
   pass "tokens in word allowed"
+}
+
+test_allows_password_method_call() {
+  ! would_be_blocked 'result = check_password_strength(input)' || { fail "password method call should be allowed"; return; }
+  pass "password method call allowed"
+}
+
+test_allows_credential_reference() {
+  ! would_be_blocked 'provider = credential_manager.get()' || { fail "credential reference should be allowed"; return; }
+  pass "credential reference allowed"
+}
+
+test_allows_secret_key_method() {
+  ! would_be_blocked 'value = get_secret_key()' || { fail "secret_key method should be allowed"; return; }
+  pass "secret_key method allowed"
+}
+
+test_allows_private_key_reference() {
+  ! would_be_blocked 'if has_private_key(cert): return True' || { fail "private_key reference should be allowed"; return; }
+  pass "private_key reference allowed"
 }
 
 # =============================================================================
@@ -326,6 +346,10 @@ test_allows_url_with_secret
 test_allows_key_without_api_prefix
 test_allows_token_in_middle_of_word
 test_allows_api_key_method_call
+test_allows_password_method_call
+test_allows_credential_reference
+test_allows_secret_key_method
+test_allows_private_key_reference
 
 echo ""
 echo "--- Escape Hatches (must bypass) ---"
