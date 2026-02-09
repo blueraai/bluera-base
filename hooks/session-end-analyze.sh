@@ -5,7 +5,12 @@
 
 set -euo pipefail
 
-cd "${CLAUDE_PROJECT_DIR:-.}"
+# Require CLAUDE_PROJECT_DIR — fallback-to-dot is an anti-pattern
+if [[ -z "${CLAUDE_PROJECT_DIR:-}" ]]; then
+  echo "[bluera-base] Skipping $(basename "$0"): CLAUDE_PROJECT_DIR not set" >&2
+  exit 0
+fi
+cd "$CLAUDE_PROJECT_DIR"
 
 # Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -76,13 +81,26 @@ fi
 EVENTS=$(echo "$EVENTS" | head -c 30000)
 
 # Get project name for context
-PROJECT_NAME=$(basename "${CLAUDE_PROJECT_DIR:-$(pwd)}")
+PROJECT_NAME=$(basename "$CLAUDE_PROJECT_DIR")
+
+# Read project conventions so learnings don't contradict them
+PROJECT_CONTEXT=""
+for f in CLAUDE.md CLAUDE.local.md; do
+  if [[ -f "$f" ]]; then
+    PROJECT_CONTEXT="${PROJECT_CONTEXT}
+--- $f ---
+$(head -c 2000 "$f")"
+  fi
+done
 
 # Analyze with Claude
 ANALYSIS_PROMPT="Analyze this Claude Code session for actionable, project-specific learnings.
 
 Project: $PROJECT_NAME
-
+${PROJECT_CONTEXT:+
+Project conventions (learnings MUST NOT contradict these):
+$PROJECT_CONTEXT
+}
 Session events (user messages and errors):
 $EVENTS
 
@@ -140,6 +158,6 @@ echo "$LEARNINGS" | jq -c --arg sid "$SESSION_ID" --arg ts "$TIMESTAMP" --arg pr
 
 # Output system message
 jq -n --arg count "$LEARNING_COUNT" \
-  '{"systemMessage": "[bluera-base] Captured \($count) learning(s) from session analysis. Run /bluera-base:learn show to review."}'
+  '{"systemMessage": "[bluera-base] Captured \($count) learning(s) from session analysis. Run /bluera-base:learn show to review."}' >&2
 
 exit 0
