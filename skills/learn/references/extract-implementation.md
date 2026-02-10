@@ -47,7 +47,8 @@ echo "Analyzing: $(basename "$TRANSCRIPT")"
 
 ```bash
 # Extract user messages and errors - MUST match session-end-analyze.sh
-EVENTS=$(jq -s '
+# Strip control chars (U+0000-U+001F except tab/newline/CR) to prevent jq parse errors
+EVENTS=$(tr -d '\000-\010\013\014\016-\037' < "$TRANSCRIPT" | jq -s '
   [.[] | select(
     (.type == "user") or
     (.type == "tool_result" and (
@@ -63,7 +64,7 @@ EVENTS=$(jq -s '
       {type: "error", content: ((.content | tostring)[0:300] | gsub("\n"; " ") | gsub("\r"; "")), is_error: .is_error}
     end
   )
-' "$TRANSCRIPT" 2>/dev/null)
+' 2>/dev/null)
 
 # Check event count
 EVENT_COUNT=$(echo "$EVENTS" | jq 'length' 2>/dev/null || echo "0")

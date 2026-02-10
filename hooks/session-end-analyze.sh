@@ -51,7 +51,8 @@ MAX_BUDGET=$(bluera_get_config ".deepLearn.maxBudget" "0.02")
 # Extract learning-relevant events from transcript
 # Focus on: user messages (corrections), tool errors (resolutions)
 # Note: Content may contain newlines that break JSON output - sanitize with gsub
-EVENTS=$(jq -s '
+# Strip control chars (U+0000-U+001F except tab/newline/CR) to prevent jq parse errors
+EVENTS=$(tr -d '\000-\010\013\014\016-\037' < "$TRANSCRIPT" | jq -s '
   [.[] | select(
     (.type == "user") or
     (.type == "tool_result" and (
@@ -69,7 +70,7 @@ EVENTS=$(jq -s '
       {type: "error", content: ((.content | tostring)[0:300] | gsub("\n"; " ") | gsub("\r"; "")), is_error: .is_error}
     end
   )
-' "$TRANSCRIPT" 2>/dev/null)
+' 2>/dev/null)
 
 # Skip if no meaningful events or too short
 EVENT_COUNT=$(echo "$EVENTS" | jq 'length')
