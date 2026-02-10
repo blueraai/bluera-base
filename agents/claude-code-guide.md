@@ -243,7 +243,7 @@ Agent hook example (PostToolUse):
 **Decision mechanisms differ by hook type:**
 
 - **Command hooks** on PreToolUse: return `hookSpecificOutput.permissionDecision` (`allow`/`deny`/`ask`) via stderr JSON
-- **Prompt hooks** on PreToolUse: LLM returns `{"decision": "allow"}` or `{"decision": "deny", "reason": "..."}`
+- **Prompt hooks** on PreToolUse: LLM returns `{"decision": "allow"}`, `{"decision": "deny", "reason": "..."}`, or `{"decision": "ask"}`
 - **Agent hooks**: report findings as text, no structured decision control
 
 **Environment persistence (SessionStart):**

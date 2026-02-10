@@ -189,6 +189,7 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 
 - [ ] Server commands are correct
 - [ ] Required environment variables documented
+- [ ] Fallback behavior defined for server unavailability
 - [ ] Tool Search leveraged for projects with many MCP servers (on-demand loading reduces context)
 - [ ] MCP tool names follow `mcp__<server>__<tool>` convention
 - [ ] Hook matchers for MCP tools use regex patterns (e.g., `mcp__memory__.*`)
