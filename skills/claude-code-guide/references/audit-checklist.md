@@ -84,6 +84,8 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 - [ ] `hooks.json` has valid structure
 - [ ] Matchers use correct regex syntax
 - [ ] Event types are valid (SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop, Stop, TeammateIdle, TaskCompleted, PreCompact, SessionEnd)
+- [ ] Hook types match use case (`command` for scripts, `prompt` for LLM decisions, `agent` for complex verification)
+- [ ] Prompt hooks on PreToolUse return valid decision JSON (`allow`, `deny`, `ask`)
 - [ ] TeammateIdle/TaskCompleted hooks registered if agent teams used
 
 ### Scripts
@@ -101,6 +103,8 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 - [ ] Defensive stdin: `INPUT=$(cat 2>/dev/null || true)`
 - [ ] Setup hooks use `once: true` where appropriate
 - [ ] No infinite loops in Stop hooks
+- [ ] Hooks don't assume propagation to Task subagents (known caveat — GitHub #24558, as of 2.1.38)
+- [ ] Hooks don't rely on `CLAUDE_ENV_FILE` vars in subprocess environment (only available in Bash tool calls)
 
 ## 5a. Agent Teams (if applicable)
 
@@ -185,7 +189,9 @@ Since Claude Code 2.1.3, skills auto-register as slash commands. No separate `co
 
 - [ ] Server commands are correct
 - [ ] Required environment variables documented
-- [ ] Fallback behavior defined
+- [ ] Tool Search leveraged for projects with many MCP servers (on-demand loading reduces context)
+- [ ] MCP tool names follow `mcp__<server>__<tool>` convention
+- [ ] Hook matchers for MCP tools use regex patterns (e.g., `mcp__memory__.*`)
 
 ---
 

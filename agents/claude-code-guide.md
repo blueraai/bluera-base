@@ -24,7 +24,7 @@ You are an expert on Claude Code and Claude Code plugins. You help developers:
 |------|---------|
 | `docs/claude-code-best-practices.md` | Comprehensive guide (decision frameworks, layouts, patterns) |
 | `docs/advanced-patterns.md` | State bus, loops, markers, confidence filtering |
-| `docs/bluera-base-plugin-audit-spec.md` | Detailed audit checklist |
+| `skills/claude-code-guide/references/audit-checklist.md` | Detailed audit checklist |
 
 ### 2. Indexed Documentation (Search via bluera-knowledge)
 
@@ -169,6 +169,24 @@ log_debug() {
 
 - `additionalContext` - Inject context into Claude's next response
 - `updatedInput` - Modify tool input before execution
+- `hookSpecificOutput.permissionDecision` - Control tool execution: `allow`, `deny`, `ask`
+
+**PreToolUse permission control:**
+
+For PreToolUse command hooks, the top-level `decision` field is deprecated. Use `hookSpecificOutput.permissionDecision` instead:
+
+```bash
+# Allow with modified input
+echo '{"hookSpecificOutput": {"permissionDecision": "allow"}, "updatedInput": {"command": "npm ci"}}' >&2
+exit 0
+
+# Deny with reason
+echo '{"hookSpecificOutput": {"permissionDecision": "deny"}}' >&2
+echo "Denied: unsafe command" >&2
+exit 2
+```
+
+Note: this deprecation is specific to PreToolUse. Other hook events retain their original output fields.
 
 **One-time hooks:**
 
@@ -181,6 +199,52 @@ log_debug() {
   }]
 }
 ```
+
+**Hook types:**
+
+| Type | Use For | Example |
+|------|---------|---------|
+| `command` | Shell scripts, fast checks | Lint, secrets scan, file validation |
+| `prompt` | LLM-evaluated decisions | "Is this commit safe?" — returns JSON |
+| `agent` | Complex verification needing tools | File inspection, multi-step checks |
+
+Prompt hook example (PreToolUse):
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "prompt",
+        "prompt": "Is this bash command safe? Answer JSON: {\"decision\": \"allow\"} or {\"decision\": \"deny\", \"reason\": \"...\"}"
+      }]
+    }]
+  }
+}
+```
+
+Agent hook example (PostToolUse):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Write",
+      "hooks": [{
+        "type": "agent",
+        "prompt": "Review the file that was just written. Check for security issues and anti-patterns."
+      }]
+    }]
+  }
+}
+```
+
+**Decision mechanisms differ by hook type:**
+
+- **Command hooks** on PreToolUse: return `hookSpecificOutput.permissionDecision` (`allow`/`deny`/`ask`) via stderr JSON
+- **Prompt hooks** on PreToolUse: LLM returns `{"decision": "allow"}` or `{"decision": "deny", "reason": "..."}`
+- **Agent hooks**: report findings as text, no structured decision control
 
 **Environment persistence (SessionStart):**
 
@@ -216,6 +280,12 @@ Now all subsequent Bash commands have `$MY_STATE_DIR` and `$MY_CONFIG` available
 - Always check: `[[ -n "${CLAUDE_ENV_FILE:-}" ]] && [[ -f "$CLAUDE_ENV_FILE" ]]`
 - Clean old values to prevent accumulation across sessions
 - Known bug: May be empty/missing on some platforms (see GitHub #9567)
+
+**Known caveats:**
+
+- Plugin hooks may not propagate to Task subagents (GitHub #24558, as of Claude Code 2.1.38). Design hooks assuming they run in the lead session only.
+- `CLAUDE_ENV_FILE` injects env vars into Bash tool calls only, not into hook subprocess environments.
+- Async Stop hooks run in separate processes — do not rely on session-scoped env vars.
 
 ### Skills
 
@@ -322,6 +392,38 @@ Instead of 12KB diff in context → pass pointer + 50-char summary.
 
 See `docs/advanced-patterns.md` for complete implementation.
 
+### MCP Integration
+
+**Tool Search (lazy loading):** Claude Code loads MCP tool descriptions on-demand rather than all at once, significantly reducing context usage when many servers are configured.
+
+**Plugin-bundled MCP:** Plugins can include `.mcp.json` at plugin root for zero-config MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/server.js"],
+      "env": { "PORT": "3000" }
+    }
+  }
+}
+```
+
+**MCP tool naming:** Tools appear as `mcp__<server>__<tool>`. Match in hooks with regex: `mcp__memory__.*`.
+
+**Network configuration** (in `settings.json`):
+
+```json
+{
+  "network": {
+    "allowedDomains": ["api.example.com"],
+    "allowUnixSockets": true,
+    "allowLocalBinding": false
+  }
+}
+```
+
 ## Anti-Patterns to Flag
 
 | Anti-Pattern | Why It's Bad | Fix |
@@ -336,6 +438,7 @@ See `docs/advanced-patterns.md` for complete implementation.
 | Missing `once: true` on setup hooks | Runs every session unnecessarily | Add `once: true` for one-time hooks |
 | Passing large data through conversation | Wastes tokens, degrades performance | Use state bus + capsules pattern |
 | Verbose hook output | Pollutes Claude's context | Use `--quiet`, `head -N`, log to file |
+| Command hook for LLM decisions | Slower, more complex than needed | Use `type: "prompt"` for yes/no evaluations |
 
 ## How to Answer Questions
 
