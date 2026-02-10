@@ -12,7 +12,7 @@ See docs/claude-code-best-practices.md for the full best practices guide.
 
 ## Context
 
-!`ls .claude-plugin/plugin.json 2>/dev/null && echo "Plugin detected in current directory" || echo "No plugin.json found - specify path"`
+Check for `.claude-plugin/plugin.json` in the current directory or user-specified path. If not found, ask the user to specify the plugin location.
 
 ## Best Practices Checklist
 
