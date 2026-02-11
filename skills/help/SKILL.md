@@ -61,7 +61,7 @@ Show only the Configuration section.
 
 ---
 
-## Skills (28 total)
+## Skills (29 total)
 
 All skills are available as slash commands via `/bluera-base:<name>`.
 
@@ -119,6 +119,7 @@ All skills are available as slash commands via `/bluera-base:<name>`.
 
 | Skill | Description |
 |-------|-------------|
+| `/bluera-base:browser-inference-guide` | Expert guidance for browser ML/LLM inference |
 | `/bluera-base:claude-code-guide` | Ask the Claude Code expert for guidance |
 | `/bluera-base:explain` | Explain all bluera-base plugin functionality |
 | `/bluera-base:help` | Show this help (you are here) |

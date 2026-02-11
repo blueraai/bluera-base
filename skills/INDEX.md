@@ -37,6 +37,7 @@ Categorized index of all bluera-base skills.
 | [claude-code-guide](claude-code-guide/SKILL.md) | Claude Code expert guidance | Task, Read, Grep |
 | [audit-plugin](audit-plugin/SKILL.md) | Audit plugin best practices | Read, Grep, Task |
 | [analyze-config](analyze-config/SKILL.md) | Analyze .claude/** overlap | Read, Glob, Grep |
+| [browser-inference-guide](browser-inference-guide/SKILL.md) | Browser inference expert guidance | Task, Read, WebSearch |
 | [claude-cleaner](claude-cleaner/SKILL.md) | Diagnose slow startup | Bash, Read |
 | [dry](dry/SKILL.md) | Detect code duplication | Bash |
 | [dry-refactor](dry-refactor/SKILL.md) | Refactor duplicates | Read, Edit |
@@ -72,8 +73,8 @@ Categorized index of all bluera-base skills.
 | Development Workflows | 5 |
 | Project Setup | 4 |
 | Configuration | 3 |
-| Analysis & Maintenance | 7 |
+| Analysis & Maintenance | 8 |
 | Documentation | 5 |
 | Creation & Scaffolding | 2 |
 | Learning & Adaptation | 2 |
-| **Total** | **28** |
+| **Total** | **29** |
