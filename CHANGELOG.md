@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.39.0](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.39.0) (2026-02-12)
+
+### Features
+
+* **skills:** add bluera config status badge to statusline preset ([174a8cd](https://github.com/blueraai/bluera-base/commit/174a8cd746a121481fa9f293729597ad5f91576d))
+* **skills:** add browser-inference-guide expert skill ([19aab4c](https://github.com/blueraai/bluera-base/commit/19aab4ce05106a627f9e371e642e557cefa97036))
+
+### Bug Fixes
+
+* **skills:** remove shell-exec backtick pattern from audit-plugin skill ([4ab402f](https://github.com/blueraai/bluera-base/commit/4ab402f3ac4859963f4d61f123a28a68a6bdef33))
+
 ## [0.38.0](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.38.0) (2026-02-11)
 
 ### Features
