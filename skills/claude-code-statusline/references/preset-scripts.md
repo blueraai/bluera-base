@@ -164,13 +164,46 @@ echo "$OUTPUT"
 
 ## Script: bluera
 
-Advanced statusline with rate limits, context bar, and ANSI colors.
+Advanced statusline with rate limits, context bar, bluera config status, and ANSI colors.
 
 ```bash
 #!/bin/bash
 # Bluera preset - advanced statusline with rate limits, context bar, and ANSI colors
 
 input=$(cat)
+
+# --- Bluera Config Status ---
+get_bluera_status() {
+    local project_dir="$1"
+    local config_file="$project_dir/.bluera/bluera-base/config.json"
+    local local_config="$project_dir/.bluera/bluera-base/config.local.json"
+
+    # Not initialized — no badge
+    if [ ! -f "$config_file" ] && [ ! -f "$local_config" ]; then
+        echo ""
+        return
+    fi
+
+    # Merge configs (shared ← local override) matching config.sh behavior
+    local config=""
+    if [ -f "$config_file" ] && [ -f "$local_config" ]; then
+        config=$(jq -s '.[0] * .[1]' "$config_file" "$local_config" 2>/dev/null)
+    elif [ -f "$local_config" ]; then
+        config=$(cat "$local_config" 2>/dev/null)
+    else
+        config=$(cat "$config_file" 2>/dev/null)
+    fi
+
+    [ -z "$config" ] && echo "" && return
+
+    local total enabled
+    total=$(echo "$config" | jq '[to_entries[] | select(.value | type == "object" and has("enabled"))] | length' 2>/dev/null || echo 0)
+    enabled=$(echo "$config" | jq '[to_entries[] | select(.value | type == "object" and .enabled == true)] | length' 2>/dev/null || echo 0)
+
+    [ "$total" -eq 0 ] && echo "" && return
+
+    printf " \033[38;5;33m⚡\033[36m%d/%d\033[0m" "$enabled" "$total"
+}
 
 # --- Project Type Detection ---
 get_project_type() {
@@ -293,22 +326,26 @@ FILLED=$((CONTEXT_PCT * BAR_WIDTH / 100))
 EMPTY=$((BAR_WIDTH - FILLED))
 BAR=""; for ((i=0; i<FILLED; i++)); do BAR+="█"; done; for ((i=0; i<EMPTY; i++)); do BAR+="░"; done
 
-# Project type and rate limits
+# Project type, bluera status, and rate limits
 PROJECT_TYPE=$(get_project_type "$CURRENT_DIR")
 [ -n "$PROJECT_TYPE" ] && PROJECT_TYPE=" $PROJECT_TYPE"
+
+PROJECT_DIR=$(echo "$input" | jq -r '.workspace.project_dir // empty')
+[ -z "$PROJECT_DIR" ] && PROJECT_DIR="$CURRENT_DIR"
+BLUERA_STATUS=$(get_bluera_status "$PROJECT_DIR")
 
 RATE_LIMITS=$(get_rate_limits)
 [ -n "$RATE_LIMITS" ] && RATE_LIMITS=" │ $RATE_LIMITS"
 
 # Output with colored context bar
 if [ "$CONTEXT_PCT" -lt 50 ]; then
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s │ \033[33m%s\033[0m │ \033[32m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[32m%s\033[0m %d%% │ %s%s" \
+        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
 elif [ "$CONTEXT_PCT" -lt 80 ]; then
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s │ \033[33m%s\033[0m │ \033[33m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[33m%s\033[0m %d%% │ %s%s" \
+        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
 else
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s │ \033[33m%s\033[0m │ \033[31m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[31m%s\033[0m %d%% │ %s%s" \
+        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
 fi
 ```
