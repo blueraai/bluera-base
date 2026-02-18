@@ -216,11 +216,11 @@ NEW_CONTENT="<!-- AUTO:bluera-base:learned -->
 
 ## User Control Modes
 
-Control auto-learning behavior via `/bluera-base:config` command:
+Control auto-learning behavior via `/bluera-base:settings` command:
 
 ```bash
-/bluera-base:config enable auto-learn    # Opt-in to learning observation
-/bluera-base:config set .autoLearn.mode auto  # Change mode
+/bluera-base:settings enable auto-learn    # Opt-in to learning observation
+/bluera-base:settings set .autoLearn.mode auto  # Change mode
 ```
 
 Configuration stored in `.bluera/bluera-base/config.json`:

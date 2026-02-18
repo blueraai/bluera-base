@@ -1,5 +1,5 @@
 ---
-name: config
+name: settings
 description: Manage bluera-base plugin configuration
 argument-hint: "[show|init|set|enable|disable|reset|status] [key] [value]"
 allowed-tools: [Read, Write, Edit, Bash, AskUserQuestion]
@@ -13,13 +13,13 @@ Manage plugin settings stored in `.bluera/bluera-base/`.
 
 | Command | Description |
 |---------|-------------|
-| `/bluera-base:config` or `/bluera-base:config show` | Interactive feature toggle (view and change settings) |
-| `/bluera-base:config init` | Initialize config for this project |
-| `/bluera-base:config set <key> <value>` | Set a config value |
-| `/bluera-base:config enable <feature>` | Enable a feature |
-| `/bluera-base:config disable <feature>` | Disable a feature |
-| `/bluera-base:config reset` | Reset to defaults |
-| `/bluera-base:config status [--state]` | Show config and state file status |
+| `/bluera-base:settings` or `/bluera-base:settings show` | Interactive feature toggle (view and change settings) |
+| `/bluera-base:settings init` | Initialize config for this project |
+| `/bluera-base:settings set <key> <value>` | Set a config value |
+| `/bluera-base:settings enable <feature>` | Enable a feature |
+| `/bluera-base:settings disable <feature>` | Disable a feature |
+| `/bluera-base:settings reset` | Reset to defaults |
+| `/bluera-base:settings status [--state]` | Show config and state file status |
 
 ---
 
@@ -385,8 +385,8 @@ Disabled features:
   ✗ auto-commit
   ✗ dry-check
 
-Run /bluera-base:config show to see full settings.
-Run /bluera-base:config enable|disable <feature> to change later.
+Run /bluera-base:settings show to see full settings.
+Run /bluera-base:settings enable|disable <feature> to change later.
 ```
 
 ### Set
@@ -544,77 +544,77 @@ Env (from CLAUDE_ENV_FILE):
 
 ```bash
 # Interactive toggle - view current settings and toggle features on/off
-/bluera-base:config
+/bluera-base:settings
 
 # Same as above (show is the default)
-/bluera-base:config show
+/bluera-base:settings show
 
 # Initialize config for a new project (guided setup)
-/bluera-base:config init
+/bluera-base:settings init
 
 # CLI toggle - enable/disable specific features (for scripting)
-/bluera-base:config enable auto-learn
+/bluera-base:settings enable auto-learn
 
 # Set learning mode to auto-apply
-/bluera-base:config set .autoLearn.mode auto
+/bluera-base:settings set .autoLearn.mode auto
 
 # Set default gates for milhouse
-/bluera-base:config set .milhouse.defaultGates '["bun test", "bun run lint"]' --shared
+/bluera-base:settings set .milhouse.defaultGates '["bun test", "bun run lint"]' --shared
 
 # Disable notifications
-/bluera-base:config disable notifications
+/bluera-base:settings disable notifications
 
 # Reset local overrides
-/bluera-base:config reset
+/bluera-base:settings reset
 
 # Reset everything
-/bluera-base:config reset --all
+/bluera-base:settings reset --all
 
 # Show state file status (useful for debugging milhouse loops)
-/bluera-base:config status --state
+/bluera-base:settings status --state
 
 # Enable auto-commit on session stop
-/bluera-base:config enable auto-commit
+/bluera-base:settings enable auto-commit
 
 # Enable auto-push after commit
-/bluera-base:config enable auto-push
+/bluera-base:settings enable auto-push
 
 # Set custom remote for auto-push
-/bluera-base:config set .autoCommit.remote upstream --shared
+/bluera-base:settings set .autoCommit.remote upstream --shared
 
 # Enable DRY duplicate checking
-/bluera-base:config enable dry-check
+/bluera-base:settings enable dry-check
 
 # Enable auto-scan on session stop
-/bluera-base:config enable dry-auto
+/bluera-base:settings enable dry-auto
 
 # Set custom DRY thresholds
-/bluera-base:config set .dryCheck.minTokens 50 --shared
+/bluera-base:settings set .dryCheck.minTokens 50 --shared
 
 # Enable strict typing enforcement (blocks any, as casts, type: ignore)
-/bluera-base:config enable strict-typing
+/bluera-base:settings enable strict-typing
 
 # Enable standards review on commit (validates against CLAUDE.md)
-/bluera-base:config enable standards-review
+/bluera-base:settings enable standards-review
 
 # Set standards review to block mode (prevents commits with violations)
-/bluera-base:config set .standardsReview.mode block --shared
+/bluera-base:settings set .standardsReview.mode block --shared
 
 # Enable deep learning (semantic session analysis)
-/bluera-base:config enable deep-learn
+/bluera-base:settings enable deep-learn
 
 # Set deep learning model (haiku is faster/cheaper, sonnet is smarter)
-/bluera-base:config set .deepLearn.model sonnet
+/bluera-base:settings set .deepLearn.model sonnet
 
 # Set max budget per analysis
-/bluera-base:config set .deepLearn.maxBudget 0.05
+/bluera-base:settings set .deepLearn.maxBudget 0.05
 ```
 
 ---
 
 ## Gitignore Patterns
 
-The `/bluera-base:config init` command adds these patterns to `.gitignore`:
+The `/bluera-base:settings init` command adds these patterns to `.gitignore`:
 
 ```gitignore
 # Bluera plugins - shared config committed, local/state ignored

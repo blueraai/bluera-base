@@ -37,7 +37,7 @@ This allows local overrides while maintaining team-wide defaults.
 
 ## Feature Toggles
 
-Manage with `/bluera-base:config enable|disable <feature>`:
+Manage with `/bluera-base:settings enable|disable <feature>`:
 
 | Feature | Config Path | Description | Default |
 |---------|-------------|-------------|---------|
@@ -119,5 +119,5 @@ Runtime state in `.bluera/bluera-base/state/`:
 
 ## See Also
 
-- [Commands Reference](commands.md) - `/bluera-base:config` usage
+- [Commands Reference](commands.md) - `/bluera-base:settings` usage
 - [Hooks](hooks.md) - How hooks consume config

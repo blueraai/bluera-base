@@ -10,7 +10,7 @@ Patterns that are explicitly forbidden.
 - **Legacy support**: Old patterns should be migrated, not maintained alongside new ones
 - **Deprecated implementations**: Don't reference or keep deprecated code
 
-## Strict Typing (when enabled via `/bluera-base:config enable strict-typing`)
+## Strict Typing (when enabled via `/bluera-base:settings enable strict-typing`)
 
 ### TypeScript/JavaScript
 

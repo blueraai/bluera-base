@@ -302,13 +302,13 @@ Configuration is stored in `.bluera/bluera-base/config.json`:
 /bluera-base:claude-code-auto-improve config
 
 # Enable auto-improve
-/bluera-base:config set autoImprove.enabled true
+/bluera-base:settings set autoImprove.enabled true
 
 # Set to auto-apply mode
-/bluera-base:config set autoImprove.autoApply true
+/bluera-base:settings set autoImprove.autoApply true
 
 # Disable specific source
-/bluera-base:config set autoImprove.sources '["changelog", "github"]'
+/bluera-base:settings set autoImprove.sources '["changelog", "github"]'
 ```
 
 ---

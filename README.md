@@ -115,67 +115,225 @@ claude --plugin-dir /path/to/bluera-base
 
 ### Commands
 
-| Command | Arguments | Purpose |
-|---------|-----------|---------|
-| `/init` | `[--quick\|--full]` | Initialize project with bluera-base conventions |
-| `/commit` | | Create atomic commits with README/CLAUDE.md awareness |
-| `/code-review` | | Multi-agent codebase review |
-| `/release` | | Cut release with conventional commits and CI monitoring |
-| `/config` | `[show\|init\|set\|enable\|disable\|reset\|status] [key] [value]` | Manage plugin configuration |
-| `/milhouse-loop` | `<prompt-file> [--inline TEXT] [--max-iterations N] [--promise TEXT] [--gate CMD] [--stuck-limit N] [--init-harness]` | Start iterative development loop |
-| `/cancel-milhouse` | | Cancel active milhouse loop |
-| `/claude-code-disk` | `[--clean] [--json] [--backups] [--restore <ts>]` | View disk usage and clean up ~/.claude/ |
-| `/install-rules` | | Install rule templates to `.claude/rules/` |
-| `/claude-md` | `<audit\|init\|learn> [options]` | Audit and maintain CLAUDE.md files |
-| `/readme` | `<beautify\|breakout> [instructions]` | Maintain README.md with GitHub formatting |
-| `/test-plugin` | | Run plugin validation test suite |
-| `/dry` | `[scan\|report\|config\|init] [--threshold N] [--path <dir>]` | Detect duplicate code, suggest DRY refactors |
-| `/harden-repo` | `[--language <lang>] [--skip-hooks] [--coverage <threshold>]` | Set up linters, formatters, git hooks (13 langs) |
-| `/statusline` | `[show\|preset\|custom\|reset]` | Configure terminal status line |
-| `/analyze-config` | `[--cleanup]` | Scan `.claude/**` for bluera-base overlap |
-| `/audit-plugin` | `[path/to/plugin] [--fix]` | Audit plugin against best practices |
-| `/help` | `[commands\|skills\|hooks\|config\|all]` | Show plugin features and usage |
-| `/explain` | `[overview\|features\|commands\|behaviors\|config\|philosophy]` | Explain plugin functionality |
-| `/todo` | | Manage project TODO tasks |
-| `/worktree` | `[list\|add\|remove\|prune\|status] [args]` | Manage Git worktrees for parallel development |
-| `/learn` | `[show\|apply\|dismiss\|clear]` | Manage semantic learnings from session analysis |
-| `/memory` | `[add\|get\|search\|tag\|edit\|delete]` | Manage global memories (cross-project knowledge) |
-| `/large-file-refactor` | `<file>` | Break apart files that exceed token limits |
-| `/claude-code-audit` | `[path] [instructions]` | Audit Claude Code configuration against best practices |
-| `/claude-code-guide` | `<question\|review\|audit>` | Expert guidance for Claude Code plugins |
+All commands are prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`).
 
-*All commands prefixed with `/bluera-base:` (e.g., `/bluera-base:commit`)*
+#### Development
+
+| Command | Description |
+|---------|-------------|
+| `/commit` | Create atomic commits grouped by logical features, with README/CLAUDE.md awareness |
+| `/code-review` | Multi-agent codebase review with confidence scoring |
+| `/release` | Cut releases with conventional commits auto-detection and CI monitoring |
+| `/milhouse` | Iterative development loop — repeats a prompt until task completion |
+| `/todo` | Structured project tasks with requirements, outcomes, and learnings |
+| `/checklist` | Lightweight checkbox list with automatic session-start reminders |
+| `/learn` | Review, apply, or dismiss semantic learnings from session analysis |
+| `/memory` | Cross-project knowledge store — persists insights across repos |
+
+#### Setup & Configuration
+
+| Command | Description |
+|---------|-------------|
+| `/init` | Initialize project with bluera-base conventions (config, rules, CLAUDE.md) |
+| `/settings` | Manage feature toggles — enable/disable auto-learn, notifications, etc. |
+| `/install-rules` | Install rule templates to `.claude/rules/` |
+| `/harden-repo` | Set up linters, formatters, git hooks, and coverage for 13 languages |
+| `/create` | Interactively scaffold new plugin components (skills, hooks, agents) |
+
+#### Analysis & Quality
+
+| Command | Description |
+|---------|-------------|
+| `/dry` | Detect duplicate code using jscpd, suggest DRY refactors |
+| `/claude-code-audit-plugin` | Audit a Claude Code plugin against best practices |
+| `/claude-code-analyze-config` | Scan `.claude/**` for overlap with bluera-base |
+| `/claude-code-disk` | View disk usage and clean up `~/.claude/` storage |
+| `/large-file-refactor` | Break apart files that exceed Claude's token limits |
+| `/tech-debt-and-refactor-scan` | Scan codebase for tech debt and structural issues |
+
+#### Documentation
+
+| Command | Description |
+|---------|-------------|
+| `/claude-code-md` | Audit, initialize, or update CLAUDE.md memory files |
+| `/readme` | Maintain README.md with GitHub tables, badges, diagrams, collapsible sections |
+
+#### Tools
+
+| Command | Description |
+|---------|-------------|
+| `/worktree` | Manage Git worktrees for isolated parallel development |
+| `/claude-code-statusline` | Configure terminal status line with presets and custom modules |
+| `/claude-code-test-plugin` | Run comprehensive plugin validation test suite |
+| `/claude-code-graph` | Generate dependency graph of plugin components |
+
+#### Guidance
+
+| Command | Description |
+|---------|-------------|
+| `/claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
+| `/browser-inference-guide` | Expert guidance for in-browser ML/LLM inference (WebGPU, WASM, WebNN) |
+| `/explain` | Explain bluera-base features in plain language |
+| `/help` | Quick reference for all commands, hooks, and config |
+
+<details>
+<summary><strong>Command Arguments Reference</strong></summary>
+
+**`/init`**
+
+- `--quick` — Config, rules, and CLAUDE.md only (default)
+- `--full` — Full setup: linting, formatting, hooks, and interactive feature enablement
+
+**`/settings`**
+
+- `show` — Display current effective configuration
+- `init` — Create config file with defaults
+- `set <key> <value>` — Set a config value
+- `enable <feature>` — Turn on a feature (e.g., `auto-learn`, `notifications`, `auto-commit`)
+- `disable <feature>` — Turn off a feature
+- `reset` — Reset to defaults
+- `status` — Show enabled/disabled feature summary
+
+**`/milhouse`**
+
+- `--inline "<prompt>"` — Provide the iteration prompt inline
+- `--max-iterations N` — Cap the number of iterations (0 = unlimited)
+- `--promise "<text>"` — Assertion that must remain true each iteration
+- `--gate "<command>"` — Shell command that must exit 0 to continue
+- `--stuck-limit N` — Stop after N iterations with no progress
+- `cancel` — Stop an active milhouse loop
+
+**`/harden-repo`**
+
+- `--language <lang>` — Target a specific language (auto-detected if omitted)
+- `--skip-hooks` — Skip git hook setup
+- `--coverage <N>` — Set coverage threshold (default: 80%)
+
+**`/dry`**
+
+- `scan` — Run duplicate detection (default)
+- `report` — Show last scan results
+- `config` — Show/edit detection settings
+- `--threshold N` — Minimum token count to flag (default: 70)
+- `--path <dir>` — Scan a specific directory
+
+**`/claude-code-disk`**
+
+- *(no args)* — Show disk usage summary
+- `--clean` — Interactive cleanup of old sessions, backups, and caches
+- `--json` — Output as JSON
+- `--backups` — List statusline backups
+- `--restore <timestamp>` — Restore a statusline backup
+
+**`/worktree`**
+
+- `list` — Show all worktrees
+- `add <branch> [base]` — Create a new worktree
+- `remove <branch>` — Remove a worktree
+- `prune` — Clean up stale worktree references
+- `status` — Show status of all worktrees
+
+**`/learn`**
+
+- `show` — Display pending learnings
+- `apply` — Write approved learnings to CLAUDE.local.md
+- `dismiss` — Discard pending learnings
+- `clear` — Remove all stored learnings
+
+**`/memory`**
+
+- `add` — Store a new cross-project memory
+- `get` — Retrieve a memory by ID
+- `search <query>` — Find memories by content
+- `tag <id> <tags>` — Add tags to a memory
+- `edit <id>` — Modify a memory
+- `delete <id>` — Remove a memory
+
+**`/claude-code-md`**
+
+- `audit` — Check CLAUDE.md for staleness and structure issues
+- `init` — Create a new CLAUDE.md with progressive disclosure template
+- `learn` — Extract learnings from the current session into CLAUDE.md
+
+**`/readme`**
+
+- `beautify [instructions]` — Improve formatting with tables, badges, diagrams
+- `breakout` — Split large READMEs into modular docs/ files
+- `audit` — Verify documentation accuracy against codebase
+
+**`/claude-code-guide`**
+
+- `<question>` — Ask about Claude Code features, hooks, skills, MCP
+- `review` — Review current plugin against best practices
+- `audit [path] [focus]` — Comprehensive audit against checklist
+
+**`/browser-inference-guide`**
+
+- `<question>` — Ask about WebGPU, WASM, WebNN, or browser inference topics
+- `review` — Review an implementation against the engineering spec
+- `audit [path] [focus]` — Audit against browser inference checklist
+
+**`/claude-code-statusline`**
+
+- `show` — Display current statusline configuration
+- `preset <name>` — Apply a preset (minimal, informative, developer, system, bluera)
+- `custom` — Build a custom statusline interactively
+- `reset` — Remove statusline configuration
+
+**`/help`**
+
+- `commands` — List all commands
+- `skills` — List all skills
+- `hooks` — Explain automatic hooks
+- `config` — Show configuration options
+- `all` — Show everything (default)
+
+**`/explain`**
+
+- `overview` — High-level plugin summary
+- `features` — Feature breakdown
+- `commands` — Command walkthrough
+- `behaviors` — Hook and automation details
+- `config` — Configuration deep-dive
+- `philosophy` — Design principles
+
+</details>
 
 ### Skills
 
+29 skills power the commands above. Each skill is a markdown-defined workflow that Claude follows.
+
 | Skill | Purpose |
 |-------|---------|
-| `analyze-config` | Analyze repo's .claude/** for overlap with bluera-base |
-| `commit` | Guidelines for logical commit grouping with README/CLAUDE.md awareness |
-| `audit-plugin` | Audit Claude Code plugins against best practices |
-| `auto-learn` | Auto-learning pattern detection and consolidation |
-| `claude-code-disk` | View disk usage and clean up ~/.claude/ storage |
+| `browser-inference-guide` | Expert guidance for in-browser ML/LLM inference |
+| `checklist` | Lightweight project checklist with session-start reminders |
+| `claude-code-analyze-config` | Analyze `.claude/**` for overlap with bluera-base |
+| `claude-code-audit-plugin` | Audit Claude Code plugins against best practices |
+| `claude-code-disk` | View disk usage and clean up `~/.claude/` storage |
+| `claude-code-graph` | Generate dependency graph of plugin components |
+| `claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
 | `claude-code-md` | CLAUDE.md validation with progressive disclosure templates |
+| `claude-code-statusline` | Terminal status line configuration with presets |
+| `claude-code-test-plugin` | Run comprehensive plugin validation test suite |
 | `code-review` | Multi-agent codebase review with confidence scoring |
-| `config` | Manage bluera-base plugin configuration |
+| `commit` | Atomic commits grouped by logical features with doc awareness |
+| `settings` | Manage bluera-base plugin configuration |
+| `create` | Interactively scaffold plugin components (skills, hooks, agents) |
 | `dry` | Detect duplicate code using jscpd |
-| `dry-refactor` | Language-specific guidance for DRY refactoring |
 | `explain` | Explain all bluera-base plugin functionality |
+| `harden-repo` | Language-specific linting, formatting, hooks, and coverage |
 | `help` | Show plugin features and usage |
 | `init` | Initialize project with bluera-base conventions |
-| `install-rules` | Install rule templates into .claude/rules/ |
+| `install-rules` | Install rule templates into `.claude/rules/` |
 | `large-file-refactor` | Analyze and split large files when token limits exceeded |
-| `learn` | Deep learning management (show, apply, dismiss learnings) |
-| `memory` | Global memory management (cross-project knowledge) |
-| `milhouse` | Iterative development loop documentation |
-| `readme` | README.md formatting with tables, badges, diagrams, collapsible sections |
+| `learn` | Manage semantic learnings (show, apply, dismiss) |
+| `memory` | Cross-project global memory management |
+| `milhouse` | Iterative development loop |
+| `readme` | README.md formatting with tables, badges, diagrams |
 | `release` | Release workflow with multi-language version bumping |
-| `harden-repo` | Language-specific tooling for linting, formatting, hooks, and coverage |
-| `statusline` | Status line configuration with presets |
-| `test-plugin` | Run comprehensive plugin validation test suite |
-| `todo` | Manage project TODO tasks |
+| `tech-debt-and-refactor-scan` | Scan codebase for tech debt and structural issues |
+| `todo` | Structured project tasks with outcomes and learnings |
 | `worktree` | Git worktree management for parallel development |
-| `claude-code-guide` | Expert guidance for Claude Code plugins, hooks, skills, and MCP |
 
 → [Full skills documentation](docs/skills.md)
 
@@ -270,8 +428,8 @@ flowchart LR
 
 | Feature | What It Does | Enable |
 |---------|--------------|--------|
-| **Auto-Learn** | Tracks recurring commands, suggests CLAUDE.md edits | `/config enable auto-learn` |
-| **Deep-Learn** | AI analysis of sessions via Claude CLI (~$0.001/session) | `/config enable deep-learn` |
+| **Auto-Learn** | Tracks recurring commands, suggests CLAUDE.md edits | `/settings enable auto-learn` |
+| **Deep-Learn** | AI analysis of sessions via Claude CLI (~$0.001/session) | `/settings enable deep-learn` |
 
 Learnings are stored in a marked section of `CLAUDE.local.md`:
 

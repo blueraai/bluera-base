@@ -385,7 +385,7 @@ Execute each test in order. Mark each as PASS or FAIL.
    - Expected: Output contains "What is Bluera Base"
    - PASS if command executes and shows overview
 
-3. **/config show**: Run `/bluera-base:config show`
+3. **/config show**: Run `/bluera-base:settings show`
    - Expected: Output shows config JSON or defaults
    - PASS if command executes without error
 

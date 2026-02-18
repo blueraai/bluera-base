@@ -153,7 +153,7 @@ Tags are free-form but here are suggested categories:
 Memory system is **disabled by default** (opt-in). To enable:
 
 ```bash
-/bluera-base:config set .memory.enabled true
+/bluera-base:settings set .memory.enabled true
 ```
 
 **Available options:**
@@ -167,8 +167,8 @@ Memory system is **disabled by default** (opt-in). To enable:
 **Enable context surfacing:**
 
 ```bash
-/bluera-base:config set .memory.enabled true
-/bluera-base:config set .memory.surfaceOnStart true
+/bluera-base:settings set .memory.enabled true
+/bluera-base:settings set .memory.surfaceOnStart true
 ```
 
 ## Implementation

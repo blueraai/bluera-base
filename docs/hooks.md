@@ -88,7 +88,7 @@ Applies to: `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.py`, `.pyi`, `.rs`, 
 
 - **Anti-pattern detection**: Blocks `fallback`, `deprecated`, `backward compatibility`, `legacy` patterns
 - **Lint suppression detection**: Blocks new rule suppressions in `.eslintrc*`, `.markdownlint*`, `pyproject.toml`, etc. (Note: Checks added lines in tracked files, or full file content for new/untracked files)
-- **Strict typing** (opt-in via `/bluera-base:config enable strict-typing`):
+- **Strict typing** (opt-in via `/bluera-base:settings enable strict-typing`):
   - TypeScript: blocks `any`, unsafe `as` casts, `@ts-nocheck`, `@ts-ignore` without 10+ char explanation
   - Python: blocks `Any`, `cast()`, `type: ignore` without error code `[code]`
   - Escape hatch: `// ok:` (TS) or `# ok:` (Python) suppresses strict typing AND lint suppression checks on that line
@@ -125,7 +125,7 @@ Intercepts the Stop event to continue iterative development loops. When a milhou
 **Opt-in feature.** Enable with:
 
 ```bash
-/bluera-base:config enable auto-commit
+/bluera-base:settings enable auto-commit
 ```
 
 When enabled, blocks session stop and prompts you to run `/bluera-base:commit` if there are uncommitted changes.
@@ -178,7 +178,7 @@ Example invariants file:
 
 ## observe-learning.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable auto-learn`.
+**Opt-in feature.** Enable with `/bluera-base:settings enable auto-learn`.
 
 Observes Bash commands during the session to identify patterns for auto-learning.
 
@@ -186,7 +186,7 @@ Observes Bash commands during the session to identify patterns for auto-learning
 
 ## session-end-learn.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable auto-learn`.
+**Opt-in feature.** Enable with `/bluera-base:settings enable auto-learn`.
 
 Consolidates patterns observed during the session into learnings.
 
@@ -194,7 +194,7 @@ Consolidates patterns observed during the session into learnings.
 
 ## session-end-analyze.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable deep-learn`.
+**Opt-in feature.** Enable with `/bluera-base:settings enable deep-learn`.
 
 Semantic session analysis using Claude CLI. Analyzes session transcripts to extract meaningful, project-specific learnings.
 
@@ -215,9 +215,9 @@ Semantic session analysis using Claude CLI. Analyzes session transcripts to extr
 **Configuration:**
 
 ```bash
-/bluera-base:config enable deep-learn
-/bluera-base:config set .deepLearn.model haiku    # or sonnet
-/bluera-base:config set .deepLearn.maxBudget 0.05 # USD per analysis
+/bluera-base:settings enable deep-learn
+/bluera-base:settings set .deepLearn.model haiku    # or sonnet
+/bluera-base:settings set .deepLearn.maxBudget 0.05 # USD per analysis
 ```
 
 **Cost:** ~$0.001 per session (Haiku)
@@ -228,7 +228,7 @@ Semantic session analysis using Claude CLI. Analyzes session transcripts to extr
 
 ## dry-scan.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable dry-check`. For auto-scan on session stop, also enable `dry-auto`.
+**Opt-in feature.** Enable with `/bluera-base:settings enable dry-check`. For auto-scan on session stop, also enable `dry-auto`.
 
 Scans for code duplication at session end using `jscpd`. Reports duplicates that could be refactored.
 
@@ -236,7 +236,7 @@ Scans for code duplication at session end using `jscpd`. Reports duplicates that
 
 ## standards-review.sh
 
-**Opt-in feature.** Enable with `/bluera-base:config enable standards-review`.
+**Opt-in feature.** Enable with `/bluera-base:settings enable standards-review`.
 
 Reviews code against CLAUDE.md guidelines before Bash commands. Helps ensure code follows project conventions.
 
@@ -249,8 +249,8 @@ Reviews code against CLAUDE.md guidelines before Bash commands. Helps ensure cod
 **Configuration:**
 
 ```bash
-/bluera-base:config enable standards-review
-/bluera-base:config set .standardsReview.mode warn  # or block
+/bluera-base:settings enable standards-review
+/bluera-base:settings set .standardsReview.mode warn  # or block
 ```
 
 **Modes:**

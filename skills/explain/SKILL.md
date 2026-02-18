@@ -107,11 +107,11 @@ JavaScript/TypeScript, Python, Rust, Go, Java, Kotlin, Ruby, PHP, C#/.NET, Swift
 
 ```bash
 # Interactive setup - walks through each feature
-/bluera-base:config init
+/bluera-base:settings init
 
 # Or enable features individually
-/bluera-base:config enable notifications
-/bluera-base:config enable strict-typing
+/bluera-base:settings enable notifications
+/bluera-base:settings enable strict-typing
 ```
 
 ### Explore
@@ -139,8 +139,8 @@ Features are opt-in capabilities you can enable or disable. Each feature has a c
 **How to use:**
 
 ```bash
-/bluera-base:config enable notifications   # Enable
-/bluera-base:config disable notifications  # Disable
+/bluera-base:settings enable notifications   # Enable
+/bluera-base:settings disable notifications  # Disable
 ```
 
 **What you'll see:** Notifications like `"bluera-base - Permission Required"` with the project name in the title.
@@ -178,9 +178,9 @@ brew install terminal-notifier
 **How to use:**
 
 ```bash
-/bluera-base:config enable auto-learn      # Enable tracking
-/bluera-base:config set .autoLearn.mode suggest  # Suggest updates (default)
-/bluera-base:config set .autoLearn.mode auto     # Auto-apply updates
+/bluera-base:settings enable auto-learn      # Enable tracking
+/bluera-base:settings set .autoLearn.mode suggest  # Suggest updates (default)
+/bluera-base:settings set .autoLearn.mode auto     # Auto-apply updates
 ```
 
 **What you'll see:** At session end, suggestions for CLAUDE.md updates based on patterns observed. In auto mode, updates are applied directly.
@@ -198,8 +198,8 @@ brew install terminal-notifier
 **How to use:**
 
 ```bash
-/bluera-base:config enable auto-commit     # Prompt on session end
-/bluera-base:config enable auto-push       # Add push instruction to prompt
+/bluera-base:settings enable auto-commit     # Prompt on session end
+/bluera-base:settings enable auto-push       # Add push instruction to prompt
 ```
 
 **What you'll see:** When you end a session with uncommitted changes, you're prompted to run `/bluera-base:commit` (and optionally push).
@@ -217,9 +217,9 @@ brew install terminal-notifier
 **How to use:**
 
 ```bash
-/bluera-base:config enable dry-check       # Enable the feature
+/bluera-base:settings enable dry-check       # Enable the feature
 /bluera-base:dry scan                      # Manual scan
-/bluera-base:config enable dry-auto        # Auto-scan on session end
+/bluera-base:settings enable dry-auto        # Auto-scan on session end
 ```
 
 **What you'll see:** A report showing duplicate code blocks, their locations, and suggestions for refactoring.
@@ -240,7 +240,7 @@ brew install terminal-notifier
 **How to use:**
 
 ```bash
-/bluera-base:config enable strict-typing
+/bluera-base:settings enable strict-typing
 ```
 
 **What you'll see:** When you edit a file with forbidden patterns, Claude is notified and asked to fix them.
@@ -269,8 +269,8 @@ brew install terminal-notifier
 **Configuration:**
 
 ```bash
-/bluera-base:config set .milhouse.defaultMaxIterations 10  # Limit iterations
-/bluera-base:config set .milhouse.defaultStuckLimit 3      # Ask if stuck after 3 no-progress iterations
+/bluera-base:settings set .milhouse.defaultMaxIterations 10  # Limit iterations
+/bluera-base:settings set .milhouse.defaultStuckLimit 3      # Ask if stuck after 3 no-progress iterations
 ```
 
 **Default:** Unlimited iterations, stuck limit 3
@@ -424,22 +424,22 @@ Settings merge in order: defaults → `config.json` → `config.local.json`
 
 ```bash
 # Show current configuration
-/bluera-base:config show
+/bluera-base:settings show
 
 # Interactive setup
-/bluera-base:config init
+/bluera-base:settings init
 
 # Enable/disable features
-/bluera-base:config enable strict-typing
-/bluera-base:config disable notifications
+/bluera-base:settings enable strict-typing
+/bluera-base:settings disable notifications
 
 # Set specific values
-/bluera-base:config set .milhouse.defaultMaxIterations 10
-/bluera-base:config set .autoLearn.mode auto
+/bluera-base:settings set .milhouse.defaultMaxIterations 10
+/bluera-base:settings set .autoLearn.mode auto
 
 # Reset to defaults
-/bluera-base:config reset          # Remove personal overrides
-/bluera-base:config reset --all    # Remove all config
+/bluera-base:settings reset          # Remove personal overrides
+/bluera-base:settings reset --all    # Remove all config
 ```
 
 ---

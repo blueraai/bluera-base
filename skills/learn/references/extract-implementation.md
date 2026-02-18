@@ -14,7 +14,7 @@ The extract command manually triggers session analysis on the current session's 
 # Check deep-learn enabled
 ENABLED=$(cat .bluera/bluera-base/config.json 2>/dev/null | jq -r '.deepLearn.enabled // false')
 if [[ "$ENABLED" != "true" ]]; then
-  echo "Deep-learn not enabled. Run: /bluera-base:config enable deep-learn"
+  echo "Deep-learn not enabled. Run: /bluera-base:settings enable deep-learn"
   exit 0
 fi
 

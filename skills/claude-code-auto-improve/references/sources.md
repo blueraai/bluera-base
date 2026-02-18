@@ -178,10 +178,10 @@ In `.bluera/bluera-base/config.json`:
 
 ```bash
 # Only use changelog and learnings
-/bluera-base:config set autoImprove.sources '["changelog", "learnings"]'
+/bluera-base:settings set autoImprove.sources '["changelog", "learnings"]'
 
 # Skip GitHub (useful if not authenticated)
-/bluera-base:config set autoImprove.sources '["changelog", "knowledge", "learnings"]'
+/bluera-base:settings set autoImprove.sources '["changelog", "knowledge", "learnings"]'
 ```
 
 ---

@@ -696,7 +696,7 @@ bluera_memory_import_learnings() {
   local mem_enabled
   mem_enabled=$(bluera_get_config ".memory.enabled" "false")
   if [[ "$mem_enabled" != "true" ]]; then
-    echo "Global memory is disabled. Enable with: /bluera-base:config set .memory.enabled true"
+    echo "Global memory is disabled. Enable with: /bluera-base:settings set .memory.enabled true"
     return 1
   fi
 

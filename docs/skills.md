@@ -39,10 +39,10 @@ Automatically detects recurring command patterns during sessions and suggests le
 
 ```bash
 # Enable (opt-in, disabled by default)
-/bluera-base:config enable auto-learn
+/bluera-base:settings enable auto-learn
 
 # Set mode: suggest (default) or auto
-/bluera-base:config set .autoLearn.mode auto
+/bluera-base:settings set .autoLearn.mode auto
 ```
 
 | Option | Values | Default | Description |
@@ -82,10 +82,10 @@ Manage learnings captured from semantic session analysis (deep learning).
 
 ```bash
 # Enable deep learning (required for session analysis)
-/bluera-base:config enable deep-learn
+/bluera-base:settings enable deep-learn
 
 # Configure model (haiku is faster, sonnet is smarter)
-/bluera-base:config set .deepLearn.model sonnet
+/bluera-base:settings set .deepLearn.model sonnet
 ```
 
 ### Cost

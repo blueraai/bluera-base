@@ -44,7 +44,7 @@ Show only the Configuration section.
 
 ```bash
 # Initialize config for your project
-/bluera-base:config init
+/bluera-base:settings init
 
 # Create atomic commits with conventional format
 /bluera-base:commit
@@ -82,7 +82,7 @@ All skills are available as slash commands via `/bluera-base:<name>`.
 
 | Skill | Description |
 |-------|-------------|
-| `/bluera-base:config` | Manage plugin configuration |
+| `/bluera-base:settings` | Manage plugin configuration |
 | `/bluera-base:create` | Create plugin components (skills, hooks, agents, prompts) |
 | `/bluera-base:harden-repo` | Set up git hooks, linters, formatters |
 | `/bluera-base:init` | Initialize a project with bluera-base conventions |
@@ -184,17 +184,17 @@ Hooks run automatically on specific events. No action required.
 
 ## Configuration
 
-Manage settings with `/bluera-base:config`. Config stored in `.bluera/bluera-base/`.
+Manage settings with `/bluera-base:settings`. Config stored in `.bluera/bluera-base/`.
 
 ### Quick Enable/Disable
 
 ```bash
-/bluera-base:config enable auto-learn      # Track commands for learning
-/bluera-base:config enable notifications   # Desktop notifications
-/bluera-base:config enable auto-commit     # Auto-commit on session stop
-/bluera-base:config enable auto-push       # Add push instruction to prompt
-/bluera-base:config enable dry-check       # Enable DRY detection
-/bluera-base:config enable dry-auto        # Auto-scan on session stop
+/bluera-base:settings enable auto-learn      # Track commands for learning
+/bluera-base:settings enable notifications   # Desktop notifications
+/bluera-base:settings enable auto-commit     # Auto-commit on session stop
+/bluera-base:settings enable auto-push       # Add push instruction to prompt
+/bluera-base:settings enable dry-check       # Enable DRY detection
+/bluera-base:settings enable dry-auto        # Auto-scan on session stop
 ```
 
 ### Config Schema
@@ -262,7 +262,7 @@ bluera-base works with any language Claude Code supports. Language-specific feat
 
 - `/bluera-base:help <topic>` - Specific topic help
 - `@skill-name` - Reference skill documentation
-- `/bluera-base:config status` - Debug configuration issues
+- `/bluera-base:settings status` - Debug configuration issues
 
 ### Skill Budget
 

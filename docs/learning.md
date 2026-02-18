@@ -70,16 +70,16 @@ Tracks recurring commands during sessions and generates learnings automatically.
 
 ```bash
 # Enable auto-learn
-/bluera-base:config enable auto-learn
+/bluera-base:settings enable auto-learn
 
 # Set mode
-/bluera-base:config set .autoLearn.mode auto     # or "suggest"
+/bluera-base:settings set .autoLearn.mode auto     # or "suggest"
 
 # Set threshold (occurrences before suggesting)
-/bluera-base:config set .autoLearn.threshold 3
+/bluera-base:settings set .autoLearn.threshold 3
 
 # Set target file
-/bluera-base:config set .autoLearn.target local  # or "shared"
+/bluera-base:settings set .autoLearn.target local  # or "shared"
 ```
 
 | Setting | Options | Default | Description |
@@ -125,13 +125,13 @@ Semantic analysis of session transcripts to extract meaningful, project-specific
 
 ```bash
 # Enable deep learning
-/bluera-base:config enable deep-learn
+/bluera-base:settings enable deep-learn
 
 # Configure model
-/bluera-base:config set .deepLearn.model haiku    # or "sonnet"
+/bluera-base:settings set .deepLearn.model haiku    # or "sonnet"
 
 # Set budget limit per analysis
-/bluera-base:config set .deepLearn.maxBudget 0.05
+/bluera-base:settings set .deepLearn.maxBudget 0.05
 ```
 
 ### Cost
@@ -220,7 +220,7 @@ These learnings persist across sessions and help Claude:
 
 ### Learnings not appearing
 
-1. Check auto-learn is enabled: `/bluera-base:config status`
+1. Check auto-learn is enabled: `/bluera-base:settings status`
 2. Verify target file exists and has markers
 3. Check `.bluera/bluera-base/state/session-signals.json` for tracked commands
 
@@ -233,7 +233,7 @@ These learnings persist across sessions and help Claude:
 ### Deep-learn not working
 
 1. Requires `claude` CLI installed
-2. Check deep-learn is enabled: `/bluera-base:config enable deep-learn`
+2. Check deep-learn is enabled: `/bluera-base:settings enable deep-learn`
 3. Verify API access for Claude CLI
 
 ---

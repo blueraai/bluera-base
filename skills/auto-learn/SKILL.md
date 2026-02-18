@@ -20,20 +20,20 @@ The auto-learn system observes commands run during a Claude Code session and, wh
 
 ## Configuration
 
-Enable and configure via `/bluera-base:config`:
+Enable and configure via `/bluera-base:settings`:
 
 ```bash
 # Enable auto-learning (opt-in, disabled by default)
-/bluera-base:config enable auto-learn
+/bluera-base:settings enable auto-learn
 
 # Set mode: suggest (default) or auto
-/bluera-base:config set .autoLearn.mode auto
+/bluera-base:settings set .autoLearn.mode auto
 
 # Set occurrence threshold (default: 3)
-/bluera-base:config set .autoLearn.threshold 5
+/bluera-base:settings set .autoLearn.threshold 5
 
 # Set target file: local (default) or shared
-/bluera-base:config set .autoLearn.target shared
+/bluera-base:settings set .autoLearn.target shared
 ```
 
 ### Configuration Options
@@ -114,7 +114,7 @@ Maximum **50 learnings** in the auto-managed section. If exceeded, a warning is 
 Auto-learn is **disabled by default**. Users must explicitly enable it:
 
 ```bash
-/bluera-base:config enable auto-learn
+/bluera-base:settings enable auto-learn
 ```
 
 ## State Files
@@ -141,7 +141,7 @@ For more intelligent learning, see the **deep-learn** feature which uses Claude 
 
 ```bash
 # Enable deep learning (more powerful, uses Claude Haiku)
-/bluera-base:config enable deep-learn
+/bluera-base:settings enable deep-learn
 ```
 
 **Differences:**
@@ -166,7 +166,7 @@ See `skills/learn/SKILL.md` for full deep learning documentation.
 
 ## Related
 
-- `/bluera-base:config` - Enable and configure auto-learn
+- `/bluera-base:settings` - Enable and configure auto-learn
 - `/bluera-base:claude-code-md learn` - Manually add a learning
 - `/bluera-base:learn` - Manage deep learnings
 - `skills/learn` - Deep learning skill

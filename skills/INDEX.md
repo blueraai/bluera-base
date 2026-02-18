@@ -25,7 +25,7 @@ Categorized index of all bluera-base skills.
 
 | Skill | Description | Key Tools |
 |-------|-------------|-----------|
-| [config](config/SKILL.md) | Manage plugin configuration | Read, Write, Edit |
+| [settings](settings/SKILL.md) | Manage plugin configuration | Read, Write, Edit |
 | [statusline](statusline/SKILL.md) | Terminal status line display | Read, Write |
 | [checklist](checklist/SKILL.md) | Project checklist management | Read, Write, Edit |
 

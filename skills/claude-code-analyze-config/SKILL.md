@@ -26,7 +26,7 @@ This plugin provides:
 - `/bluera-base:claude-code-clean` - diagnose slow startup and guide cleanup
 - `/bluera-base:code-review` - multi-agent code review
 - `/bluera-base:commit` - atomic commits with documentation awareness
-- `/bluera-base:config` - configuration management
+- `/bluera-base:settings` - configuration management
 - `/bluera-base:dry` - detect duplicate code using jscpd
 - `/bluera-base:explain` - explain plugin functionality
 - `/bluera-base:harden-repo` - git hooks, linters, formatters setup

@@ -26,7 +26,7 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Enable strict typing:
 
    ```bash
-   /bluera-base:config enable strict-typing
+   /bluera-base:settings enable strict-typing
    ```
 
 2. Edit a TypeScript file to introduce a violation:
@@ -71,8 +71,8 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Enable auto-learn:
 
    ```bash
-   /bluera-base:config set autoLearn.enabled true
-   /bluera-base:config set autoLearn.mode suggest
+   /bluera-base:settings set autoLearn.enabled true
+   /bluera-base:settings set autoLearn.mode suggest
    ```
 
 2. Run test commands repeatedly to hit threshold
@@ -88,7 +88,7 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Enable deep learning:
 
    ```bash
-   /bluera-base:config set deepLearn.enabled true
+   /bluera-base:settings set deepLearn.enabled true
    ```
 
 2. Have a session with corrections or error resolutions
@@ -123,7 +123,7 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Enable auto-commit:
 
    ```bash
-   /bluera-base:config set autoCommit.enabled true
+   /bluera-base:settings set autoCommit.enabled true
    ```
 
 2. Make changes during session
@@ -139,7 +139,7 @@ These hooks require manual testing due to their interactive or contextual nature
 1. Enable dry scanning:
 
    ```bash
-   /bluera-base:config set dryScan.enabled true
+   /bluera-base:settings set dryScan.enabled true
    ```
 
 2. Create duplicate code blocks

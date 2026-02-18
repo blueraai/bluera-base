@@ -100,14 +100,14 @@ Manually trigger deep-learn analysis on the current session:
 Enable deep learning:
 
 ```bash
-/bluera-base:config enable deep-learn
+/bluera-base:settings enable deep-learn
 ```
 
 Configure model and budget:
 
 ```bash
-/bluera-base:config set .deepLearn.model haiku    # or sonnet
-/bluera-base:config set .deepLearn.maxBudget 0.05 # USD per analysis
+/bluera-base:settings set .deepLearn.model haiku    # or sonnet
+/bluera-base:settings set .deepLearn.maxBudget 0.05 # USD per analysis
 ```
 
 ### Auto-Promotion to Global Memory (Opt-In)
@@ -118,9 +118,9 @@ promoted to global memory when applied.
 **Enable via config:**
 
 ```bash
-/bluera-base:config set .memory.enabled true
-/bluera-base:config set .deepLearn.autoPromoteEnabled true
-/bluera-base:config set .deepLearn.autoPromoteThreshold 0.9  # default
+/bluera-base:settings set .memory.enabled true
+/bluera-base:settings set .deepLearn.autoPromoteEnabled true
+/bluera-base:settings set .deepLearn.autoPromoteThreshold 0.9  # default
 ```
 
 **Cross-Project Warning**: Promoted memories are visible across ALL projects.

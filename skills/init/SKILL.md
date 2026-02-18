@@ -100,7 +100,7 @@ If config not initialized:
 2. Write default `config.json`
 3. Update `.gitignore` with bluera patterns
 
-See `/bluera-base:config init` for full workflow.
+See `/bluera-base:settings init` for full workflow.
 
 #### 2. Install Rules
 
@@ -171,7 +171,7 @@ Show summary:
 
 Next steps:
 - Review .claude/rules/ and customize if needed
-- Run /bluera-base:config show to see all settings
+- Run /bluera-base:settings show to see all settings
 - Run /bluera-base:help for available commands
 ```
 
