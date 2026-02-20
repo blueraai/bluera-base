@@ -129,6 +129,29 @@
         ]
       }
     ],
+    "SubagentStop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/milhouse-stop.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-end-learn.sh",
+            "timeout": 10,
+            "async": true
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": ".*",
