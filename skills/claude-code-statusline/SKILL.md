@@ -77,6 +77,28 @@ json_get() {
 
 ---
 
+## Preset Version Detection
+
+All preset scripts include a version stamp on line 2: `# bluera-base-preset: <name>@<version>`
+
+**When the user runs this skill, BEFORE offering presets:**
+
+1. Read `~/.claude/statusline.sh` (or `$CLAUDE_CONFIG_DIR/statusline.sh`)
+2. Look for a line matching `# bluera-base-preset: <name>@<version>`
+3. Read the current plugin version from `.claude-plugin/plugin.json` in the plugin directory
+4. Compare:
+
+| Scenario | Action |
+|----------|--------|
+| Stamp found, version < current | Tell user: "Your **`<name>`** preset is from v`<old>`, current is v`<new>`. Would you like to update?" |
+| Stamp found, version = current | Tell user: "Your **`<name>`** preset is already up to date (v`<version>`)." |
+| No stamp found | Treat as custom/unmanaged — do not suggest overwriting. Offer presets normally. |
+| No statusline.sh exists | Offer presets normally (fresh install). |
+
+**When writing a preset**, always include the version stamp as line 2 (after shebang). The stamp is already present in each preset script in `preset-scripts.md`.
+
+---
+
 ## File Operations (REQUIRED)
 
 After generating the statusline script:

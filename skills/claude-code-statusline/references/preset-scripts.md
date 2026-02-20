@@ -8,6 +8,7 @@ Ready-to-use statusline scripts. Copy to `~/.claude/statusline.sh` and make exec
 
 ```bash
 #!/bin/bash
+# bluera-base-preset: minimal@0.40.0
 input=$(cat)
 MODEL=$(echo "$input" | jq -r '.model.display_name // "?"')
 CTX=$(echo "$input" | jq -r '.context_window.used_percentage // 0' | cut -d. -f1)
@@ -20,6 +21,7 @@ echo "$MODEL $CTX%"
 
 ```bash
 #!/bin/bash
+# bluera-base-preset: informative@0.40.0
 input=$(cat)
 
 MODEL=$(echo "$input" | jq -r '.model.display_name // "?"')
@@ -47,6 +49,7 @@ echo "🤖 $MODEL │ 📊 ${CTX}%${STATUS} │ 💰 $COST_FMT"
 
 ```bash
 #!/bin/bash
+# bluera-base-preset: developer@0.40.0
 input=$(cat)
 
 # Extract values
@@ -106,6 +109,7 @@ echo "$OUTPUT"
 
 ```bash
 #!/bin/bash
+# bluera-base-preset: system@0.40.0
 input=$(cat)
 
 # Extract values
@@ -168,6 +172,7 @@ Advanced statusline with rate limits, context bar, bluera config status, and ANS
 
 ```bash
 #!/bin/bash
+# bluera-base-preset: bluera@0.40.0
 # Bluera preset - advanced statusline with rate limits, context bar, and ANSI colors
 
 input=$(cat)
