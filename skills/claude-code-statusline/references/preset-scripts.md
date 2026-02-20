@@ -275,7 +275,7 @@ get_rate_limits() {
     local five_color="\033[32m"; [ "$five_int" -ge 50 ] && five_color="\033[33m"; [ "$five_int" -ge 75 ] && five_color="\033[38;5;208m"; [ "$five_int" -ge 95 ] && five_color="\033[31m"
     local seven_color="\033[32m"; [ "$seven_int" -ge 50 ] && seven_color="\033[33m"; [ "$seven_int" -ge 75 ] && seven_color="\033[38;5;208m"; [ "$seven_int" -ge 95 ] && seven_color="\033[31m"
 
-    printf "${five_color}5h:%d%%\033[0m ${seven_color}7d:%d%%\033[0m" "$five_int" "$seven_int"
+    printf "${seven_color}7d:%d%%\033[0m ${five_color}5h:%d%%\033[0m" "$seven_int" "$five_int"
 }
 
 # --- Reset Timer (time until 5h rate limit resets) ---
