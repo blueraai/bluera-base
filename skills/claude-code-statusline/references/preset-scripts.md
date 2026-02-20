@@ -168,12 +168,12 @@ echo "$OUTPUT"
 
 ## Script: bluera
 
-Advanced statusline with rate limits, context bar, bluera config status, and ANSI colors.
+Advanced 2-line statusline with burn rate, cache efficiency, reset timer, token usage, block projection, rate limits, context bar, and ANSI colors.
 
 ```bash
 #!/bin/bash
-# bluera-base-preset: bluera@0.40.0
-# Bluera preset - advanced statusline with rate limits, context bar, and ANSI colors
+# bluera-base-preset: bluera@0.41.0
+# Bluera preset - advanced 2-line statusline with ANSI colors
 
 input=$(cat)
 
@@ -278,18 +278,153 @@ get_rate_limits() {
     printf "${five_color}5h:%d%%\033[0m ${seven_color}7d:%d%%\033[0m" "$five_int" "$seven_int"
 }
 
+# --- Reset Timer (time until 5h rate limit resets) ---
+get_reset_timer() {
+    local cache_file="/tmp/.claude_usage_cache"
+    [ ! -f "$cache_file" ] && echo "" && return
+
+    local resets_at
+    resets_at=$(jq -r '(.five_hour // .five_hour_opus // .five_hour_sonnet // {}).resets_at // empty' "$cache_file" 2>/dev/null)
+    [ -z "$resets_at" ] && echo "" && return
+
+    # Parse ISO timestamp to epoch — strip fractional secs and offset for macOS date
+    local clean_ts="${resets_at%%.*}"  # strip .989255+00:00 or similar
+    clean_ts="${clean_ts%%+*}"         # strip +00:00 if no fractional
+    local reset_epoch
+    reset_epoch=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%S" "$clean_ts" +%s 2>/dev/null || date -d "$resets_at" +%s 2>/dev/null)
+    [ -z "$reset_epoch" ] && echo "" && return
+
+    local now=$(date +%s)
+    local delta=$((reset_epoch - now))
+    [ "$delta" -le 0 ] && echo "" && return
+
+    local hours=$((delta / 3600))
+    local mins=$(( (delta % 3600) / 60 ))
+
+    if [ "$hours" -gt 0 ]; then
+        printf "\033[38;5;245m↻%dh%dm\033[0m" "$hours" "$mins"
+    else
+        printf "\033[38;5;245m↻%dm\033[0m" "$mins"
+    fi
+}
+
+# --- Cache Efficiency (cache read hit rate) ---
+get_cache_efficiency() {
+    local cache_read="$1" cache_create="$2"
+    local total=$((cache_read + cache_create))
+    [ "$total" -eq 0 ] && echo "" && return
+
+    local pct=$((cache_read * 100 / total))
+
+    # Green ≥50% (good cache reuse), yellow 25-49%, red <25%
+    local color="\033[31m"
+    [ "$pct" -ge 25 ] && color="\033[33m"
+    [ "$pct" -ge 50 ] && color="\033[32m"
+
+    printf "${color}C:%d%%\033[0m" "$pct"
+}
+
+# --- Session Duration ---
+get_session_duration() {
+    local duration_ms="$1"
+    [ "$duration_ms" = "0" ] || [ -z "$duration_ms" ] && echo "" && return
+
+    local secs=$((duration_ms / 1000))
+    if [ "$secs" -lt 60 ]; then
+        printf "\033[38;5;245m%ds\033[0m" "$secs"
+    elif [ "$secs" -lt 3600 ]; then
+        printf "\033[38;5;245m%dm\033[0m" $((secs / 60))
+    else
+        local h=$((secs / 3600)) m=$(( (secs % 3600) / 60 ))
+        if [ "$m" -eq 0 ]; then
+            printf "\033[38;5;245m%dh\033[0m" "$h"
+        else
+            printf "\033[38;5;245m%dh%dm\033[0m" "$h" "$m"
+        fi
+    fi
+}
+
+# --- Burn Rate (cost per hour) ---
+get_burn_rate() {
+    local cost="$1" duration_ms="$2"
+    [ "$duration_ms" = "0" ] || [ -z "$duration_ms" ] || [ "$cost" = "0" ] && echo "" && return
+
+    local rate
+    rate=$(echo "scale=2; $cost / ($duration_ms / 3600000)" | bc -l 2>/dev/null)
+    [ -z "$rate" ] && echo "" && return
+
+    local rate_int=$(printf "%.0f" "$rate" 2>/dev/null || echo "0")
+
+    # Green <$2/h, yellow $2-5/h, orange $5-10/h, red >$10/h
+    local color="\033[32m"
+    [ "$rate_int" -ge 2 ] && color="\033[33m"
+    [ "$rate_int" -ge 5 ] && color="\033[38;5;208m"
+    [ "$rate_int" -ge 10 ] && color="\033[31m"
+
+    printf "${color}\$%.1f/h\033[0m" "$rate"
+}
+
+# --- Token Usage (compact) ---
+get_token_usage() {
+    local tokens="$1"
+    [ "$tokens" -eq 0 ] 2>/dev/null && echo "" && return
+
+    if [ "$tokens" -ge 1000000 ]; then
+        local m=$((tokens / 1000000))
+        local remainder=$(( (tokens % 1000000) / 100000 ))
+        printf "\033[38;5;245m%d.%dM\033[0m" "$m" "$remainder"
+    elif [ "$tokens" -ge 1000 ]; then
+        printf "\033[38;5;245m%dK\033[0m" $((tokens / 1000))
+    else
+        printf "\033[38;5;245m%d\033[0m" "$tokens"
+    fi
+}
+
+# --- Block Projection (estimated remaining spend in 5h window) ---
+get_block_projection() {
+    local cost="$1" duration_ms="$2"
+    [ "$duration_ms" = "0" ] || [ -z "$duration_ms" ] || [ "$cost" = "0" ] && echo "" && return
+
+    local cache_file="/tmp/.claude_usage_cache"
+    [ ! -f "$cache_file" ] && echo "" && return
+
+    local resets_at
+    resets_at=$(jq -r '(.five_hour // .five_hour_opus // .five_hour_sonnet // {}).resets_at // empty' "$cache_file" 2>/dev/null)
+    [ -z "$resets_at" ] && echo "" && return
+
+    local clean_ts="${resets_at%%.*}"
+    clean_ts="${clean_ts%%+*}"
+    local reset_epoch
+    reset_epoch=$(TZ=UTC date -j -f "%Y-%m-%dT%H:%M:%S" "$clean_ts" +%s 2>/dev/null || date -d "$resets_at" +%s 2>/dev/null)
+    [ -z "$reset_epoch" ] && echo "" && return
+
+    local now=$(date +%s)
+    local remaining_secs=$((reset_epoch - now))
+    [ "$remaining_secs" -le 0 ] && echo "" && return
+
+    # Multiply first to preserve precision: cost * remaining / duration_secs
+    local projection
+    projection=$(echo "scale=2; $cost * $remaining_secs / ($duration_ms / 1000)" | bc -l 2>/dev/null)
+    [ -z "$projection" ] && echo "" && return
+
+    printf "\033[38;5;245m→\$%.0f\033[0m" "$projection"
+}
+
 # Extract values
+SESSION_ID=$(echo "$input" | jq -r '.session_id // ""' | cut -c1-6)
 MODEL=$(echo "$input" | jq -r '.model.display_name // "?"')
 CURRENT_DIR=$(echo "$input" | jq -r '.workspace.current_dir')
 DIR_NAME=$(basename "$CURRENT_DIR")
 COST=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+DURATION_MS=$(echo "$input" | jq -r '.cost.total_duration_ms // 0')
 LINES_ADDED=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
 LINES_REMOVED=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
 CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size // 200000')
 USAGE=$(echo "$input" | jq '.context_window.current_usage')
 
-# Calculate context percentage
-if [ "$USAGE" != "null" ]; then
+# Calculate context percentage and token counts
+INPUT_TOKENS=0; CACHE_CREATE=0; CACHE_READ=0; CURRENT_TOKENS=0
+if [ "$USAGE" != "null" ] && [ -n "$USAGE" ]; then
     INPUT_TOKENS=$(echo "$USAGE" | jq '.input_tokens // 0')
     CACHE_CREATE=$(echo "$USAGE" | jq '.cache_creation_input_tokens // 0')
     CACHE_READ=$(echo "$USAGE" | jq '.cache_read_input_tokens // 0')
@@ -303,10 +438,12 @@ fi
 GIT_INFO=""
 if git -C "$CURRENT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git -C "$CURRENT_DIR" --no-optional-locks branch --show-current 2>/dev/null)
+    SHORT_SHA=$(git -C "$CURRENT_DIR" --no-optional-locks rev-parse --short=6 HEAD 2>/dev/null)
+    BRANCH_ICON=$(printf '\xee\x82\xa0')
     if [ -n "$(git -C "$CURRENT_DIR" --no-optional-locks status --porcelain 2>/dev/null)" ]; then
-        GIT_INFO=$(printf " \033[33m%s\033[0m\033[31m*\033[0m" "$BRANCH")
+        GIT_INFO=$(printf "\033[34m%s\033[0m \033[33m%s %s\033[31m*\033[0m" "$SHORT_SHA" "$BRANCH_ICON" "$BRANCH")
     else
-        GIT_INFO=$(printf " \033[36m%s\033[0m" "$BRANCH")
+        GIT_INFO=$(printf "\033[34m%s\033[0m \033[32m%s\033[0m \033[36m%s\033[0m" "$SHORT_SHA" "$BRANCH_ICON" "$BRANCH")
     fi
 fi
 
@@ -333,24 +470,66 @@ BAR=""; for ((i=0; i<FILLED; i++)); do BAR+="█"; done; for ((i=0; i<EMPTY; i++
 
 # Project type, bluera status, and rate limits
 PROJECT_TYPE=$(get_project_type "$CURRENT_DIR")
-[ -n "$PROJECT_TYPE" ] && PROJECT_TYPE=" $PROJECT_TYPE"
+[ -n "$PROJECT_TYPE" ] && PROJECT_TYPE="$PROJECT_TYPE "
 
 PROJECT_DIR=$(echo "$input" | jq -r '.workspace.project_dir // empty')
 [ -z "$PROJECT_DIR" ] && PROJECT_DIR="$CURRENT_DIR"
 BLUERA_STATUS=$(get_bluera_status "$PROJECT_DIR")
 
 RATE_LIMITS=$(get_rate_limits)
-[ -n "$RATE_LIMITS" ] && RATE_LIMITS=" │ $RATE_LIMITS"
+RESET_TIMER=$(get_reset_timer)
+[ -n "$RESET_TIMER" ] && RESET_TIMER=" $RESET_TIMER"
 
-# Output with colored context bar
+# New metrics
+CACHE_EFF=$(get_cache_efficiency "$CACHE_READ" "$CACHE_CREATE")
+[ -n "$CACHE_EFF" ] && CACHE_EFF=" $CACHE_EFF"
+
+TOKEN_FMT=$(get_token_usage "$CURRENT_TOKENS")
+[ -n "$TOKEN_FMT" ] && TOKEN_FMT=" $TOKEN_FMT"
+
+BURN_RATE=$(get_burn_rate "$COST" "$DURATION_MS")
+[ -n "$BURN_RATE" ] && BURN_RATE=" $BURN_RATE"
+
+BLOCK_PROJ=$(get_block_projection "$COST" "$DURATION_MS")
+[ -n "$BLOCK_PROJ" ] && BLOCK_PROJ=" $BLOCK_PROJ"
+
+DURATION_FMT=$(get_session_duration "$DURATION_MS")
+[ -n "$DURATION_FMT" ] && DURATION_FMT="$DURATION_FMT"
+
+# Separator: dark gray middle dot
+SEP=$(printf " \033[38;5;240m·\033[0m ")
+
+# Format session ID prefix (blood orange)
+SID_FMT=""
+[ -n "$SESSION_ID" ] && SID_FMT=$(printf "\033[38;5;166m%s\033[0m " "$SESSION_ID")
+
+# Context bar color
 if [ "$CONTEXT_PCT" -lt 50 ]; then
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[32m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    BAR_COLOR="\033[32m"
 elif [ "$CONTEXT_PCT" -lt 80 ]; then
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[33m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    BAR_COLOR="\033[33m"
 else
-    printf "\033[35m%s\033[0m \033[1m%s\033[0m%s%s%s │ \033[33m%s\033[0m │ \033[31m%s\033[0m %d%% │ %s%s" \
-        "$MODEL" "$DIR_NAME" "$PROJECT_TYPE" "$BLUERA_STATUS" "$GIT_INFO" "$COST_FMT" "$BAR" "$CONTEXT_PCT" "$LINES_FMT" "$RATE_LIMITS"
+    BAR_COLOR="\033[31m"
 fi
+
+# Build rate limit segment (5h + 7d + reset + projection)
+RATE_SEG=""
+if [ -n "$RATE_LIMITS" ]; then
+    RATE_SEG="${SEP}$RATE_LIMITS$RESET_TIMER$BLOCK_PROJ"
+fi
+
+# Build cost segment
+COST_SEG=$(printf "%s\033[33m%s\033[0m%s" "$SEP" "$COST_FMT" "$BURN_RATE")
+
+# Build plugin status segment for line 2
+PLUGIN_SEG=""
+[ -n "$BLUERA_STATUS" ] && PLUGIN_SEG="${SEP}$BLUERA_STATUS"
+
+# Line 1: session_id stack project · model ctx_bar ctx% tokens cache · 5h 7d reset proj · cost burn
+printf "%s%s\033[1m%s\033[0m%s\033[35m%s\033[0m %b%s\033[0m %d%%%s%s%s%s\n" \
+    "$SID_FMT" "$PROJECT_TYPE" "$DIR_NAME" "$SEP" \
+    "$MODEL" "$BAR_COLOR" "$BAR" "$CONTEXT_PCT" "$TOKEN_FMT" "$CACHE_EFF" "$RATE_SEG" "$COST_SEG"
+
+# Line 2: sha branch lines · duration · bluera
+printf "%s %s%s%s%s" "$GIT_INFO" "$LINES_FMT" "$SEP" "$DURATION_FMT" "$PLUGIN_SEG"
 ```

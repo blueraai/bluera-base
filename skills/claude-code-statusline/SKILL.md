@@ -21,7 +21,7 @@ Choose a preset and apply it:
 | **informative** | `🤖 Opus 4.5 │ 📊 45%🟢 │ 💰 $1.23` |
 | **developer** | `📁project │ 🤖Opus4.5 │ 📊45%🟢 │ 🌿main* │ 📦Node │ 💰$1.23` |
 | **system** | `📁project │ 🤖Opus4.5 │ 📊45%🟢 │ 🌿main │ 💻15%🟢 │ 🧠62%🟡 │ 🐳3` |
-| **bluera** | `Opus4.5 project 🐍 ⚡7/10 main* │ $1.23 │ ██████░░░░ 60% │ +42/-8 │ 5h:12% 7d:8%` |
+| **bluera** | 2-line: `a1b2c3 📦 project · Opus4.6 ██████░░░░ 60% 85K C:85% · 5h:12% 7d:8% ↻3h12m →$3 · $1.23 $1.2/h` / `abc123  main* +42/-8 · 1h23m · ⚡7/10` |
 
 ---
 
@@ -184,7 +184,32 @@ DISPLAY_MODE="normal"
 
 ### bluera
 
-Advanced with rate limits, context bar, ANSI colors. See preset-scripts.md for full implementation.
+Advanced 2-line display with ANSI colors. See preset-scripts.md for full implementation.
+
+**Line 1** — Identity + Cost + Context + Rate Limits:
+
+| Metric | Source | Display |
+|--------|--------|---------|
+| Session ID | `session_id` (first 6 chars) | Orange prefix |
+| Cost | `cost.total_cost_usd` | `42¢` or `$1.23` |
+| Burn rate | cost / duration | `$1.2/h` (green/yellow/orange/red) |
+| Context bar | token counts | `██████░░░░ 60%` (green/yellow/red) |
+| Token usage | input + cache tokens | `85K` or `1.2M` |
+| Cache efficiency | cache_read / total_cache | `C:85%` (green/yellow/red) |
+| Rate limits | OAuth API (macOS) | `5h:12% 7d:8%` |
+| Reset timer | OAuth `resets_at` | `↻3h12m` |
+| Block projection | burn_rate * time_remaining | `→$3` |
+
+**Line 2** — Git + Session:
+
+| Metric | Source | Display |
+|--------|--------|---------|
+| Git SHA | `rev-parse --short=6` | Gray 6-char hash |
+| Branch | `branch --show-current` | Cyan (clean) or Yellow+red* (dirty) |
+| Lines changed | `cost.total_lines_added/removed` | `+42/-8` (green/red) |
+| Session duration | `cost.total_duration_ms` | `1h23m` |
+
+All metrics are conditional — only displayed when data is available.
 
 ---
 

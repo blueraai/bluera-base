@@ -27,6 +27,11 @@
       "type": "web",
       "url": "https://docs.anthropic.com/en/docs/claude-code/plugins",
       "depth": 1
+    },
+    {
+      "name": "claude-code-statusline",
+      "type": "repo",
+      "url": "https://github.com/rz1989s/claude-code-statusline"
     }
   ]
 }
