@@ -9,6 +9,8 @@
   "repository": "https://github.com/blueraai/bluera-base",
   "homepage": "https://github.com/blueraai/bluera-base#readme",
   "license": "MIT",
+  "categories": ["development", "automation"],
+  "compatibility": { "minVersion": "2.1.0" },
   "keywords": [
     "conventions",
     "hooks",

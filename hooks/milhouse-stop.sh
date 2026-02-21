@@ -106,47 +106,41 @@ if [[ $MAX_ITERATIONS -gt 0 ]] && [[ $ITERATION -ge $MAX_ITERATIONS ]]; then
   exit 0
 fi
 
-# Get transcript path from hook input
-TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
+# Try last_assistant_message from hook input first (v2.1.47+)
+LAST_OUTPUT=$(echo "$HOOK_INPUT" | jq -r '.last_assistant_message // empty' 2>/dev/null)
 
-# Validate transcript_path is not null/empty (jq returns "null" for missing keys)
-if [[ -z "$TRANSCRIPT_PATH" ]] || [[ "$TRANSCRIPT_PATH" == "null" ]]; then
-  echo "⚠️  Milhouse: transcript_path missing or invalid. State preserved." >&2
-  exit 0  # Exit WITHOUT deleting state - may be transient issue
-fi
+if [[ -z "$LAST_OUTPUT" ]]; then
+  # Fallback: parse transcript for older Claude Code versions
+  TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
 
-if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
-  echo "⚠️  Milhouse: transcript not found ($TRANSCRIPT_PATH). Stopping." >&2
-  rm "$STATE_FILE"
-  exit 0
-fi
+  if [[ -z "$TRANSCRIPT_PATH" ]] || [[ "$TRANSCRIPT_PATH" == "null" ]]; then
+    echo "⚠️  Milhouse: no last_assistant_message or transcript_path. State preserved." >&2
+    exit 0
+  fi
 
-# Read last assistant message from transcript (JSONL format - one JSON per line)
-# Use jq for robust parsing (handles whitespace variations in JSON)
-if ! jq -e 'select(.role == "assistant")' "$TRANSCRIPT_PATH" >/dev/null 2>&1; then
-  echo "⚠️  Milhouse: no assistant messages in transcript. Stopping." >&2
-  rm "$STATE_FILE"
-  exit 0
-fi
+  if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
+    echo "⚠️  Milhouse: transcript not found ($TRANSCRIPT_PATH). Stopping." >&2
+    rm "$STATE_FILE"
+    exit 0
+  fi
 
-# Extract last assistant message using jq (JSONL: -s slurps all lines into array)
-LAST_LINE=$(jq -s '[.[] | select(.role == "assistant")] | last' "$TRANSCRIPT_PATH" 2>/dev/null)
-if [[ -z "$LAST_LINE" ]] || [[ "$LAST_LINE" == "null" ]]; then
-  echo "⚠️  Milhouse: failed to extract assistant message. Stopping." >&2
-  rm "$STATE_FILE"
-  exit 0
-fi
+  LAST_LINE=$(jq -s '[.[] | select(.role == "assistant")] | last' "$TRANSCRIPT_PATH" 2>/dev/null)
+  if [[ -z "$LAST_LINE" ]] || [[ "$LAST_LINE" == "null" ]]; then
+    echo "⚠️  Milhouse: no assistant messages in transcript. Stopping." >&2
+    rm "$STATE_FILE"
+    exit 0
+  fi
 
-# Parse JSON with error handling
-if ! LAST_OUTPUT=$(echo "$LAST_LINE" | jq -r '
-  .message.content |
-  map(select(.type == "text")) |
-  map(.text) |
-  join("\n")
-' 2>&1); then
-  echo "⚠️  Milhouse: JSON parse failed. Stopping." >&2
-  rm "$STATE_FILE"
-  exit 0
+  if ! LAST_OUTPUT=$(echo "$LAST_LINE" | jq -r '
+    .message.content |
+    map(select(.type == "text")) |
+    map(.text) |
+    join("\n")
+  ' 2>&1); then
+    echo "⚠️  Milhouse: JSON parse failed. Stopping." >&2
+    rm "$STATE_FILE"
+    exit 0
+  fi
 fi
 
 if [[ -z "$LAST_OUTPUT" ]]; then

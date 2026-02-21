@@ -1,0 +1,8 @@
+{
+  "bluera-base": {
+    "autoLearn": { "enabled": false },
+    "autoCommit": { "enabled": false },
+    "autoImprove": { "enabled": false },
+    "dryRun": { "enabled": false }
+  }
+}
