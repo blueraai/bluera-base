@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.43.0](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.43.0) (2026-02-21)
+
+### ⚠ BREAKING CHANGES
+
+* **skills:** rename /config to /settings to avoid Claude Code collision
+
+### Features
+
+* **hooks:** add SubagentStop event handlers ([b4c1fd2](https://github.com/blueraai/bluera-base/commit/b4c1fd2e059baaf08127e614fdd27c45147e8138))
+* **skills:** add bluera config status badge to statusline preset ([174a8cd](https://github.com/blueraai/bluera-base/commit/174a8cd746a121481fa9f293729597ad5f91576d))
+* **skills:** add browser-inference-guide expert skill ([19aab4c](https://github.com/blueraai/bluera-base/commit/19aab4ce05106a627f9e371e642e557cefa97036))
+* **skills:** add version stamps to statusline presets ([2168370](https://github.com/blueraai/bluera-base/commit/21683706cb389d0eb069216bfe1c814aee7d375a))
+* **skills:** make auto-improve adoption-oriented instead of passive ([0e9d4f7](https://github.com/blueraai/bluera-base/commit/0e9d4f74e108f85b2f7f250c69a862f87af1c2ca))
+* **skills:** rename /config to /settings to avoid Claude Code collision ([fd4dacc](https://github.com/blueraai/bluera-base/commit/fd4daccc9b06427ccaacffb81827025e12a16298))
+* **statusline:** supercharge bluera preset with advanced metrics ([683fe29](https://github.com/blueraai/bluera-base/commit/683fe29d159fdbc5233e4773c26be67b80654779))
+
+### Bug Fixes
+
+* **skills:** remove shell-exec backtick pattern from audit-plugin skill ([4ab402f](https://github.com/blueraai/bluera-base/commit/4ab402f3ac4859963f4d61f123a28a68a6bdef33))
+* **statusline:** reverse 7d/5h rate limit order in bluera preset ([8bcbc55](https://github.com/blueraai/bluera-base/commit/8bcbc55477078599820a4eb723e4a05e3b3a9642))
+
 ## [0.42.0](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.42.0) (2026-02-20)
 
 ### ⚠ BREAKING CHANGES
