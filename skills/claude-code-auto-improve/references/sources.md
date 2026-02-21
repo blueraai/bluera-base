@@ -199,3 +199,48 @@ In `.bluera/bluera-base/config.json`:
 | Knowledge | MCP unavailable | Skip silently |
 
 Always aim to complete with available sources rather than failing entirely.
+
+---
+
+## Adoption Criteria
+
+When a CHANGELOG entry reveals a new Claude Code feature, use this rubric to decide whether the plugin should adopt it. The goal is **actionable proposals**, not passive observations.
+
+### Decision Matrix
+
+| Feature Type | Adopt? | Example |
+|-------------|--------|---------|
+| New hook event that existing hooks should fire on | **Yes** | `SubagentStop` — our Stop hooks miss subagent completions |
+| New manifest/config field improving UX | **Yes** if low-effort | `settings.json` — ship defaults for new users |
+| New API data hooks could consume | **Yes** if actionable | `last_assistant_message` — avoid transcript file parsing |
+| New API data statusline could display | **Evaluate** | `added_dirs` — is this useful to show? |
+| New feature for a system we don't use | **Skip** | Background agents — we have no agent definitions |
+| Bug fix for something we don't do | **Skip** | Windows MSYS2 shell handling — not our code |
+
+### Proposal Requirements
+
+Every finding that passes the decision matrix MUST include:
+
+1. **What**: One-sentence description of the new feature
+2. **Current state**: How the plugin handles this today (search codebase first)
+3. **Proposal**: Concrete changes — files to create/edit, content to add
+4. **Effort**: Low (<30min) / Medium (1-2h) / High (half-day+)
+5. **Benefit**: User-facing improvement in plain language
+
+### Anti-Patterns
+
+Do NOT produce findings that:
+
+- Say "we don't have one" without proposing what to create
+- Note a feature exists without evaluating relevance
+- List a feature as "Could adopt" without explaining the concrete benefit
+- Report irrelevant features (e.g., Windows fixes for a macOS-focused plugin)
+
+### Priority Assignment
+
+| Priority | Criteria |
+|----------|----------|
+| P0 | Breaking change — plugin will malfunction without fix |
+| P1 | Gap — existing feature doesn't work in a supported scenario |
+| P2 | Improvement — concrete UX or performance benefit |
+| P3 | Nice-to-have — marginal benefit, adopt when convenient |

@@ -25,15 +25,15 @@ Automatically improve bluera-base by fetching latest Claude Code updates and val
 └────────┬────────┘
          ▼
 ┌─────────────────┐
-│ Analyze Changes │ ← Parse recent entries, extract relevant updates
+│ Analyze & Design│ ← Compare + design adoption proposals for new features
 └────────┬────────┘
          ▼
 ┌─────────────────┐
-│ Validate Plugin │ ← Run audit, check patterns
+│ Validate Plugin │ ← Audit patterns + evaluate adoption candidates
 └────────┬────────┘
          ▼
 ┌─────────────────┐
-│ Propose Changes │ ← Present findings, get approval
+│ Propose Changes │ ← Actionable proposals with implementation sketches
 └────────┬────────┘
          ▼
 ┌─────────────────┐
@@ -62,14 +62,18 @@ Parse each line as JSON with fields: `type`, `pattern`, `learning`, `confidence`
 webfetch:
   url: https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
   prompt: |
-    Extract the most recent 3 changelog entries (versions).
+    Extract the most recent 5 changelog entries (versions).
     For each entry, return:
     - Version and date
     - Added items (new features)
     - Changed items (behavior changes)
     - Deprecated items
     - Fixed items
-    Focus on entries related to: hooks, plugins, skills, commands, frontmatter, agents
+    Focus on entries related to: hooks, plugins, skills, commands, frontmatter, agents, statusline, MCP, settings
+
+    For each Added item, also note:
+    - Whether it's something a plugin could adopt (new hook event, new manifest field, new config option, new API data)
+    - What type of plugin change it would require (new file, config update, hook registration, manifest field)
 ```
 
 ### 1.3 Search Knowledge Store (if available)
@@ -149,6 +153,26 @@ comparison_result:
   improvements: []
 ```
 
+### 2.3 Design Adoption
+
+For each item in `new_features` and `improvements`, don't just note existence — **design how the plugin should use it**. Evaluate using this rubric:
+
+| Signal | Action | Reasoning |
+|--------|--------|-----------|
+| New hook event our existing hooks should also fire on | **Adopt** | Direct gap — our hooks miss events |
+| New manifest/config field that improves UX | **Adopt** if low-effort | Better marketplace/user experience |
+| New API data hooks/statusline could consume | **Evaluate** | Only if data is useful to display or process |
+| New feature irrelevant to our plugin type | **Skip** | Don't report as a finding |
+
+For each item worth adopting, produce a **proposal**:
+
+1. **Current state**: How does the plugin handle this today? (search codebase)
+2. **Adoption sketch**: What files change? What's the concrete content?
+3. **Effort**: Low (<30min) / Medium (1-2h) / High (half-day+)
+4. **Benefit**: What user-facing improvement does this give?
+
+**Critical rule:** Do not report passive observations like "we don't have one." Every finding must include a concrete proposal with files and content, or be skipped as irrelevant.
+
 ---
 
 ## Phase 3: Validate Plugin
@@ -167,11 +191,20 @@ task:
     2. Skill frontmatter against current spec
     3. Plugin manifest completeness
     4. Deprecated patterns that should be updated
+    5. For each new Claude Code feature from the CHANGELOG (listed below),
+       evaluate whether the plugin should adopt it:
+       - Describe what adoption would look like (files, content)
+       - Assess effort vs. benefit
+       - Recommend: adopt / skip / defer
+
+    CHANGELOG findings to evaluate:
+    <pass the new_features list from Phase 2.3>
 
     Return findings as:
-    - Critical: Must fix
-    - Warning: Should fix
-    - Info: Could improve
+    - Critical: Must fix (with implementation sketch)
+    - Warning: Should fix (with implementation sketch)
+    - Info: Could improve (with adoption proposal)
+    - Skip: Not relevant to this plugin (brief reason)
 ```
 
 ### 3.2 Check Specific Patterns
@@ -190,22 +223,42 @@ task:
 
 ### 4.1 Compile Findings
 
-Organize findings into actionable groups:
+Organize findings as **actionable proposals**, not passive observations. Each finding must include what, why, how, and effort:
 
 ```markdown
 ## Auto-Improve Findings
 
-### From CHANGELOG (v1.2.3 - 2025-02-01)
-- [ ] New `argument-hint` frontmatter available for commands
-- [ ] Hook async pattern changed
+### Proposals
 
-### From Audit
-- [ ] Hook `foo.sh` missing defensive stdin pattern
-- [ ] Skill `bar` using deprecated field
+**#1: Register SubagentStop handlers** (P1 · Low effort)
+- **What**: Stop hooks don't fire for subagent completions
+- **Current**: 5 Stop hooks registered, 0 SubagentStop hooks
+- **Proposal**: Add SubagentStop entries in hooks.json for milhouse-stop, session-end-learn
+- **Benefit**: Multi-agent workflows properly trigger stop hooks
+- **Files**: `hooks/hooks.json`
 
-### From Learnings
-- [ ] User frequently runs `bun test` - consider adding to presets
+**#2: Adopt `settings.json` for default plugin config** (P2 · Low effort)
+- **What**: v2.1.49 lets plugins ship `settings.json` with defaults
+- **Current**: Plugin initializes config at runtime via config helpers
+- **Proposal**: Create `.claude-plugin/settings.json` with defaults for autoLearn, autoCommit, dryRun
+- **Benefit**: New users get sensible behavior without manual setup
+- **Files**: `.claude-plugin/settings.json` (new)
+
+### Validation (passing)
+- Hook exit codes: all correct
+- Skill frontmatter: all valid
+- Stdin draining: consistent
+
+### Skipped (not relevant)
+- Sonnet 4.6 support: already supported, no action needed
 ```
+
+**Rules for findings:**
+
+- Every proposal MUST have: What, Current, Proposal, Benefit, Files
+- Validation passes go in a summary list, not individual entries
+- Irrelevant items go in "Skipped" with a one-line reason
+- Never write "we don't have one" without a concrete proposal for what to create
 
 ### 4.2 Get User Approval
 
