@@ -302,9 +302,9 @@ get_reset_timer() {
     local mins=$(( (delta % 3600) / 60 ))
 
     if [ "$hours" -gt 0 ]; then
-        printf "\033[38;5;245m↻%dh%dm\033[0m" "$hours" "$mins"
+        printf "↻%dh%dm" "$hours" "$mins"
     else
-        printf "\033[38;5;245m↻%dm\033[0m" "$mins"
+        printf "↻%dm" "$mins"
     fi
 }
 
@@ -331,15 +331,15 @@ get_session_duration() {
 
     local secs=$((duration_ms / 1000))
     if [ "$secs" -lt 60 ]; then
-        printf "\033[38;5;245m%ds\033[0m" "$secs"
+        printf "%ds" "$secs"
     elif [ "$secs" -lt 3600 ]; then
-        printf "\033[38;5;245m%dm\033[0m" $((secs / 60))
+        printf "%dm" $((secs / 60))
     else
         local h=$((secs / 3600)) m=$(( (secs % 3600) / 60 ))
         if [ "$m" -eq 0 ]; then
-            printf "\033[38;5;245m%dh\033[0m" "$h"
+            printf "%dh" "$h"
         else
-            printf "\033[38;5;245m%dh%dm\033[0m" "$h" "$m"
+            printf "%dh%dm" "$h" "$m"
         fi
     fi
 }
@@ -352,11 +352,11 @@ get_token_usage() {
     if [ "$tokens" -ge 1000000 ]; then
         local m=$((tokens / 1000000))
         local remainder=$(( (tokens % 1000000) / 100000 ))
-        printf "\033[38;5;245m%d.%dM\033[0m" "$m" "$remainder"
+        printf "%d.%dM" "$m" "$remainder"
     elif [ "$tokens" -ge 1000 ]; then
-        printf "\033[38;5;245m%dK\033[0m" $((tokens / 1000))
+        printf "%dK" $((tokens / 1000))
     else
-        printf "\033[38;5;245m%d\033[0m" "$tokens"
+        printf "%d" "$tokens"
     fi
 }
 
@@ -440,8 +440,8 @@ TOKEN_FMT=$(get_token_usage "$CURRENT_TOKENS")
 DURATION_FMT=$(get_session_duration "$DURATION_MS")
 [ -n "$DURATION_FMT" ] && DURATION_FMT="$DURATION_FMT"
 
-# Separator: dark gray middle dot
-SEP=$(printf " \033[38;5;240m·\033[0m ")
+# Separator: single space (minimizes invisible bytes for Ink flex layout)
+SEP=" "
 
 # Format session ID prefix (blood orange)
 SID_FMT=""
@@ -462,18 +462,22 @@ if [ -n "$RATE_LIMITS" ]; then
     RATE_SEG="${SEP}$RATE_LIMITS$RESET_TIMER"
 fi
 
-# Build cost segment
-COST_SEG=$(printf "%s\033[33m%s\033[0m" "$SEP" "$COST_FMT")
+# Build duration+cost segment (after project name, before model)
+TIME_COST=""
+if [ -n "$DURATION_FMT" ]; then
+    TIME_COST=" ${DURATION_FMT}"
+fi
+TIME_COST="${TIME_COST} \033[33m${COST_FMT}\033[0m"
 
 # Build plugin status segment for line 2
 PLUGIN_SEG=""
 [ -n "$BLUERA_STATUS" ] && PLUGIN_SEG="${SEP}$BLUERA_STATUS"
 
-# Line 1: session_id stack project · model ctx_bar ctx% tokens cache · 7d 5h reset · cost
-printf "%s%s\033[1m%s\033[0m%s\033[35m%s\033[0m %b%s\033[0m %d%%%s%s%s%s\n" \
-    "$SID_FMT" "$PROJECT_TYPE" "$DIR_NAME" "$SEP" \
-    "$MODEL" "$BAR_COLOR" "$BAR" "$CONTEXT_PCT" "$TOKEN_FMT" "$CACHE_EFF" "$RATE_SEG" "$COST_SEG"
+# Line 1: session_id stack project duration cost model ctx_bar ctx% tokens cache 7d 5h reset
+printf "%s%s\033[1m%s\033[0m%b%s\033[35m%s\033[0m %b%s\033[0m %d%%%s%s%s\n" \
+    "$SID_FMT" "$PROJECT_TYPE" "$DIR_NAME" "$TIME_COST" "$SEP" \
+    "$MODEL" "$BAR_COLOR" "$BAR" "$CONTEXT_PCT" "$TOKEN_FMT" "$CACHE_EFF" "$RATE_SEG"
 
-# Line 2: sha branch lines · duration · bluera
-printf "%s %s%s%s%s" "$GIT_INFO" "$LINES_FMT" "$SEP" "$DURATION_FMT" "$PLUGIN_SEG"
+# Line 2: sha branch lines bluera
+printf "%s %s%s" "$GIT_INFO" "$LINES_FMT" "$PLUGIN_SEG"
 ```
