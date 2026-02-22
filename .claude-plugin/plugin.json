@@ -1,6 +1,6 @@
 {
   "name": "bluera-base",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "description": "Shared development conventions for Bluera projects - hooks, skills, CLAUDE.md patterns",
   "author": {
     "name": "Bluera Inc",
@@ -9,8 +9,13 @@
   "repository": "https://github.com/blueraai/bluera-base",
   "homepage": "https://github.com/blueraai/bluera-base#readme",
   "license": "MIT",
-  "categories": ["development", "automation"],
-  "compatibility": { "minVersion": "2.1.0" },
+  "categories": [
+    "development",
+    "automation"
+  ],
+  "compatibility": {
+    "minVersion": "2.1.0"
+  },
   "keywords": [
     "conventions",
     "hooks",
