@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.44.2](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.44.2) (2026-02-22)
+
+### ⚠ BREAKING CHANGES
+
+* **skills:** rename /config to /settings to avoid Claude Code collision
+
+### Features
+
+* **auto-improve:** apply adoption proposals from v2.1.47-v2.1.50 ([83f679c](https://github.com/blueraai/bluera-base/commit/83f679cb73c023135423cf5e053de2fb1ce1c357))
+* **hooks:** add SubagentStop event handlers ([b4c1fd2](https://github.com/blueraai/bluera-base/commit/b4c1fd2e059baaf08127e614fdd27c45147e8138))
+* **skills:** add bluera config status badge to statusline preset ([174a8cd](https://github.com/blueraai/bluera-base/commit/174a8cd746a121481fa9f293729597ad5f91576d))
+* **skills:** add browser-inference-guide expert skill ([19aab4c](https://github.com/blueraai/bluera-base/commit/19aab4ce05106a627f9e371e642e557cefa97036))
+* **skills:** add modern hook/config checks to plugin audit ([8e48346](https://github.com/blueraai/bluera-base/commit/8e483463b919741c2afc030019b0bb0402d1dd25))
+* **skills:** add version stamps to statusline presets ([2168370](https://github.com/blueraai/bluera-base/commit/21683706cb389d0eb069216bfe1c814aee7d375a))
+* **skills:** make auto-improve adoption-oriented instead of passive ([0e9d4f7](https://github.com/blueraai/bluera-base/commit/0e9d4f74e108f85b2f7f250c69a862f87af1c2ca))
+* **skills:** rename /config to /settings to avoid Claude Code collision ([fd4dacc](https://github.com/blueraai/bluera-base/commit/fd4daccc9b06427ccaacffb81827025e12a16298))
+* **statusline:** supercharge bluera preset with advanced metrics ([683fe29](https://github.com/blueraai/bluera-base/commit/683fe29d159fdbc5233e4773c26be67b80654779))
+
+### Bug Fixes
+
+* **skills:** remove shell-exec backtick pattern from audit-plugin skill ([4ab402f](https://github.com/blueraai/bluera-base/commit/4ab402f3ac4859963f4d61f123a28a68a6bdef33))
+* **statusline:** reduce ANSI bytes, rearrange layout, drop dot separators ([48ffba9](https://github.com/blueraai/bluera-base/commit/48ffba99529faa2764dccb9ff6732b87572b274a))
+* **statusline:** remove burn rate and block projection from line 1 ([657217e](https://github.com/blueraai/bluera-base/commit/657217e0d3f73eb010ae4486c43beff32971c174))
+* **statusline:** reverse 7d/5h rate limit order in bluera preset ([8bcbc55](https://github.com/blueraai/bluera-base/commit/8bcbc55477078599820a4eb723e4a05e3b3a9642))
+
 ## [0.44.1](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.44.1) (2026-02-22)
 
 ### ⚠ BREAKING CHANGES
