@@ -50,11 +50,32 @@ plugin/
 }
 ```
 
+**Discoverability fields** (recommended):
+
+```json
+{
+  "categories": ["development", "automation"],
+  "compatibility": { "minVersion": "2.1.0" }
+}
+```
+
 **Check**:
 
 - [ ] All required fields present
 - [ ] Version follows semver
 - [ ] Description is meaningful (not placeholder)
+- [ ] Has `categories` array for marketplace discovery
+- [ ] Has `compatibility.minVersion` if plugin uses features from specific versions
+
+### 2b. Plugin Settings (v2.1.49+)
+
+Plugins can ship `.claude-plugin/settings.json` to provide default configuration.
+
+**Check**:
+
+- [ ] If plugin has configurable behavior, `settings.json` exists with safe defaults
+- [ ] All settings default to `false` or conservative values (opt-in, not opt-out)
+- [ ] Settings file is valid JSON
 
 ### 3. Commands
 
@@ -111,6 +132,32 @@ skills/
 - [ ] Scripts are executable (`chmod +x`)
 - [ ] Exit codes are correct (0=allow, 2=block)
 - [ ] No infinite loops in Stop hooks (check `stop_hook_active`)
+- [ ] All hooks drain stdin (`cat 2>/dev/null || true` or equivalent)
+- [ ] If Stop hooks exist, SubagentStop handlers should also be registered for any that apply to subagent completions
+- [ ] Stop/SubagentStop hooks use `last_assistant_message` from hook input (v2.1.47+) instead of parsing transcript files directly — transcript fallback is acceptable for backward compatibility
+
+### 5b. Hook Event Coverage
+
+Verify the plugin registers for all relevant hook events:
+
+| Event | When to use |
+|-------|-------------|
+| `SessionStart` | Session initialization, config loading |
+| `PreToolUse` | Validate/block tool calls |
+| `PostToolUse` | React to completed tool calls |
+| `PreCompact` | Preserve state before context compaction |
+| `Notification` | System notifications (permission prompts, idle) |
+| `Stop` | Session end behavior |
+| `SubagentStop` | Subagent completion (mirror relevant Stop hooks) |
+| `TeammateIdle` | Agent team coordination |
+| `TaskCompleted` | Task tracking in agent teams |
+| `ConfigChange` | React to mid-session config changes (v2.1.49+) |
+| `WorktreeCreate` / `WorktreeRemove` | Worktree lifecycle (v2.1.50+) |
+
+**Check**:
+
+- [ ] If plugin has Stop hooks, evaluate whether SubagentStop handlers are also needed
+- [ ] If plugin uses agent teams, TeammateIdle and TaskCompleted should be registered
 
 ### 6. Token Efficiency
 
