@@ -21,7 +21,7 @@ Choose a preset and apply it:
 | **informative** | `🤖 Opus 4.5 │ 📊 45%🟢 │ 💰 $1.23` |
 | **developer** | `📁project │ 🤖Opus4.5 │ 📊45%🟢 │ 🌿main* │ 📦Node │ 💰$1.23` |
 | **system** | `📁project │ 🤖Opus4.5 │ 📊45%🟢 │ 🌿main │ 💻15%🟢 │ 🧠62%🟡 │ 🐳3` |
-| **bluera** | 2-line: `a1b2c3 📦 project · Opus4.6 ██████░░░░ 60% 85K C:85% · 7d:8% 5h:12% ↻3h12m →$3 · $1.23 $1.2/h` / `abc123  main* +42/-8 · 1h23m · ⚡7/10` |
+| **bluera** | 2-line: `a1b2c3 📦 project · Opus4.6 ██████░░░░ 60% 85K C:85% · 7d:8% 5h:12% ↻3h12m · $1.23` / `abc123  main* +42/-8 · 1h23m · ⚡7/10` |
 
 ---
 
@@ -192,13 +192,11 @@ Advanced 2-line display with ANSI colors. See preset-scripts.md for full impleme
 |--------|--------|---------|
 | Session ID | `session_id` (first 6 chars) | Orange prefix |
 | Cost | `cost.total_cost_usd` | `42¢` or `$1.23` |
-| Burn rate | cost / duration | `$1.2/h` (green/yellow/orange/red) |
 | Context bar | token counts | `██████░░░░ 60%` (green/yellow/red) |
 | Token usage | input + cache tokens | `85K` or `1.2M` |
 | Cache efficiency | cache_read / total_cache | `C:85%` (green/yellow/red) |
 | Rate limits | OAuth API (macOS) | `7d:8% 5h:12%` |
 | Reset timer | OAuth `resets_at` | `↻3h12m` |
-| Block projection | burn_rate * time_remaining | `→$3` |
 
 **Line 2** — Git + Session:
 
