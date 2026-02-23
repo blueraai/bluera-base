@@ -50,22 +50,12 @@ plugin/
 }
 ```
 
-**Discoverability fields** (recommended):
-
-```json
-{
-  "categories": ["development", "automation"],
-  "compatibility": { "minVersion": "2.1.0" }
-}
-```
-
 **Check**:
 
 - [ ] All required fields present
 - [ ] Version follows semver
 - [ ] Description is meaningful (not placeholder)
-- [ ] Has `categories` array for marketplace discovery
-- [ ] Has `compatibility.minVersion` if plugin uses features from specific versions
+- [ ] No unrecognized keys (Claude Code uses strict manifest validation)
 
 ### 2b. Plugin Settings (v2.1.49+)
 
