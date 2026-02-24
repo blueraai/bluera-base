@@ -395,7 +395,38 @@ else
   STRICT_TYPING_ENABLED="false"
 fi
 
+# === Auto-format (single file, no rate limit) ===
+
+format_file() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+
+  case "$file" in
+    *.py|*.pyi)
+      if command -v ruff &>/dev/null && \
+         { [ -f "pyproject.toml" ] || [ -f "ruff.toml" ] || [ -f ".ruff.toml" ]; }; then
+        ruff format "$file" 2>/dev/null || true
+        ruff check --fix "$file" 2>/dev/null || true
+      elif command -v black &>/dev/null; then
+        black --quiet "$file" 2>/dev/null || true
+      fi
+      ;;
+    *.ts|*.tsx|*.js|*.jsx|*.vue|*.css|*.scss)
+      if command -v npx &>/dev/null && \
+         { [ -f ".prettierrc" ] || [ -f ".prettierrc.json" ] || [ -f ".prettierrc.js" ] || \
+           [ -f ".prettierrc.yml" ] || [ -f ".prettierrc.cjs" ] || [ -f ".prettierrc.mjs" ] || \
+           [ -f "prettier.config.js" ] || [ -f "prettier.config.cjs" ] || [ -f "prettier.config.mjs" ] || \
+           ([ -f "package.json" ] && grep -q '"prettier"' package.json 2>/dev/null); }; then
+        npx prettier --write "$file" 2>/dev/null || true
+      fi
+      ;;
+  esac
+}
+
 # === Main ===
+
+# Auto-format the written file (no rate limit, single file is fast)
+format_file "$FILE_PATH"
 
 # Anti-pattern check (all source files, no deps)
 check_anti_patterns_file "$FILE_PATH" || exit $?

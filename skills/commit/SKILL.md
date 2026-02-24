@@ -45,11 +45,19 @@ CLAUDE.md is hierarchical - use the directory level matching the changed files. 
 | Project-wide (scripts, CI/CD, build) | Root CLAUDE.md |
 | Directory-specific patterns | Subdirectory CLAUDE.md (create if needed) |
 
+## Hook-Generated Changes
+
+Post-edit hooks (e.g. `post-edit-check.sh`) may auto-format files after you write them. These formatting changes are **part of your work**, not separate changes.
+
+- **Always stage formatting changes with the files you edited** — they are a side effect of your edits
+- **Never split formatter output into a separate commit** — this will cause pre-commit lint failures because the unformatted version gets committed first
+- If `git diff` shows whitespace, import ordering, or style changes in files you edited, those came from the formatter hook — include them
+
 ## Grouping Rules
 
 Identify logical features by grouping related files:
 
-- Same feature = same commit
+- Same feature = same commit (including any formatter changes to those files)
 - Infrastructure/config = separate commit
 - Tests = with their implementation OR separate if test-only
 
