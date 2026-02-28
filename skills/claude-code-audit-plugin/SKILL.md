@@ -167,6 +167,41 @@ Verify the plugin registers for all relevant hook events:
 - [ ] allowed-tools are scoped narrowly
 - [ ] PreToolUse hooks for dangerous command blocking
 
+### 8. CLAUDE.md / Skills Overlap
+
+CLAUDE.md loads into every conversation. If a skill already covers a topic, CLAUDE.md should reference the skill rather than duplicating the content.
+
+**Check**:
+
+- [ ] Scan CLAUDE.md (root, includes/, .claude/rules/) for content that overlaps with skills/\*\*/\*.md
+- [ ] For each overlap: the CLAUDE.md section should be replaced with a brief pointer (e.g., "See /plugin:skill-name for details")
+- [ ] Report line count before and after slimming
+
+**Common overlaps**:
+
+| CLAUDE.md content | Likely skill |
+|-------------------|-------------|
+| Commit conventions, message format | commit skill |
+| Release workflow, version bumping | release skill |
+| CI/CD pipeline details | release skill references |
+| Code review process | code-review skill |
+| Plugin structure diagram | audit-plugin skill |
+| Hook behavior documentation | skill that wraps the hook |
+
+**How to detect**: For each CLAUDE.md paragraph/section:
+
+1. Extract key terms (2-3 word phrases)
+2. Search skills/\*\*/SKILL.md and skills/\*\*/references/ for those terms
+3. If 3+ key terms appear in a single skill, flag as overlap
+
+**Fix** (with --fix): Replace overlapping section with a one-line reference. Example:
+
+```text
+Use `/plugin:skill-name` for [topic].
+```
+
+Report: `CLAUDE.md: X lines -> Y lines (saved Z lines)`
+
 ## Workflow
 
 ### Phase 1: Locate Plugin
@@ -218,6 +253,12 @@ For each checklist item:
 1. **Large SKILL.md** (312 lines)
    - `skills/complex-skill/SKILL.md`
    - Suggestion: Move detail to references/
+
+#### CLAUDE.md Overlap
+- CLAUDE.md: 82 lines -> 65 lines (saved 17 lines)
+- Overlaps found:
+  1. "CI/CD" section (lines 42-56) -> covered by `/plugin:release`
+  2. "Plugin Structure" (lines 26-34) -> covered by this audit skill
 
 ### Passed
 - Plugin structure correct

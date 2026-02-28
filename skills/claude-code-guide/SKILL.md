@@ -123,6 +123,12 @@ task:
 
 ## Quick Reference
 
+### Settings Hierarchy
+
+Managed > CLI (`--settings`) > Local (`.claude/settings.local.json`) > Project (`.claude/settings.json`) > User (`~/.claude/settings.json`)
+
+Schema: `https://json.schemastore.org/claude-code-settings.json` — see [references/settings.md](references/settings.md)
+
 ### Plugin Structure
 
 ```text

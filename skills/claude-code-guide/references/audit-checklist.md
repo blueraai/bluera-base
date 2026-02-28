@@ -4,6 +4,7 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 **Official Documentation:**
 
+- [Claude Code Settings](https://code.claude.com/docs/en/settings) | [JSON Schema](https://www.schemastore.org/claude-code-settings.json)
 - [Claude Code Plugins](https://code.claude.com/docs/en/plugins)
 - [Claude Code Hooks](https://code.claude.com/docs/en/hooks)
 - [Claude Code Skills](https://code.claude.com/docs/en/skills)
@@ -31,9 +32,14 @@ Comprehensive checklist for auditing Claude Code configurations and plugins.
 
 ### Settings
 
-- [ ] `.claude/settings.json` (if exists) is valid JSON
+> Reference: [Settings docs](https://code.claude.com/docs/en/settings) | [JSON Schema](https://www.schemastore.org/claude-code-settings.json) | [settings.md](settings.md)
+
+- [ ] `.claude/settings.json` (if exists) is valid JSON with only recognized keys
+- [ ] Uses `$schema` for IDE validation: `"$schema": "https://json.schemastore.org/claude-code-settings.json"`
+- [ ] Settings hierarchy is correct (managed > CLI > local > project > user)
 - [ ] No conflicting configurations between files
 - [ ] Local overrides (`.local.md`, `settings.local.json`) are gitignored
+- [ ] Permissions use scoped rules (not overly broad wildcards)
 
 ## 2. Plugin Structure (if applicable)
 

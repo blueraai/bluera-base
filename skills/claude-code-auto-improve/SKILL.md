@@ -76,7 +76,33 @@ webfetch:
     - What type of plugin change it would require (new file, config update, hook registration, manifest field)
 ```
 
-### 1.3 Search Knowledge Store (if available)
+### 1.3 Validate Settings Against Schema
+
+Fetch the canonical settings schema and compare against plugin settings files:
+
+```yaml
+webfetch:
+  url: https://json.schemastore.org/claude-code-settings.json
+  prompt: |
+    Extract the full list of recognized top-level keys and their types.
+    For object-type keys (permissions, hooks, sandbox, attribution, env),
+    also list their recognized sub-keys.
+    Return as a structured list.
+```
+
+Then validate all settings files in the plugin:
+
+1. **Find settings files**: `.claude/settings.json`, `.claude/settings.local.json`, `.claude-plugin/settings.json`
+2. **For each file**: Compare keys against the schema
+3. **Flag**:
+   - Unrecognized keys (typos or removed fields)
+   - Deprecated keys (if noted in schema description)
+   - Missing recommended keys (e.g., `$schema` for IDE validation)
+4. **Also check** `hooks.json` event names against the schema's hook event enum
+
+Add findings to the Phase 2 comparison results under a `settings_validation` category.
+
+### 1.4 Search Knowledge Store (if available)
 
 ```yaml
 mcp:
@@ -91,7 +117,7 @@ mcp:
 
 If store not found, skip this step.
 
-### 1.4 Query GitHub Issues
+### 1.5 Query GitHub Issues
 
 ```bash
 gh api repos/anthropics/claude-code/issues \
@@ -216,6 +242,7 @@ task:
 | ${CLAUDE_PLUGIN_ROOT} | All paths should use this variable |
 | Frontmatter | Check for deprecated or missing fields |
 | async hooks | Verify appropriate use of async: true |
+| Settings keys | Validate against SchemaStore schema (Phase 1.3) |
 
 ---
 
@@ -335,7 +362,7 @@ Configuration is stored in `.bluera/bluera-base/config.json`:
   "autoImprove": {
     "enabled": false,
     "autoApply": false,
-    "sources": ["changelog", "github", "knowledge", "learnings"],
+    "sources": ["changelog", "schema", "github", "knowledge", "learnings"],
     "changelogUrl": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md"
   }
 }
@@ -374,6 +401,7 @@ Configuration is stored in `.bluera/bluera-base/config.json`:
 | GitHub API rate limited | Skip GitHub issues, suggest `gh auth login` |
 | Knowledge store not found | Skip knowledge search |
 | No learnings file | Skip learnings, continue |
+| Schema fetch fails | Log warning, skip settings validation |
 
 Always complete with available sources rather than failing entirely.
 
@@ -386,7 +414,7 @@ Final output summarizes actions taken:
 ```markdown
 ## Auto-Improve Complete
 
-**Sources checked:** changelog, github, learnings
+**Sources checked:** changelog, schema, github, learnings
 **Issues found:** 5
 **Changes applied:** 3
 **Skipped:** 2
