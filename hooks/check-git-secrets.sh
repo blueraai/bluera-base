@@ -19,6 +19,13 @@ bluera_require_jq_mandatory || exit 2
 
 AI_SECRETS_CHECK=$(bluera_get_config ".secretsCheck.aiEnabled" "false" 2>/dev/null || echo "false") # ok: config key
 
+# Read user-configured exclude paths from <repo>/.bluera/bluera-base/config.json
+EXCLUDE_PATHS=$(bluera_get_config ".secretsCheck.excludePaths" "[]" 2>/dev/null || echo "[]")
+EXTRA_EXCLUDES=""
+if [[ "$EXCLUDE_PATHS" != "[]" ]] && [[ "$EXCLUDE_PATHS" != "null" ]]; then
+  EXTRA_EXCLUDES=$(echo "$EXCLUDE_PATHS" | jq -r '.[] | ":!" + .' 2>/dev/null || true)
+fi
+
 # Read hook input from stdin
 INPUT=$(cat 2>/dev/null || true)
 [[ -z "$INPUT" ]] && exit 0
@@ -32,7 +39,8 @@ echo "$COMMAND" | grep -qE '^git[[:space:]]+(add|commit)' || exit 0
 # Get staged content (exclude example files and test files)
 # Only check ADDED lines (+ prefix), not removed (-) or context lines
 # This prevents false positives when modifying files that had pattern matches
-STAGED_RAW=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.env.example' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' 2>/dev/null || true)
+# shellcheck disable=SC2086
+STAGED_RAW=$(git diff --cached -- ':!.bluera/' ':!dist/' ':!build/' ':!*.env.example' ':!*.test.ts' ':!*.spec.ts' ':!*.test.js' ':!*.spec.js' ':!**/__tests__/**' ':!**/*.test.*' ':!**/*.spec.*' $EXTRA_EXCLUDES 2>/dev/null || true)
 STAGED=$(echo "$STAGED_RAW" | grep '^+' | grep -v '^+++' || true)
 [[ -z "$STAGED" ]] && exit 0
 

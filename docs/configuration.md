@@ -50,6 +50,8 @@ Manage with `/bluera-base:settings enable|disable <feature>`:
 | `dry-check` | `.dryCheck.enabled` | Enable DRY duplicate detection | ON |
 | `dry-auto` | `.dryCheck.onStop` | Auto-scan for duplicates on stop | ON |
 | `strict-typing` | `.strictTyping.enabled` | Block `any`, `as` casts | ON |
+| `secrets-check` | `.secretsCheck.enabled` | Block commits containing potential secrets | ON |
+| `secrets-ai` | `.secretsCheck.aiEnabled` | AI-powered obfuscated secret detection (requires Claude CLI) | ON |
 
 ## Default Schema
 
@@ -96,12 +98,29 @@ Manage with `/bluera-base:settings enable|disable <feature>`:
   },
   "secretsCheck": {
     "enabled": true,
-    "aiEnabled": true
+    "aiEnabled": true,
+    "excludePaths": []
   }
 }
 ```
 
 > **Note:** The `autoCommit.remote` field is defined but currently unused.
+
+## Secrets Check: Excluding Paths
+
+The `secretsCheck.excludePaths` array lets you skip specific paths from the pre-commit secrets scan. This is useful for data files (JSONL, JSON) that mention env var names in documentation text but don't contain actual secrets.
+
+Paths are passed as git pathspec exclusions (`:!<path>`) to `git diff --cached`.
+
+```json
+{
+  "secretsCheck": {
+    "excludePaths": ["training/data/", "*.jsonl", "docs/env-setup.md"]
+  }
+}
+```
+
+Configure in `.bluera/bluera-base/config.json` (shared, committed) or `config.local.json` (personal, gitignored).
 
 ## State Files
 

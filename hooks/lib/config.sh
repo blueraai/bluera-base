@@ -53,7 +53,8 @@ BLUERA_BASE_DEFAULT_CONFIG='{
   },
   "secretsCheck": {
     "enabled": true,
-    "aiEnabled": true
+    "aiEnabled": true,
+    "excludePaths": []
   },
   "coverage": {
     "enabled": false,
