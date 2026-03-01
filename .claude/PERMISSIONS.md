@@ -28,13 +28,15 @@ For auto-commit and release workflows:
 "Bash(git describe *)"
 ```
 
-### GitHub CLI (Optional)
+### GitHub / GitLab CLI (Optional)
 
 For release workflow CI monitoring:
 
 ```json
 "Bash(gh run *)",
-"Bash(gh release *)"
+"Bash(gh release *)",
+"Bash(glab run *)",
+"Bash(glab release *)"
 ```
 
 ### Notifications (Optional)

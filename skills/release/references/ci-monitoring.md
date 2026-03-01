@@ -1,5 +1,7 @@
 # CI Monitoring
 
+> **Note:** Examples below use `gh` (GitHub CLI). For GitLab, substitute `glab` with equivalent subcommands.
+
 After push, **wait for ALL workflows to complete before declaring success**.
 
 ## Wait for All Workflows (REQUIRED)

@@ -104,7 +104,7 @@ Prevents bypassing the release workflow by blocking direct version/release comma
 - **npm/yarn/pnpm/bun:** `npm version`, `npm run release`, and equivalent yarn/pnpm/bun commands
 - **Python:** `poetry version`, `bump2version`, `hatch version`
 - **Rust:** `cargo release`
-- **Git-based:** `git tag v[0-9]...`, `gh release create`
+- **Git-based:** `git tag v[0-9]...`, `gh release create` / `glab release create`
 
 **Not blocked:** Makefile-based releases (`make release`, `make version`) are not detected.
 

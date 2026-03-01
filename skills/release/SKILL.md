@@ -59,6 +59,6 @@ __SKILL__=release cargo release patch --execute
    - Zero workflows are `in_progress` or `queued`
 7. **Verify workflows:** Compare `.github/workflows/` files vs actual runs - ensure none missing
 8. **Tag:** Create and push tag only AFTER CI passes (or let auto-release do it)
-9. **Verify release:** `gh release list --limit 1` to confirm published
+9. **Verify release:** `gh release list --limit 1` (or `glab release list` for GitLab) to confirm published
 
 **IMPORTANT:** Do NOT declare "Release Complete" while any workflow shows `in_progress`. Run the full polling loop and wait for ALL workflows to reach `completed` status before finishing.

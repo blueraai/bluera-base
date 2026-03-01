@@ -59,7 +59,7 @@ PY_PATTERNS='(poetry|hatch) (version|publish)|bump2version'
 RUST_PATTERNS='cargo (release|publish)'
 
 # Go/Generic: direct git tag creation for versions
-GIT_PATTERNS='git tag .*[v]?[0-9]|gh release create'
+GIT_PATTERNS='git tag .*[v]?[0-9]|g(h|lab) release create'
 
 if echo "$COMMAND" | grep -qE "($JS_PATTERNS)|($PY_PATTERNS)|($RUST_PATTERNS)|($GIT_PATTERNS)"; then
   echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2

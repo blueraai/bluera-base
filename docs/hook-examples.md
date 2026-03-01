@@ -52,7 +52,7 @@ fi
 # Block manual version/release commands
 BLOCK_PATTERNS='(npm|yarn|pnpm|bun)( run)? (version|release)'
 BLOCK_PATTERNS="$BLOCK_PATTERNS|git tag v[0-9]"
-BLOCK_PATTERNS="$BLOCK_PATTERNS|gh release create"
+BLOCK_PATTERNS="$BLOCK_PATTERNS|gh release create|glab release create"
 
 if echo "$COMMAND" | grep -qE "$BLOCK_PATTERNS"; then
   echo "Manual release commands are blocked. Use /bluera-base:release instead." >&2
