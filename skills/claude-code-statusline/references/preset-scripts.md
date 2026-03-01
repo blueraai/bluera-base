@@ -447,6 +447,9 @@ SEP=" "
 SID_FMT=""
 [ -n "$SESSION_ID" ] && SID_FMT=$(printf "\033[38;5;166m%s\033[0m " "$SESSION_ID")
 
+# Hostname (short, dim)
+HOSTNAME_FMT=$(printf "\033[2m%s\033[0m " "$(hostname -s)")
+
 # Context bar color
 if [ "$CONTEXT_PCT" -lt 50 ]; then
     BAR_COLOR="\033[32m"
@@ -473,9 +476,9 @@ TIME_COST="${TIME_COST} \033[33m${COST_FMT}\033[0m"
 PLUGIN_SEG=""
 [ -n "$BLUERA_STATUS" ] && PLUGIN_SEG="${SEP}$BLUERA_STATUS"
 
-# Line 1: session_id stack project duration cost model ctx_bar ctx% tokens cache 7d 5h reset
-printf "%s%s\033[1m%s\033[0m%b%s\033[35m%s\033[0m %b%s\033[0m %d%%%s%s%s\n" \
-    "$SID_FMT" "$PROJECT_TYPE" "$DIR_NAME" "$TIME_COST" "$SEP" \
+# Line 1: session_id stack hostname project duration cost model ctx_bar ctx% tokens cache 7d 5h reset
+printf "%s%s%s\033[1m%s\033[0m%b%s\033[35m%s\033[0m %b%s\033[0m %d%%%s%s%s\n" \
+    "$SID_FMT" "$PROJECT_TYPE" "$HOSTNAME_FMT" "$DIR_NAME" "$TIME_COST" "$SEP" \
     "$MODEL" "$BAR_COLOR" "$BAR" "$CONTEXT_PCT" "$TOKEN_FMT" "$CACHE_EFF" "$RATE_SEG"
 
 # Line 2: sha branch lines bluera
