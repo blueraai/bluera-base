@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.48.0](https://github.com/blueraai/bluera-base/compare/v0.47.0...v0.48.0) (2026-03-01)
+
+### Features
+
+* **skills:** add mandatory knowledge store consultation to claude-code-guide ([979fb80](https://github.com/blueraai/bluera-base/commit/979fb8021a719fd7f84a2b27e5e4343a0bda4dd7))
+* **statusline:** add hostname to bluera preset after project type icon ([0d53b62](https://github.com/blueraai/bluera-base/commit/0d53b626e13b0e45e79c3423da4051c1da6f9ac8))
+
 ## [0.47.0](https://github.com/blueraai/bluera-base/compare/v0.37.8...v0.47.0) (2026-03-01)
 
 ### ⚠ BREAKING CHANGES
