@@ -31,6 +31,16 @@ Parse argument to determine mode:
 - **Question** - Answer the question using expert knowledge
 - **No argument** - Offer both options
 
+### 1.5 Ensure Knowledge Stores (one-time)
+
+Before dispatching, check if bluera-knowledge stores are indexed:
+
+1. Try `mcp__plugin_bluera-knowledge_bluera-knowledge__execute` with `command: stores`
+2. If **MCP unavailable** (tool not found): print `[claude-code-guide] bluera-knowledge not installed — skipping knowledge store setup. Install for richer results.` and continue
+3. If **available**: check if stores `claude-code`, `claude-skills`, `claude-plugins-official` exist in the response
+4. If any are missing: run `/bluera-base:bluera-knowledge:sync` to index from `stores.config.json`
+5. Skip this step if all stores already exist (idempotent)
+
 ### 2. For Questions
 
 Spawn the `claude-code-guide` agent:
@@ -41,8 +51,12 @@ task:
   prompt: |
     User question: $ARGUMENTS
 
+    IMPORTANT: You MUST search bluera-knowledge stores BEFORE answering.
+    Query stores: claude-code, claude-skills, claude-plugins-official, claude-code-docs
+    If bluera-knowledge is unavailable, skip silently and use other sources.
+
     Answer using your knowledge of Claude Code best practices.
-    Search documentation if needed. Cite sources.
+    Cite sources.
 ```
 
 ### 3. For Review Mode
@@ -53,6 +67,8 @@ Spawn the agent with review instructions:
 task:
   subagent_type: claude-code-guide
   prompt: |
+    IMPORTANT: Search bluera-knowledge stores first (claude-code, claude-skills, claude-plugins-official).
+
     Review the current plugin for:
     1. Plugin structure (plugin.json location, directory layout)
     2. Hook implementations (exit codes, defensive stdin, stop_hook_active)
@@ -91,6 +107,8 @@ Spawn the agent with comprehensive audit:
 task:
   subagent_type: claude-code-guide
   prompt: |
+    IMPORTANT: Search bluera-knowledge stores first (claude-code, claude-skills, claude-plugins-official).
+
     Perform a comprehensive Claude Code audit.
 
     **Target**: $PATH (or current directory if not specified)
@@ -104,7 +122,7 @@ task:
     3. Note issues with severity (critical/warning/suggestion)
     4. Provide specific fixes
 
-    Search documentation and web for latest recommendations if needed.
+    Search bluera-knowledge and web for latest recommendations if needed.
 
     Output format:
     ## Audit Report: [project name]

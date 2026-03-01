@@ -17,6 +17,21 @@
       "url": "https://github.com/blueraai/claude-code-anywhere"
     },
     {
+      "name": "claude-code",
+      "type": "repo",
+      "url": "https://github.com/anthropics/claude-code"
+    },
+    {
+      "name": "claude-skills",
+      "type": "repo",
+      "url": "https://github.com/anthropics/skills"
+    },
+    {
+      "name": "claude-plugins-official",
+      "type": "repo",
+      "url": "https://github.com/anthropics/claude-plugins-official"
+    },
+    {
       "name": "claude-code-docs",
       "type": "web",
       "url": "https://docs.anthropic.com/en/docs/claude-code",
